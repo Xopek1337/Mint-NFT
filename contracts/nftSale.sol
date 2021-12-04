@@ -5,7 +5,7 @@ pragma solidity 0.8.10;
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Wallet is Ownable {
+contract nftSale is Ownable {
     address public addr;
     IERC721 public token;
     address public getPayment;
