@@ -20,8 +20,8 @@ contract Wallet is Ownable {
     }
     
     function sellToken(uint amount) external public {
-        require(amount > maxAmount);
-        require(msg.value != price * amount);
+        require(amount < maxAmount);
+        require(msg.value == price * amount);
         require(totalSupply >= amount);
 
         (bool success, ) = getPayment.call{value: msg.value};
