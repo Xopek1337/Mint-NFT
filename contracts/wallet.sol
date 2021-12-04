@@ -1,17 +1,19 @@
+// SPDX-License-Identifier: MIT
+
 pragma solidity 0.8.10;
 
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol"
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Wallet is Ownable {
-    adress public addr;
+    address public addr;
     IERC721 public token;
-    adress public getPayment;
+    address public getPayment;
     uint public maxAmount;
     uint public totalSupply;
     uint public price;
 
-    constructor(uint _addr) {
+    constructor(address _addr) {
         token = IERC721(addr);
         getPayment = _addr;
         price = 0.01 ether;
@@ -19,28 +21,28 @@ contract Wallet is Ownable {
         totalSupply = 100;
     }
     
-    function sellToken(uint amount) external public {
-        require(amount < maxAmount);
+    function sellToken(uint amount) payable external {
+        require(amount <= maxAmount);
         require(msg.value == price * amount);
         require(totalSupply >= amount);
 
-        (bool success, ) = getPayment.call{value: msg.value};
+        (bool success,) = getPayment.call{value: msg.value}("");
 
         if(success) {
             token.approve(msg.sender, amount);
             token.transferFrom(addr, msg.sender, amount);
         }
     }
-    function setPrice(uint _price) onlyOwner {
+    function setPrice(uint _price) external onlyOwner {
         price = _price;
     }
-    function setTotalSupply(uint _supply) onlyOwner {
+    function setTotalSupply(uint _supply) external onlyOwner {
         totalSupply = _supply;
     }
-    function setMaxAmount(uint _amount) onlyOwner {
+    function setMaxAmount(uint _amount) external onlyOwner {
         maxAmount = _amount;
     }
-    function setPayAdress(adress _getPayment) onlyOwner {
+    function setPayAddress(address _getPayment) external onlyOwner {
         getPayment = _getPayment;
     }
 }
