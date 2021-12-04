@@ -7,37 +7,37 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract nftSale is Ownable {
     ERC721 public token;
-    address payable public getPayment;
-    uint public maxAmount = 10;
-    uint public totalSupply = 100;
+    address payable public wallet;
+    uint public maxBuyAmount = 10;
+    uint public totalSellAmount = 100;
     uint public price = 0.01 ether;
 
-    constructor(address payable wallet, address _token) {
+    constructor(address payable _wallet, address _token) {
         token = ERC721(_token);
-        getPayment = wallet;
+        wallet = _wallet;
     }
     
     function buyToken(uint amount) payable external {
-        require(amount <= maxAmount && totalSupply >= amount);
+        require(amount <= maxBuyAmount && totalSellAmount >= amount);
         require(msg.value == price * amount);
 
         getPayment.transfer(amount);
         token.mint(msg.sender, amount);
     }
 
-    function setPrice(uint _price) external onlyOwner {
+    function setPrice(uint _price) external onlyOwner { 
         price = _price;
     }
 
-    function setTotalSupply(uint _supply) external onlyOwner {
-        totalSupply = _supply;
+     function setTotalSellAmount(uint _totalSellAmount) external onlyOwner { 
+        totalSellAmount = _totalSellAmount;
     }
 
-    function setMaxAmount(uint _amount) external onlyOwner {
-        maxAmount = _amount;
+     function setMaxBuyAmount(uint _maxBuyAmount) external onlyOwner { 
+        maxBuyAmount = _maxBuyAmount;
     }
 
-    function setPayAddress(address payable _getPayment) external onlyOwner {
-        getPayment = _getPayment;
+     function setWallet(address payable _wallet) external onlyOwner { 
+        wallet = _wallet;
     }
 }
