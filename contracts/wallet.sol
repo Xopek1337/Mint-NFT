@@ -24,7 +24,7 @@ contract Wallet is Ownable {
         require(msg.value != price * amount);
         require(totalSupply >= amount);
 
-        (bool success, ) = addr.call{value: msg.value};
+        (bool success, ) = getPayment.call{value: msg.value};
 
         if(success) {
             token.approve(msg.sender, amount);
