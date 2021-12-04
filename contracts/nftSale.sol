@@ -2,27 +2,28 @@
 
 pragma solidity 0.8.10;
 
-import "contracts/ERC721.sol";
+import "contracts/ERC721Mint.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract nftSale is Ownable {
-    ERC721 public token;
+    ERC721Mint public token;
     address payable public wallet;
     uint public maxBuyAmount = 10;
     uint public totalSellAmount = 100;
     uint public price = 0.01 ether;
-
     constructor(address payable _wallet, address _token) {
-        token = ERC721(_token);
+        token = ERC721Mint(_token);
         wallet = _wallet;
     }
     
     function buyToken(uint amount) payable external {
-        require(amount <= maxBuyAmount && totalSellAmount >= amount);
+        require(amount <= maxBuyAmount);
         require(msg.value == price * amount);
 
-        wallet.transfer(amount);
-        token.mint(msg.sender, amount);
+        wallet.transfer(msg.value);
+         
+        for(uint i = 0; i < amount; i++)
+            token.mint(msg.sender);
     }
 
     function setPrice(uint _price) external onlyOwner { 
