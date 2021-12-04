@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.10;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "contracts/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract nftSale is Ownable {
@@ -21,7 +21,7 @@ contract nftSale is Ownable {
         require(amount <= maxBuyAmount && totalSellAmount >= amount);
         require(msg.value == price * amount);
 
-        getPayment.transfer(amount);
+        wallet.transfer(amount);
         token.mint(msg.sender, amount);
     }
 
