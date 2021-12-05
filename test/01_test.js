@@ -4,7 +4,7 @@ const { ethers } = require("hardhat");
 describe('nftTest', function () {
   it('', async () => {
     const [wallet, addr1] = await ethers.getSigners();
-    let price = await new ethers.BigNumber("0.01");
+    let price = await new ethers.BigNumber.from("0.01");
 
     const ERC721Instance = await ethers.getContractFactory("ERC721Mint");
     const ERC721 = await ERC721Instance.deploy("BasicToken","BST");
