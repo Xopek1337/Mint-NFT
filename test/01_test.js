@@ -1,5 +1,10 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
+const {
+  ethers: {
+    BigNumber,
+  }
+} = require("hardhat");
 
 describe('nftTest', function () {
   it('', async () => {
@@ -14,15 +19,14 @@ describe('nftTest', function () {
     const nftSale = await nftSaleInstance.deploy(wallet.address, ERC721.address);
     await nftSale.deployed();
 
-    const startingBalance = await ethers.utils.formatEther(await ethers.provider.getBalance(wallet.address));
-    //const startingBalanceInEther = await ethers.utils.parseEther(startingBalance.toString());
+    const startingBalance = await ethers.provider.getBalance(wallet.address);
 
     await nftSale.connect(addr1).buyToken(1,{value: ethers.utils.parseEther("0.01")});
 
-    const endingBalance = await await ethers.utils.formatEther(await ethers.provider.getBalance(wallet.address));
+    const endingBalance = await ethers.provider.getBalance(wallet.address);
 
-    console.log(endingBalance.sub(startingBalance).ethers.sub(price));
+    console.log(endingBalance.sub(startingBalance).sub(price));
 
-    expect(startingBalance).to.equal(endingBalance.ethers.sub(price));
+    expect(startingBalance).to.equal(endingBalance.sub(price));
   });
 });
