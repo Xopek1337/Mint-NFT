@@ -17,8 +17,8 @@ contract nftSale is Ownable {
     }
     
     function buyToken(uint amount) payable external {
-        require(amount <= maxBuyAmount);
-        require(msg.value == price * amount);
+        require(amount <= maxBuyAmount, "amount can not exceed maxBuyAmount");
+        require(msg.value == price * amount, "sended ether is must equal to price * amount");
 
         wallet.transfer(msg.value);
          
