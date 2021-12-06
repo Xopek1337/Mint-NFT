@@ -27,6 +27,7 @@ describe('nftTest', function () {
 
     expect(startingBalance).to.equal(endingBalance.sub(price));
   });
+
   it('should put 200 token in totalAmount', async () => {
     const [wallet, addr1] = await ethers.getSigners();
 
@@ -39,9 +40,11 @@ describe('nftTest', function () {
     await nftSale.deployed();
 
     const amount = 200;
+
     await nftSale.setTotalSellAmount(amount);
+
     const endingTotalSellAmount = await nftSale.totalSellAmount();
-    console.log(endingTotalSellAmount);
+
     expect(amount).to.equal(endingTotalSellAmount);
   });
 });
