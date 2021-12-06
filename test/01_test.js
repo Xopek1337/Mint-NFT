@@ -135,7 +135,7 @@ describe('nftTest', function () {
     await nftSale.deployed();
 
     await expect(
-      nftSale.connect(addr1).buyToken(1,{value: ethers.utils.parseEther("0.01")})
+      nftSale.connect(addr1).buyToken(3,{value: ethers.utils.parseEther("0.01")})
     ).to.be.revertedWith("sended ether is must equal to price * amount");
   });
 });
