@@ -105,4 +105,37 @@ describe('nftTest', function () {
 
     expect(wallet.address).to.equal(endingWallet);
   });
+
+  it('should fail if amount can not exceed maxBuyAmount', async () => {
+    const [wallet, addr1] = await ethers.getSigners();
+
+    const ERC721Instance = await ethers.getContractFactory("ERC721Mint");
+    const ERC721 = await ERC721Instance.deploy("BasicToken","BST");
+    await ERC721.deployed();
+
+    const nftSaleInstance = await ethers.getContractFactory("nftSale");
+    const nftSale = await nftSaleInstance.deploy(wallet.address, ERC721.address);
+    await nftSale.deployed();
+
+    await expect(
+      nftSale.connect(addr1).buyToken(11,{value: ethers.utils.parseEther("0.11")})
+    ).to.be.revertedWith("amount can not exceed maxBuyAmount");
+
+  });
+
+  it('sended ether is must equal to price * amount', async () => {
+    const [wallet, addr1] = await ethers.getSigners();
+
+    const ERC721Instance = await ethers.getContractFactory("ERC721Mint");
+    const ERC721 = await ERC721Instance.deploy("BasicToken","BST");
+    await ERC721.deployed();
+
+    const nftSaleInstance = await ethers.getContractFactory("nftSale");
+    const nftSale = await nftSaleInstance.deploy(wallet.address, ERC721.address);
+    await nftSale.deployed();
+
+    await expect(
+      nftSale.connect(addr1).buyToken(1,{value: ethers.utils.parseEther("0.01")})
+    ).to.be.revertedWith("sended ether is must equal to price * amount");
+  });
 });
