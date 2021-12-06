@@ -47,4 +47,62 @@ describe('nftTest', function () {
 
     expect(amount).to.equal(endingTotalSellAmount);
   });
+
+  it('should set 0.02 ether to price', async () => {
+    const [wallet, addr1] = await ethers.getSigners();
+
+    const ERC721Instance = await ethers.getContractFactory("ERC721Mint");
+    const ERC721 = await ERC721Instance.deploy("BasicToken","BST");
+    await ERC721.deployed();
+
+    const nftSaleInstance = await ethers.getContractFactory("nftSale");
+    const nftSale = await nftSaleInstance.deploy(wallet.address, ERC721.address);
+    await nftSale.deployed();
+
+    const amount = ethers.utils.parseEther("0.02");
+
+    await nftSale.setPrice(amount);
+
+    const endingPrice = await nftSale.price();
+
+    expect(amount).to.equal(endingPrice);
+  });
+
+  it('should put 20 token in maxBuyAmount', async () => {
+    const [wallet, addr1] = await ethers.getSigners();
+
+    const ERC721Instance = await ethers.getContractFactory("ERC721Mint");
+    const ERC721 = await ERC721Instance.deploy("BasicToken","BST");
+    await ERC721.deployed();
+
+    const nftSaleInstance = await ethers.getContractFactory("nftSale");
+    const nftSale = await nftSaleInstance.deploy(wallet.address, ERC721.address);
+    await nftSale.deployed();
+
+    const amount = 20;
+
+    await nftSale.setMaxBuyAmount(amount);
+
+    const endingMaxBuyAmount = await nftSale.maxBuyAmount();
+
+    expect(amount).to.equal(endingMaxBuyAmount);
+  });
+
+  it('should change wallet address', async () => {
+    const [wallet, addr1] = await ethers.getSigners();
+
+    const ERC721Instance = await ethers.getContractFactory("ERC721Mint");
+    const ERC721 = await ERC721Instance.deploy("BasicToken","BST");
+    await ERC721.deployed();
+
+    const nftSaleInstance = await ethers.getContractFactory("nftSale");
+    const nftSale = await nftSaleInstance.deploy(wallet.address, ERC721.address);
+    await nftSale.deployed();
+
+    await nftSale.setWallet(wallet.address);
+
+    const endingWallet = await nftSale.wallet();
+
+    expect(wallet.address).to.equal(endingWallet);
+  });
 });
