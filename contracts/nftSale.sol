@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.10;
 
-import "contracts/ERC721Mint.sol";
+import "contracts/Mock/ERC721Mint.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract nftSale is Ownable {
