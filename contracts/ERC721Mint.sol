@@ -10,9 +10,10 @@ contract ERC721Mint is ERC721 {
     constructor(string memory name_, string memory symbol_) ERC721(name_, symbol_) {
     }
 
-    function mint(address to) external
+    function mint(address to) external returns (uint)
     {
         _mint(to, tokenId);
         tokenId++;
+        return tokenId;
     }
 }

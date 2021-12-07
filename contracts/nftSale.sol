@@ -15,15 +15,22 @@ contract nftSale is Ownable {
         token = ERC721Mint(_token);
         wallet = _wallet;
     }
-    
+
+    event Transfer(address _addr, uint _tokenId);
+
     function buyToken(uint amount) payable external {
         require(amount <= maxBuyAmount, "amount can not exceed maxBuyAmount");
         require(msg.value == price * amount, "sended ether is must equal to price * amount");
+        require(token.tokenId() <= totalSellAmount);
+
+        uint idToken;
 
         wallet.transfer(msg.value);
-         
-        for(uint i = 0; i < amount; i++)
-            token.mint(msg.sender);
+        
+        for(uint i = 0; i < amount; i++) {
+            idToken = token.mint(msg.sender);
+            emit Transfer(msg.sender, idToken);
+        }
     }
 
     function setPrice(uint _price) external onlyOwner { 
