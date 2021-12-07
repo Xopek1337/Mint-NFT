@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.10;
 
-import "contracts/ERC721Mint.sol";
+import "contracts/Mock/ERC721Mint.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract nftSale is Ownable {
@@ -11,6 +11,7 @@ contract nftSale is Ownable {
     uint public maxBuyAmount = 10;
     uint public totalSellAmount = 100;
     uint public price = 0.01 ether;
+    
     constructor(address payable _wallet, address _token) {
         token = ERC721Mint(_token);
         wallet = _wallet;

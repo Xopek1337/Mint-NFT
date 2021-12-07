@@ -14,6 +14,7 @@ contract ERC721Mint is ERC721 {
     {
         _mint(to, tokenId);
         tokenId++;
+
         return tokenId;
     }
 }
