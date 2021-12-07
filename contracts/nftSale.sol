@@ -5,7 +5,7 @@ pragma solidity 0.8.10;
 import "contracts/Mock/ERC721Mint.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract nftSale is Ownable {
+contract NftSale is Ownable {
     ERC721Mint public token;
     address payable public wallet;
     uint public maxBuyAmount = 10;
@@ -13,17 +13,17 @@ contract nftSale is Ownable {
     uint public price = 0.01 ether;
     uint public sendedTokens = 0;
 
+    event Transfer(address _addr, uint _tokenId);
+
     constructor(address payable _wallet, address _token) {
         token = ERC721Mint(_token);
         wallet = _wallet;
     }
 
-    event Transfer(address _addr, uint _tokenId);
-
-    function buyToken(uint amount) payable external {
-        require(amount <= maxBuyAmount, "amount can not exceed maxBuyAmount");
-        require(msg.value == price * amount, "sended ether is must equal to price * amount");
-        require(sendedTokens <= totalSellAmount);
+    function buyToken(uint amount) external payable {
+        require(amount <= maxBuyAmount, "NftSale::buyToken: amount can not exceed maxBuyAmount");
+        require(msg.value == price * amount, "NftSale::buyToken: sended ether is must equal to price * amount");
+        require(sendedTokens + amount <= totalSellAmount, "NftSale::buyToken: amount of sended tokens can not exceed totalSellAmount");
 
         uint idToken;
 
@@ -48,7 +48,7 @@ contract nftSale is Ownable {
         maxBuyAmount = _maxBuyAmount;
     }
 
-     function setWallet(address payable _wallet) external onlyOwner { 
+     function setWallet(address payable _wallet) external onlyOwner{ 
         wallet = _wallet;
     }
 }
