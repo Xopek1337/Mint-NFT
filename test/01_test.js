@@ -190,7 +190,7 @@ describe("nftTest", () => {
   });
 
   it('should mint 1 token for everyone and transfer it to accounts', async () => {
-    const [wallet, addr1, addr2, addr3] = await ethers.getSigners();
+    const [wallet, addr1, addr2] = await ethers.getSigners();
     let price = await BigNumber.from('30000000000000000');
 
     const ERC721Instance = await ethers.getContractFactory("ERC721Mint");
@@ -205,7 +205,7 @@ describe("nftTest", () => {
 
     await nftSale.connect(addr1).buyToken(1, { value: ethers.utils.parseEther("0.01") });
     await nftSale.connect(addr2).buyToken(1, { value: ethers.utils.parseEther("0.01") });
-    await nftSale.connect(addr3).buyToken(1, { value: ethers.utils.parseEther("0.01") });
+    await nftSale.connect(addr1).buyToken(1, { value: ethers.utils.parseEther("0.01") });
 
     const endingBalance = await ethers.provider.getBalance(wallet.address);
 
