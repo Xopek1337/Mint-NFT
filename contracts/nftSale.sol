@@ -13,7 +13,13 @@ contract NftSale is Ownable {
     uint public price = 0.01 ether;
     uint public sendedTokens = 0;
 
-    mapping(address => mapping(uint => uint)) public whitelist;
+    mapping(address => Amounts) public Balances;
+
+    struct Amounts {
+        uint allowedAmount;
+        uint buyedAmount;
+    }
+
     bool preSale = false;
     bool sale = false;
 
@@ -25,8 +31,25 @@ contract NftSale is Ownable {
     }
 
     function buyToken(uint amount) external payable {
-        if (preSale = true || sale = true)
-        {
+        require(preSale != false && sale != false, "NftSale::buyToken: sales are closed");
+        if (preSale == true) {
+            require(Balances[msg.sender].allowedAmount > Balances[msg.sender].buyedAmount, "NftSale::buyToken: you are not logged into whitelist");
+            require(amount <= Balances[msg.sender].allowedAmount, "NftSale::buyToken: amount can not exceed allowedAmount");
+            require(msg.value == price * amount, "NftSale::buyToken: sended ether is must equal to price * amount");
+            require(sendedTokens + amount <= totalSellAmount, "NftSale::buyToken: amount of sended tokens can not exceed totalSellAmount");
+
+            uint idToken;
+
+            wallet.transfer(msg.value);
+        
+            for(uint i = 0; i < amount; i++) {
+                idToken = token.mint(msg.sender);
+                sendedTokens++;
+                Balances[msg.sender].buyedAmount++;
+                emit Transfer(msg.sender, idToken);
+            }
+        }
+        if (sale == true) {
             require(amount <= maxBuyAmount, "NftSale::buyToken: amount can not exceed maxBuyAmount");
             require(msg.value == price * amount, "NftSale::buyToken: sended ether is must equal to price * amount");
             require(sendedTokens + amount <= totalSellAmount, "NftSale::buyToken: amount of sended tokens can not exceed totalSellAmount");
@@ -43,9 +66,26 @@ contract NftSale is Ownable {
         }
     }
 
-    function changeMode(bool _preSale, bool _sale) external onlyOwner {
-        preSale = _preSale;
-        sale = _sale;
+    function changeMode(string memory _command) external onlyOwner {
+        if (keccak256(abi.encodePacked(_command)) == keccak256(abi.encodePacked("presaleMode"))) {
+            preSale = true;
+            sale = false;
+            return;
+        }
+        if (keccak256(abi.encodePacked(_command)) == keccak256(abi.encodePacked("saleMode"))) {
+            preSale = false;
+            sale = true;
+            return;
+        }
+        if (keccak256(abi.encodePacked(_command)) == keccak256(abi.encodePacked("nonSale"))) {
+            preSale = false;
+            sale = false;
+            return;
+        }
+    }
+
+    function addWhilelist(address _addr, uint amount) external onlyOwner {
+        Balances[_addr].allowedAmount = amount;
     }
 
     function setPrice(uint _price) external onlyOwner { 
