@@ -13,6 +13,10 @@ contract NftSale is Ownable {
     uint public price = 0.01 ether;
     uint public sendedTokens = 0;
 
+    mapping(address => mapping(uint => uint)) public whitelist;
+    bool preSale = false;
+    bool sale = false;
+
     event Transfer(address _addr, uint _tokenId);
 
     constructor(address payable _wallet, address _token) {
@@ -21,19 +25,27 @@ contract NftSale is Ownable {
     }
 
     function buyToken(uint amount) external payable {
-        require(amount <= maxBuyAmount, "NftSale::buyToken: amount can not exceed maxBuyAmount");
-        require(msg.value == price * amount, "NftSale::buyToken: sended ether is must equal to price * amount");
-        require(sendedTokens + amount <= totalSellAmount, "NftSale::buyToken: amount of sended tokens can not exceed totalSellAmount");
+        if (preSale = true || sale = true)
+        {
+            require(amount <= maxBuyAmount, "NftSale::buyToken: amount can not exceed maxBuyAmount");
+            require(msg.value == price * amount, "NftSale::buyToken: sended ether is must equal to price * amount");
+            require(sendedTokens + amount <= totalSellAmount, "NftSale::buyToken: amount of sended tokens can not exceed totalSellAmount");
 
-        uint idToken;
+            uint idToken;
 
-        wallet.transfer(msg.value);
+            wallet.transfer(msg.value);
         
-        for(uint i = 0; i < amount; i++) {
-            idToken = token.mint(msg.sender);
-            sendedTokens++;
-            emit Transfer(msg.sender, idToken);
+            for(uint i = 0; i < amount; i++) {
+                idToken = token.mint(msg.sender);
+                sendedTokens++;
+                emit Transfer(msg.sender, idToken);
+            }
         }
+    }
+
+    function changeMode(bool _preSale, bool _sale) external onlyOwner {
+        preSale = _preSale;
+        sale = _sale;
     }
 
     function setPrice(uint _price) external onlyOwner { 
