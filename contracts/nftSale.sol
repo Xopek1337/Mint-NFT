@@ -34,7 +34,6 @@ contract NftSale is Ownable {
         require(preSale || sale, "NftSale::buyToken: sales are closed");
         if (preSale == true) {
             require(Balances[msg.sender].allowedAmount >= Balances[msg.sender].buyedAmount + amount, "NftSale::buyToken: you are not logged into whitelist");
-            require(amount <= Balances[msg.sender].allowedAmount, "NftSale::buyToken: amount can not exceed allowedAmount");
             require(msg.value == price * amount, "NftSale::buyToken: sended ether is must equal to price * amount");
             require(sendedTokens + amount <= totalSellAmount, "NftSale::buyToken: amount of sended tokens can not exceed totalSellAmount");
 
