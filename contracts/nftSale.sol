@@ -46,6 +46,7 @@ contract NftSale is Ownable {
                 idToken = token.mint(msg.sender);
                 sendedTokens++;
                 Balances[msg.sender].buyedAmount++;
+                Balances[msg.sender].buyedAmount--;
                 emit Transfer(msg.sender, idToken);
             }
         }
