@@ -35,12 +35,11 @@ contract NftSale is Ownable {
 
     function buyToken(uint amount) external payable {
         require(preSale || sale, "NftSale::buyToken: sales are closed");
+        uint idToken;
         if (preSale == true) {
             require(Accounts[msg.sender].allowedAmount >= Accounts[msg.sender].buyedAmount + amount, "NftSale::buyToken: you are not logged into whitelist");
             require(msg.value == price * amount, "NftSale::buyToken: sended ether is must equal to price * amount");
             require(sendedTokens + amount <= totalSellAmount, "NftSale::buyToken: amount of sended tokens can not exceed totalSellAmount");
-
-            uint idToken;
 
             wallet.transfer(msg.value);
         
@@ -55,8 +54,6 @@ contract NftSale is Ownable {
             require(amount <= maxBuyAmount, "NftSale::buyToken: amount can not exceed maxBuyAmount");
             require(msg.value == price * amount, "NftSale::buyToken: sended ether is must equal to price * amount");
             require(sendedTokens + amount <= totalSellAmount, "NftSale::buyToken: amount of sended tokens can not exceed totalSellAmount");
-
-            uint idToken;
 
             wallet.transfer(msg.value);
         
