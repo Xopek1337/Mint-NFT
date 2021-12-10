@@ -23,8 +23,8 @@ contract NftSale is Ownable {
         bool claimed;
     }
 
-    bool preSale = false;
-    bool sale = false;
+    bool public preSale = false;
+    bool public sale = false;
 
     event Transfer(address _addr, uint _tokenId);
 
@@ -35,12 +35,13 @@ contract NftSale is Ownable {
 
     function buyToken(uint amount) external payable {
         require(preSale || sale, "NftSale::buyToken: sales are closed");
+
+        uint idToken;
+
         if (preSale == true) {
             require(Accounts[msg.sender].allowedAmount >= Accounts[msg.sender].buyedAmount + amount, "NftSale::buyToken: you are not logged into whitelist");
             require(msg.value == price * amount, "NftSale::buyToken: sended ether is must equal to price * amount");
             require(sendedTokens + amount <= totalSellAmount, "NftSale::buyToken: amount of sended tokens can not exceed totalSellAmount");
-
-            uint idToken;
 
             wallet.transfer(msg.value);
         
@@ -55,8 +56,6 @@ contract NftSale is Ownable {
             require(amount <= maxBuyAmount, "NftSale::buyToken: amount can not exceed maxBuyAmount");
             require(msg.value == price * amount, "NftSale::buyToken: sended ether is must equal to price * amount");
             require(sendedTokens + amount <= totalSellAmount, "NftSale::buyToken: amount of sended tokens can not exceed totalSellAmount");
-
-            uint idToken;
 
             wallet.transfer(msg.value);
         
@@ -86,15 +85,11 @@ contract NftSale is Ownable {
         }
     }
 
-    function addWhilelist(address _addr, uint amount) external onlyOwner {
-        Accounts[_addr].allowedAmount = amount;
-    }
-
     function whitelistMint(bytes32[] calldata _merkleProof, uint amount) public
     {
         require(Accounts[msg.sender].claimed, "NftSale::whitelistMint: address has already claimed");
 
-        bytes32 leaf = keccak256(abi.encodePacked(msg.sender,amount));
+        bytes32 leaf = keccak256(abi.encodePacked(msg.sender, amount));
         require(MerkleProof.verify(_merkleProof, root, leaf), "NftSale::whitelistMint: Invalid proof");
 
         Accounts[msg.sender].allowedAmount = amount;
