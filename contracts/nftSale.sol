@@ -73,15 +73,18 @@ contract NftSale is Ownable {
             sale = false;
             return;
         }
-        if (keccak256(abi.encodePacked(_command)) == keccak256(abi.encodePacked("saleMode"))) {
+        else if (keccak256(abi.encodePacked(_command)) == keccak256(abi.encodePacked("saleMode"))) {
             preSale = false;
             sale = true;
             return;
         }
-        if (keccak256(abi.encodePacked(_command)) == keccak256(abi.encodePacked("nonSale"))) {
+        else if (keccak256(abi.encodePacked(_command)) == keccak256(abi.encodePacked("nonSale"))) {
             preSale = false;
             sale = false;
             return;
+        }
+        else {
+            revert("Invalid command");
         }
     }
 
