@@ -4,6 +4,7 @@ pragma solidity 0.8.10;
 
 import "contracts/Mock/ERC721Mint.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 contract NftSale is Ownable {
     ERC721Mint public token;
@@ -12,12 +13,14 @@ contract NftSale is Ownable {
     uint public totalSellAmount = 100;
     uint public price = 0.01 ether;
     uint public sendedTokens = 0;
+    bytes32 public root;
 
-    mapping(address => Amounts) public Balances;
+    mapping(address => Amounts) public Accounts;
 
     struct Amounts {
         uint allowedAmount;
         uint buyedAmount;
+        bool claimed;
     }
 
     bool preSale = false;
@@ -33,8 +36,7 @@ contract NftSale is Ownable {
     function buyToken(uint amount) external payable {
         require(preSale != false && sale != false, "NftSale::buyToken: sales are closed");
         if (preSale == true) {
-            require(Balances[msg.sender].allowedAmount > Balances[msg.sender].buyedAmount, "NftSale::buyToken: you are not logged into whitelist");
-            require(amount <= Balances[msg.sender].allowedAmount, "NftSale::buyToken: amount can not exceed allowedAmount");
+            require(Accounts[msg.sender].allowedAmount >= Accounts[msg.sender].buyedAmount + amount, "NftSale::buyToken: you are not logged into whitelist");
             require(msg.value == price * amount, "NftSale::buyToken: sended ether is must equal to price * amount");
             require(sendedTokens + amount <= totalSellAmount, "NftSale::buyToken: amount of sended tokens can not exceed totalSellAmount");
 
@@ -45,7 +47,7 @@ contract NftSale is Ownable {
             for(uint i = 0; i < amount; i++) {
                 idToken = token.mint(msg.sender);
                 sendedTokens++;
-                Balances[msg.sender].buyedAmount++;
+                Accounts[msg.sender].buyedAmount++;
                 emit Transfer(msg.sender, idToken);
             }
         }
@@ -85,7 +87,18 @@ contract NftSale is Ownable {
     }
 
     function addWhilelist(address _addr, uint amount) external onlyOwner {
-        Balances[_addr].allowedAmount = amount;
+        Accounts[_addr].allowedAmount = amount;
+    }
+
+    function whitelistMint(bytes32[] calldata _merkleProof, uint amount) public
+    {
+        require(Accounts[msg.sender].claimed, "NftSale::whitelistMint: address has already claimed");
+
+        bytes32 leaf = keccak256(abi.encodePacked(msg.sender,amount));
+        require(MerkleProof.verify(_merkleProof, root, leaf), "NftSale::whitelistMint: Invalid proof");
+
+        Accounts[msg.sender].allowedAmount = amount;
+        Accounts[msg.sender].claimed = true;
     }
 
     function setPrice(uint _price) external onlyOwner { 
@@ -102,5 +115,9 @@ contract NftSale is Ownable {
 
      function setWallet(address payable _wallet) external onlyOwner{ 
         wallet = _wallet;
+    }
+
+    function setRoot(bytes32 _root) external onlyOwner {
+        root = _root;
     }
 }
