@@ -87,7 +87,7 @@ contract NftSale is Ownable {
 
 
     function whitelistAdd(bytes32[] calldata _merkleProof, uint amount) public returns (bool) {
-        require(Accounts[msg.sender].claimed, "NftSale::whitelistMint: address has already claimed");
+        require(!Accounts[msg.sender].claimed, "NftSale::whitelistMint: address has already claimed");
 
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender, amount));
         require(MerkleProof.verify(_merkleProof, root, leaf), "NftSale::whitelistMint: Invalid proof");
