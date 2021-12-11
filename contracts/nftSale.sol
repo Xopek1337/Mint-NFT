@@ -13,7 +13,7 @@ contract NftSale is Ownable {
     uint public totalSellAmount = 100;
     uint public price = 0.01 ether;
     uint public sendedTokens = 0;
-    bytes32 public root;
+    bytes32 public merkleRoot;
 
     mapping(address => Amounts) public Accounts;
 
@@ -33,7 +33,7 @@ contract NftSale is Ownable {
         wallet = _wallet;
     }
 
-    function buyToken(uint amount) external payable {
+    function buyToken(uint amount) external payable returns (bool) {
         require(preSale || sale, "NftSale::buyToken: sales are closed");
 
         uint idToken;
@@ -51,6 +51,7 @@ contract NftSale is Ownable {
                 Accounts[msg.sender].buyedAmount++;
                 emit Transfer(msg.sender, idToken);
             }
+            return true;
         }
         if (sale == true) {
             require(amount <= maxBuyAmount, "NftSale::buyToken: amount can not exceed maxBuyAmount");
@@ -64,32 +65,28 @@ contract NftSale is Ownable {
                 sendedTokens++;
                 emit Transfer(msg.sender, idToken);
             }
+            return true;
         }
     }
 
-    function changeMode(string memory _command) external onlyOwner {
-        if (keccak256(abi.encodePacked(_command)) == keccak256(abi.encodePacked("presaleMode"))) {
-            preSale = true;
-            sale = false;
-            return;
-        }
-        else if (keccak256(abi.encodePacked(_command)) == keccak256(abi.encodePacked("saleMode"))) {
-            preSale = false;
-            sale = true;
-            return;
-        }
-        else if (keccak256(abi.encodePacked(_command)) == keccak256(abi.encodePacked("nonSale"))) {
-            preSale = false;
-            sale = false;
-            return;
-        }
-        else {
-            revert("Invalid command");
-        }
+    function setPreSaleMode() external onlyOwner returns (bool) {
+        preSale = true;
+        sale = false;
+        return true;
+    }
+    function setPreSaleMode() external onlyOwner returns (bool) {
+        preSale = false;
+        sale = true;
+        return true;
+    }
+    function setNonSaleMode() external onlyOwner returns (bool) {
+        preSale = false;
+        sale = false;
+        return true;
     }
 
-    function whitelistMint(bytes32[] calldata _merkleProof, uint amount) public
-    {
+
+    function whitelistAdd(bytes32[] calldata _merkleProof, uint amount) public returns (bool) {
         require(Accounts[msg.sender].claimed, "NftSale::whitelistMint: address has already claimed");
 
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender, amount));
@@ -97,25 +94,37 @@ contract NftSale is Ownable {
 
         Accounts[msg.sender].allowedAmount = amount;
         Accounts[msg.sender].claimed = true;
+        
+        return true;
     }
 
-    function setPrice(uint _price) external onlyOwner { 
+    function setPrice(uint _price) external onlyOwner returns (bool) { 
         price = _price;
+        
+        return true;
     }
 
-     function setTotalSellAmount(uint _totalSellAmount) external onlyOwner { 
+     function setTotalSellAmount(uint _totalSellAmount) external onlyOwner returns (bool) { 
         totalSellAmount = _totalSellAmount;
+        
+        return true;
     }
 
-     function setMaxBuyAmount(uint _maxBuyAmount) external onlyOwner { 
+     function setMaxBuyAmount(uint _maxBuyAmount) external onlyOwner returns (bool) { 
         maxBuyAmount = _maxBuyAmount;
+        
+        return true;
     }
 
-     function setWallet(address payable _wallet) external onlyOwner{ 
+     function setWallet(address payable _wallet) external onlyOwner returns (bool) { 
         wallet = _wallet;
+        
+        return true;
     }
 
-    function setRoot(bytes32 _root) external onlyOwner {
-        root = _root;
+    function setMerkleRoot(bytes32 _root) external onlyOwner returns (bool) {
+        merkleRoot = _merkleRoot;
+        
+        return true;
     }
 }
