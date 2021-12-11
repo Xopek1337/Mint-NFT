@@ -74,7 +74,7 @@ contract NftSale is Ownable {
         sale = false;
         return true;
     }
-    function setPreSaleMode() external onlyOwner returns (bool) {
+    function setSaleMode() external onlyOwner returns (bool) {
         preSale = false;
         sale = true;
         return true;
