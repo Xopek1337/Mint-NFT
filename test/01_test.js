@@ -19,6 +19,8 @@ describe("nftTest", () => {
     const nftSale = await nftSaleInstance.deploy(wallet.address, ERC721.address);
     await nftSale.deployed();
 
+    await nftSale.setSaleMode();
+
     const startingBalance = await ethers.provider.getBalance(wallet.address);
 
     await nftSale.connect(addr1).buyToken(1, { value: ethers.utils.parseEther("0.01") });
@@ -117,6 +119,8 @@ describe("nftTest", () => {
     const nftSale = await nftSaleInstance.deploy(wallet.address, ERC721.address);
     await nftSale.deployed();
 
+    await nftSale.setSaleMode();
+
     await expect(
       nftSale.connect(addr1).buyToken(11, { value: ethers.utils.parseEther("0.11") }),
     ).to.be.revertedWith("NftSale::buyToken: amount can not exceed maxBuyAmount");
@@ -132,6 +136,8 @@ describe("nftTest", () => {
     const nftSaleInstance = await ethers.getContractFactory("NftSale");
     const nftSale = await nftSaleInstance.deploy(wallet.address, ERC721.address);
     await nftSale.deployed();
+
+    await nftSale.setSaleMode();
 
     await expect(
       nftSale.connect(addr1).buyToken(3, { value: ethers.utils.parseEther("0.01") }),
@@ -149,6 +155,8 @@ describe("nftTest", () => {
     const nftSaleInstance = await ethers.getContractFactory("NftSale");
     const nftSale = await nftSaleInstance.deploy(wallet.address, ERC721.address);
     await nftSale.deployed();
+
+    await nftSale.setSaleMode();
 
     await nftSale.connect(addr1).buyToken(10, { value: ethers.utils.parseEther("0.10") });
     await nftSale.connect(addr2).buyToken(10, { value: ethers.utils.parseEther("0.10") });
@@ -178,6 +186,8 @@ describe("nftTest", () => {
     const nftSale = await nftSaleInstance.deploy(wallet.address, ERC721.address);
     await nftSale.deployed();
 
+    await nftSale.setSaleMode();
+
     const startingBalance = await ethers.provider.getBalance(wallet.address);
 
     await nftSale.connect(addr1).buyToken(3, { value: ethers.utils.parseEther("0.03") });
@@ -200,6 +210,8 @@ describe("nftTest", () => {
     const nftSaleInstance = await ethers.getContractFactory("NftSale");
     const nftSale = await nftSaleInstance.deploy(wallet.address, ERC721.address);
     await nftSale.deployed();
+
+    await nftSale.setSaleMode();
 
     const startingBalance = await ethers.provider.getBalance(wallet.address);
 

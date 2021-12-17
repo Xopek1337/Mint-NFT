@@ -13,7 +13,6 @@ contract NftSale is Ownable {
     uint public totalSellAmount = 100;
     uint public price = 0.01 ether;
     uint public sendedTokens = 0;
-    bytes32 public merkleRoot;
 
     mapping(address => Amounts) public Accounts;
 
@@ -85,15 +84,8 @@ contract NftSale is Ownable {
         return true;
     }
 
-
-    function whitelistAdd(bytes32[] calldata _merkleProof, uint amount) public returns (bool) {
-        require(!Accounts[msg.sender].claimed, "NftSale::whitelistMint: address has already claimed");
-
-        bytes32 leaf = keccak256(abi.encodePacked(msg.sender, amount));
-        require(MerkleProof.verify(_merkleProof, root, leaf), "NftSale::whitelistMint: Invalid proof");
-
-        Accounts[msg.sender].allowedAmount = amount;
-        Accounts[msg.sender].claimed = true;
+    function whitelistAdd(address account, uint amount) public returns (bool) {
+        Accounts[account].allowedAmount = amount;
         
         return true;
     }
@@ -118,12 +110,6 @@ contract NftSale is Ownable {
 
      function setWallet(address payable _wallet) external onlyOwner returns (bool) { 
         wallet = _wallet;
-        
-        return true;
-    }
-
-    function setMerkleRoot(bytes32 _root) external onlyOwner returns (bool) {
-        merkleRoot = _merkleRoot;
         
         return true;
     }
