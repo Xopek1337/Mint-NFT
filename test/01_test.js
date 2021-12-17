@@ -199,12 +199,12 @@ describe("nftTest", () => {
     expect(startingBalance).to.equal(endingBalance.sub(price));
   });
 
-  it('should mint 1 token for everyone and transfer it to accounts', async () => {
+  it("should mint 1 token for everyone and transfer it to accounts", async () => {
     const [wallet, addr1, addr2] = await ethers.getSigners();
-    let price = await BigNumber.from('30000000000000000');
+    const price = await BigNumber.from("30000000000000000");
 
     const ERC721Instance = await ethers.getContractFactory("ERC721Mint");
-    const ERC721 = await ERC721Instance.deploy("BasicToken","BST");
+    const ERC721 = await ERC721Instance.deploy("BasicToken", "BST");
     await ERC721.deployed();
 
     const nftSaleInstance = await ethers.getContractFactory("NftSale");
