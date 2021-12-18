@@ -58,5 +58,24 @@ contract Coupons is ERC1155, Ownable {
 
         return true;
     }
-    // надо сделать функции изменения стоимости купонов и их количества
+
+    function getCouponSupplies() public view returns (uint256[] memory) {
+        return supplies;
+    }
+
+    function getMintedCoupons() public view returns (uint256[] memory) {
+        return minted;
+    }
+
+    function getCouponRates() public view returns (uint256[] memory) {
+        return rates;
+    }
+
+    function changeCouponPrice(uint collectionId, uint price) external onlyOwner returns (bool) {
+        rates[collectionId-1] = price;
+    }
+
+    function changeCouponAmount(uint collectionId, uint amount) external onlyOwner returns (bool) {
+        supplies[collectionId-1] = amount;
+    }
 }
