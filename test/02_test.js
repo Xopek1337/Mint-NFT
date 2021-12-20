@@ -66,7 +66,7 @@ describe("couponsTest", () => {
     const couponSupplies = await coupons.getCouponSupplies();
 
     const a = await coupons.supplies(0);
-    
+
     expect(a).to.equal(couponSupplies[0]);
   });
 
@@ -80,7 +80,7 @@ describe("couponsTest", () => {
     const mintedCoupons = await coupons.getMintedCoupons();
 
     const a = await coupons.minted(0);
-    
+
     expect(a).to.equal(mintedCoupons[0]);
   });
 
@@ -94,7 +94,7 @@ describe("couponsTest", () => {
     const couponRates = await coupons.getCouponRates();
 
     const a = await coupons.rates(0);
-    
+
     expect(a).to.equal(couponRates[0]);
   });
 
