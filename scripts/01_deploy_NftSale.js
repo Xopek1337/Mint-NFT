@@ -1,5 +1,4 @@
 const hre = require("hardhat");
-
 const network = hre.network.name;
 const { logger } = require("ethers");
 const fs = require("fs");
@@ -7,8 +6,7 @@ const fs = require("fs");
 async function main() {
   const namesAndAddresses = {};
 
-  const [wallet] = await ethers.getSigners();
-  const wal = "0x9e6a2A5Ac4D55eE0952aC3c09e6144353DD3d8DE";
+  const wal = process.env.ACCOUNT_1;
 
   const ERC721Instance = await ethers.getContractFactory("ERC721Mint");
   const ERC721 = await ERC721Instance.deploy("BasicToken", "BST");

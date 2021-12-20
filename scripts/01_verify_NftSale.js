@@ -1,20 +1,19 @@
 const hre = require("hardhat");
-
 const network = hre.network.name;
-const fs = require("fs");
 const { logger } = require("ethers");
+const fs = require("fs");
 
 async function main() {
   const namesAndAddresses = {};
 
-  const wal = "0x9e6a2A5Ac4D55eE0952aC3c09e6144353DD3d8DE";
+  const wal = process.env.ACCOUNT_1;
 
   const data = JSON.parse(await fs.readFileSync("address.json", { encoding: "utf8" }));
 
   try {
     await hre.run("verify:verify", {
-      address: data.coupons,
-      constructorArguments: [wal, "https://ipfs.io/ipfs/QmTgqnhFBMkfT9s8PHKcdXBn1f5bG3Q5hmBaR4U6hoTvb1?filename=Chainlink_Elf.png"],
+      address: data.nftSale,
+      constructorArguments: [wal, data.ERC721],
     });
   } catch (e) {
     console.log(e);
