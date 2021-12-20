@@ -11,7 +11,6 @@ async function main() {
 
   const couponsInstance = await ethers.getContractFactory("Coupons");
   const coupons = await couponsInstance.deploy(wal, "https://ipfs.io/ipfs/QmTgqnhFBMkfT9s8PHKcdXBn1f5bG3Q5hmBaR4U6hoTvb1?filename=Chainlink_Elf.png");
-  await coupons.deployed();
 
   namesAndAddresses.coupons = coupons.address;
 

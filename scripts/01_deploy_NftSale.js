@@ -11,11 +11,9 @@ async function main() {
 
   const ERC721Instance = await ethers.getContractFactory("ERC721Mint");
   const ERC721 = await ERC721Instance.deploy("BasicToken", "BST");
-  await ERC721.deployed();
 
   const nftSaleInstance = await ethers.getContractFactory("NftSale");
   const nftSale = await nftSaleInstance.deploy(wal, ERC721.address);
-  await nftSale.deployed();
 
   namesAndAddresses.nftSale = nftSale.address;
   namesAndAddresses.ERC721 = ERC721.address;

@@ -19,8 +19,7 @@ describe("couponsTest", () => {
     await coupons.setURI(uri);
 
     const endingURI = await coupons.uri(1);
-    console.log(uri);
-    console.log(endingURI);
+
     expect(uri).to.equal(endingURI);
   });
 
@@ -208,10 +207,13 @@ describe("couponsTest", () => {
     const coupons = await couponsInstance.deploy(wallet.address, "https://ipfs.io/ipfs/QmTgqnhFBMkfT9s8PHKcdXBn1f5bG3Q5hmBaR4U6hoTvb1?filename=Chainlink_Elf.png");
     await coupons.deployed();
 
-    const sale = coupons.sale();
+    await coupons.setSaleMode();
 
     await coupons.setNonSaleMode();
-    expect(sale).to.equal(sale);
+
+    const sale = await coupons.sale();
+
+    expect(false).to.equal(sale);
   });
 
   it("should turn on saleMode", async () => {
@@ -221,9 +223,10 @@ describe("couponsTest", () => {
     const coupons = await couponsInstance.deploy(wallet.address, "https://ipfs.io/ipfs/QmTgqnhFBMkfT9s8PHKcdXBn1f5bG3Q5hmBaR4U6hoTvb1?filename=Chainlink_Elf.png");
     await coupons.deployed();
 
-    const sale = coupons.sale();
-
     await coupons.setSaleMode();
-    expect(sale).to.equal(sale);
+
+    const sale = await coupons.sale();
+
+    expect(true).to.equal(sale);
   });
 });

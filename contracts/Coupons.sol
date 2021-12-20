@@ -10,6 +10,7 @@ contract Coupons is ERC1155, Ownable {
     uint256[] public minted = [0, 0, 0, 0, 0, 0]; // для проверки сколько будет заминчино
     uint256[] public rates = [0.03 ether, 0.06 ether, 0.09 ether, 0.15 ether, 0.3 ether, 0.9 ether]; // цена купонов
     address payable public wallet;
+    
     bool public sale = false;
 
     constructor(address payable _wallet, string memory uri) ERC1155(uri) {
