@@ -42,12 +42,11 @@ contract NftSale is Ownable {
             require(collectionId <= supplies.length, "Coupons::mint: Collection doesn't exist");
             require(collectionId > 0, "Coupons::mint: Collection doesn't exist");
 
-            uint index = collectionId - 1;
-            uint mintedAmount = minted[index] + amount;
-            require(mintedAmount <= supplies[index], "Coupons::mint: Not enough supply");
-            minted[index] = mintedAmount;
+            uint mintedAmount = minted[collectionId] + amount;
+            require(mintedAmount <= supplies[collectionId], "Coupons::mint: Not enough supply");
+            minted[collectionId] = mintedAmount;
 
-            require(msg.value == rates[index] * amount, "Coupons::mint: Not enough ether sent");
+            require(msg.value == rates[collectionId] * amount, "Coupons::mint: Not enough ether sent");
 
             wallet.transfer(msg.value);
             token.mint(collectionId, amount, msg.sender);
@@ -60,12 +59,11 @@ contract NftSale is Ownable {
             require(collectionId <= supplies.length, "Coupons::mint: Collection doesn't exist");
             require(collectionId > 0, "Coupons::mint: Collection doesn't exist");
 
-            uint index = collectionId - 1;
-            uint mintedAmount = minted[index] + amount;
-            require(mintedAmount <= supplies[index], "Coupons::mint: Not enough supply");
-            minted[index] = mintedAmount;
+            uint mintedAmount = minted[collectionId] + amount;
+            require(mintedAmount <= supplies[collectionId], "Coupons::mint: Not enough supply");
+            minted[collectionId] = mintedAmount;
 
-            require(msg.value == rates[index] * amount, "Coupons::mint: Not enough ether sent");
+            require(msg.value == rates[collectionId] * amount, "Coupons::mint: Not enough ether sent");
 
             wallet.transfer(msg.value);
             token.mint(collectionId, amount, msg.sender);
@@ -98,13 +96,13 @@ contract NftSale is Ownable {
     }
 
     function changeCouponPrice(uint collectionId, uint price) external onlyOwner returns (bool) {
-        rates[collectionId-1] = price;
+        rates[collectionId] = price;
 
         return true;
     }
 
     function changeCouponAmount(uint collectionId, uint amount) external onlyOwner returns (bool) {
-        supplies[collectionId-1] = amount;
+        supplies[collectionId] = amount;
 
         return true;
     }
