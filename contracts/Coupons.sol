@@ -73,9 +73,13 @@ contract Coupons is ERC1155, Ownable {
 
     function changeCouponPrice(uint collectionId, uint price) external onlyOwner returns (bool) {
         rates[collectionId-1] = price;
+        
+        return true;
     }
 
     function changeCouponAmount(uint collectionId, uint amount) external onlyOwner returns (bool) {
         supplies[collectionId-1] = amount;
+        
+        return true;
     }
 }
