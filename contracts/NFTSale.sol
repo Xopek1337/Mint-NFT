@@ -36,7 +36,7 @@ contract NftSale is Ownable {
     function buyToken(uint collectionId, uint amount) external payable returns (bool) {
         require(preSale || sale, "NftSale::buyToken: sales are closed");
 
-        if (preSale == true) {
+        if (preSale) {
             require(Accounts[msg.sender].allowedAmount >= Accounts[msg.sender].buyedAmount + amount, "NftSale::buyToken: you are not logged into whitelist");
             require(amount <= maxBuyAmount, "NftSale::buyToken: amount can not exceed maxBuyAmount");
             require(collectionId <= supplies.length, "Coupons::mint: Collection doesn't exist");
@@ -55,7 +55,7 @@ contract NftSale is Ownable {
 
             return true;
         }
-        if (sale == true) {
+        if (sale) {
             require(amount <= maxBuyAmount, "NftSale::buyToken: amount can not exceed maxBuyAmount");
             require(collectionId <= supplies.length, "Coupons::mint: Collection doesn't exist");
             require(collectionId > 0, "Coupons::mint: Collection doesn't exist");

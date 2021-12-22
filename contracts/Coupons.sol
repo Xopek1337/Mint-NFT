@@ -18,7 +18,7 @@ contract Coupons is ERC1155, Ownable {
     }
     
     function mint(uint256 collectionId, uint256 amount) public payable returns (bool) {
-        require(sale == true, "Coupons::mint: Sales are closed"); // проверка на saleMode
+        require(sale, "Coupons::mint: Sales are closed"); // проверка на saleMode
         require(collectionId <= supplies.length, "Coupons::mint: Collection doesn't exist"); // проверка на существование коллекции
         require(collectionId > 0, "Coupons::mint: Collection doesn't exist");
 
