@@ -23,9 +23,8 @@ contract Coupons is ERC1155, Ownable {
         require(collectionId > 0, "Coupons::mint: Collection doesn't exist");
         require(msg.value == rates[collectionId] * amount, "Coupons::mint: Not enough ether sent");
 
-        uint mintedAmount = minted[collectionId] + amount;
-        require(mintedAmount <= supplies[collectionId], "Coupons::mint: Not enough supply");
-        minted[collectionId] = mintedAmount;
+        minted[collectionId] += amount;
+        require(minted[collectionId] <= supplies[collectionId], "Coupons::mint: Not enough supply");
         
         wallet.transfer(msg.value);
         _mint(msg.sender, collectionId, amount, "");
