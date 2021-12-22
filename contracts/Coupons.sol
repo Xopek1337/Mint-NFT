@@ -22,11 +22,10 @@ contract Coupons is ERC1155, Ownable {
         require(collectionId <= supplies.length, "Coupons::mint: Collection doesn't exist"); // проверка на существование коллекции
         require(collectionId > 0, "Coupons::mint: Collection doesn't exist");
 
-        uint index = collectionId - 1;
-        uint mintedAmount = minted[index] + amount;
-        require(mintedAmount <= supplies[index], "Coupons::mint: Not enough supply"); // проверка на предложение
-        minted[index] = mintedAmount;
-        require(msg.value == rates[index] * amount, "Coupons::mint: Not enough ether sent"); // проверка на покупательскую способность
+        uint mintedAmount = minted[collectionId] + amount;
+        require(mintedAmount <= supplies[collectionId], "Coupons::mint: Not enough supply"); // проверка на предложение
+        minted[collectionId] = mintedAmount;
+        require(msg.value == rates[collectionId] * amount, "Coupons::mint: Not enough ether sent"); // проверка на покупательскую способность
 
         wallet.transfer(msg.value); // переводим эфир на указанный кошелек
         _mint(msg.sender, collectionId, amount, "");
@@ -65,13 +64,13 @@ contract Coupons is ERC1155, Ownable {
     }
 
     function changeCouponPrice(uint collectionId, uint price) external onlyOwner returns (bool) {
-        rates[collectionId-1] = price;
+        rates[collectionId] = price;
         
         return true;
     }
 
     function changeCouponAmount(uint collectionId, uint amount) external onlyOwner returns (bool) {
-        supplies[collectionId-1] = amount;
+        supplies[collectionId] = amount;
         
         return true;
     }
