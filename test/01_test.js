@@ -19,6 +19,8 @@ describe("nftTest", () => {
     const nftSale = await nftSaleInstance.deploy(wallet.address, ERC721.address);
     await nftSale.deployed();
 
+    await nftSale.setSaleMode();
+
     const startingBalance = await ethers.provider.getBalance(wallet.address);
 
     await nftSale.connect(addr1).buyToken(1, { value: ethers.utils.parseEther("0.01") });
@@ -117,6 +119,8 @@ describe("nftTest", () => {
     const nftSale = await nftSaleInstance.deploy(wallet.address, ERC721.address);
     await nftSale.deployed();
 
+    await nftSale.setSaleMode();
+
     await expect(
       nftSale.connect(addr1).buyToken(11, { value: ethers.utils.parseEther("0.11") }),
     ).to.be.revertedWith("NftSale::buyToken: amount can not exceed maxBuyAmount");
@@ -132,6 +136,8 @@ describe("nftTest", () => {
     const nftSaleInstance = await ethers.getContractFactory("NftSale");
     const nftSale = await nftSaleInstance.deploy(wallet.address, ERC721.address);
     await nftSale.deployed();
+
+    await nftSale.setSaleMode();
 
     await expect(
       nftSale.connect(addr1).buyToken(3, { value: ethers.utils.parseEther("0.01") }),
@@ -149,6 +155,8 @@ describe("nftTest", () => {
     const nftSaleInstance = await ethers.getContractFactory("NftSale");
     const nftSale = await nftSaleInstance.deploy(wallet.address, ERC721.address);
     await nftSale.deployed();
+
+    await nftSale.setSaleMode();
 
     await nftSale.connect(addr1).buyToken(10, { value: ethers.utils.parseEther("0.10") });
     await nftSale.connect(addr2).buyToken(10, { value: ethers.utils.parseEther("0.10") });
@@ -178,6 +186,8 @@ describe("nftTest", () => {
     const nftSale = await nftSaleInstance.deploy(wallet.address, ERC721.address);
     await nftSale.deployed();
 
+    await nftSale.setSaleMode();
+
     const startingBalance = await ethers.provider.getBalance(wallet.address);
 
     await nftSale.connect(addr1).buyToken(3, { value: ethers.utils.parseEther("0.03") });
@@ -189,17 +199,19 @@ describe("nftTest", () => {
     expect(startingBalance).to.equal(endingBalance.sub(price));
   });
 
-  it('should mint 1 token for everyone and transfer it to accounts', async () => {
+  it("should mint 1 token for everyone and transfer it to accounts", async () => {
     const [wallet, addr1, addr2] = await ethers.getSigners();
-    let price = await BigNumber.from('30000000000000000');
+    const price = await BigNumber.from("30000000000000000");
 
     const ERC721Instance = await ethers.getContractFactory("ERC721Mint");
-    const ERC721 = await ERC721Instance.deploy("BasicToken","BST");
+    const ERC721 = await ERC721Instance.deploy("BasicToken", "BST");
     await ERC721.deployed();
 
     const nftSaleInstance = await ethers.getContractFactory("NftSale");
     const nftSale = await nftSaleInstance.deploy(wallet.address, ERC721.address);
     await nftSale.deployed();
+
+    await nftSale.setSaleMode();
 
     const startingBalance = await ethers.provider.getBalance(wallet.address);
 

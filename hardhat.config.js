@@ -22,7 +22,15 @@ require('dotenv').config();
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  solidity: "0.8.10",
+  solidity: {
+    version: "0.8.10",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200
+      }
+    }
+  },
   networks: {
     rinkeby: {
       url: process.env.RPC_NODE_RINKEBY,
