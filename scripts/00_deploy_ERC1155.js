@@ -1,18 +1,17 @@
 const hre = require("hardhat");
 const network = hre.network.name;
-const fs = require("fs");
 const { logger } = require("ethers");
+const fs = require("fs");
 
 async function main() {
   const namesAndAddresses = {};
-
-  const wallet = process.env.WALLET;
+  
   const token = process.env.NFT;
 
-  const couponsInstance = await ethers.getContractFactory("Coupons");
-  const coupons = await couponsInstance.deploy(wallet, token);
+  const ERC1155Instance = await ethers.getContractFactory("ERC1155Mint");
+  const ERC1155 = await ERC1155Instance.deploy(token);
 
-  namesAndAddresses.coupons = coupons.address;
+  namesAndAddresses.ERC1155 = ERC1155.address;
 
   const data = await JSON.stringify(namesAndAddresses, null, 2);
 

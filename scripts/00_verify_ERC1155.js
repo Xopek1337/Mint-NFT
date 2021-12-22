@@ -1,11 +1,9 @@
 const hre = require("hardhat");
 const network = hre.network.name;
-const fs = require("fs");
 const { logger } = require("ethers");
+const fs = require("fs");
 
 async function main() {
-  const namesAndAddresses = {};
-
   const wallet = process.env.WALLET;
   const token = process.env.NFT;
 
@@ -13,8 +11,8 @@ async function main() {
 
   try {
     await hre.run("verify:verify", {
-      address: data.coupons,
-      constructorArguments: [wallet, token],
+      address: data.ERC1155,
+      constructorArguments: [token],
     });
   } catch (e) {
     console.log(e);

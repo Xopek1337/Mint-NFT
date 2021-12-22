@@ -2,17 +2,18 @@
 
 pragma solidity 0.8.10;
 
-import "contracts/Mock/ERC721Mint.sol";
+import "contracts/ERC1155Mint.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 contract NftSale is Ownable {
-    ERC721Mint public token;
+    uint256[] public supplies = [100];
+    uint256[] public minted = [0];
+    uint256[] public rates = [0.01 ether];
+
+    ERC1155Mint public token;
     address payable public wallet;
     uint public maxBuyAmount = 10;
-    uint public totalSellAmount = 100;
-    uint public price = 0.01 ether;
-    uint public sendedTokens = 0;
 
     mapping(address => Amounts) public Accounts;
 
@@ -25,45 +26,51 @@ contract NftSale is Ownable {
     bool public preSale = false;
     bool public sale = false;
 
-    event Transfer(address _addr, uint _tokenId);
+    event Transfer(address _addr, uint _collectionId, uint _amount);
 
     constructor(address payable _wallet, address _token) {
-        token = ERC721Mint(_token);
+        token = ERC1155Mint(_token);
         wallet = _wallet;
     }
 
-    function buyToken(uint amount) external payable returns (bool) {
+    function buyToken(uint collectionId, uint amount) external payable returns (bool) {
         require(preSale || sale, "NftSale::buyToken: sales are closed");
-
-        uint idToken;
 
         if (preSale == true) {
             require(Accounts[msg.sender].allowedAmount >= Accounts[msg.sender].buyedAmount + amount, "NftSale::buyToken: you are not logged into whitelist");
-            require(msg.value == price * amount, "NftSale::buyToken: sended ether is must equal to price * amount");
-            require(sendedTokens + amount <= totalSellAmount, "NftSale::buyToken: amount of sended tokens can not exceed totalSellAmount");
+            require(amount <= maxBuyAmount, "NftSale::buyToken: amount can not exceed maxBuyAmount");
+            require(collectionId <= supplies.length, "Coupons::mint: Collection doesn't exist");
+            require(collectionId > 0, "Coupons::mint: Collection doesn't exist");
+
+            uint index = collectionId - 1;
+            uint mintedAmount = minted[index] + amount;
+            require(mintedAmount <= supplies[index], "Coupons::mint: Not enough supply");
+            minted[index] = mintedAmount;
+
+            require(msg.value == rates[index] * amount, "Coupons::mint: Not enough ether sent");
 
             wallet.transfer(msg.value);
-        
-            for(uint i = 0; i < amount; i++) {
-                idToken = token.mint(msg.sender);
-                sendedTokens++;
-                Accounts[msg.sender].buyedAmount++;
-                emit Transfer(msg.sender, idToken);
-            }
+            token.mint(collectionId, amount, msg.sender);
+            emit Transfer(msg.sender, collectionId, amount);
+
             return true;
         }
         if (sale == true) {
             require(amount <= maxBuyAmount, "NftSale::buyToken: amount can not exceed maxBuyAmount");
-            require(msg.value == price * amount, "NftSale::buyToken: sended ether is must equal to price * amount");
-            require(sendedTokens + amount <= totalSellAmount, "NftSale::buyToken: amount of sended tokens can not exceed totalSellAmount");
+            require(collectionId <= supplies.length, "Coupons::mint: Collection doesn't exist");
+            require(collectionId > 0, "Coupons::mint: Collection doesn't exist");
+
+            uint index = collectionId - 1;
+            uint mintedAmount = minted[index] + amount;
+            require(mintedAmount <= supplies[index], "Coupons::mint: Not enough supply");
+            minted[index] = mintedAmount;
+
+            require(msg.value == rates[index] * amount, "Coupons::mint: Not enough ether sent");
 
             wallet.transfer(msg.value);
-        
-            for(uint i = 0; i < amount; i++) {
-                idToken = token.mint(msg.sender);
-                sendedTokens++;
-                emit Transfer(msg.sender, idToken);
-            }
+            token.mint(collectionId, amount, msg.sender);
+            emit Transfer(msg.sender, collectionId, amount);
+            
             return true;
         }
     }
@@ -90,15 +97,15 @@ contract NftSale is Ownable {
         return true;
     }
 
-    function setPrice(uint _price) external onlyOwner returns (bool) { 
-        price = _price;
-        
+    function changeCouponPrice(uint collectionId, uint price) external onlyOwner returns (bool) {
+        rates[collectionId-1] = price;
+
         return true;
     }
 
-     function setTotalSellAmount(uint _totalSellAmount) external onlyOwner returns (bool) { 
-        totalSellAmount = _totalSellAmount;
-        
+    function changeCouponAmount(uint collectionId, uint amount) external onlyOwner returns (bool) {
+        supplies[collectionId-1] = amount;
+
         return true;
     }
 
