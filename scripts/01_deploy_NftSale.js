@@ -6,20 +6,19 @@ const fs = require("fs");
 async function main() {
   const namesAndAddresses = {};
 
-  const wal = process.env.ACCOUNT_1;
+  const wallet = process.env.WALLET;
 
-  const ERC721Instance = await ethers.getContractFactory("ERC721Mint");
-  const ERC721 = await ERC721Instance.deploy("BasicToken", "BST");
+  const data = JSON.parse(await fs.readFileSync("address.json", { encoding: "utf8" }));
 
   const nftSaleInstance = await ethers.getContractFactory("NftSale");
-  const nftSale = await nftSaleInstance.deploy(wal, ERC721.address);
+  const nftSale = await nftSaleInstance.deploy(wallet, data.ERC1155);
 
   namesAndAddresses.nftSale = nftSale.address;
-  namesAndAddresses.ERC721 = ERC721.address;
+  namesAndAddresses.ERC1155 = data.ERC1155;
 
-  const data = await JSON.stringify(namesAndAddresses, null, 2);
+  const changedData = await JSON.stringify(namesAndAddresses, null, 2);
 
-  await fs.writeFileSync("address.json", data, { encoding: "utf8" });
+  await fs.writeFileSync("address.json", changedData, { encoding: "utf8" });
 }
 
 main()

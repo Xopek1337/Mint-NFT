@@ -4,16 +4,14 @@ const { logger } = require("ethers");
 const fs = require("fs");
 
 async function main() {
-  const namesAndAddresses = {};
-
-  const wal = process.env.ACCOUNT_1;
+  const wallet = process.env.WALLET;
 
   const data = JSON.parse(await fs.readFileSync("address.json", { encoding: "utf8" }));
 
   try {
     await hre.run("verify:verify", {
       address: data.nftSale,
-      constructorArguments: [wal, data.ERC721],
+      constructorArguments: [wallet, data.ERC1155],
     });
   } catch (e) {
     console.log(e);
