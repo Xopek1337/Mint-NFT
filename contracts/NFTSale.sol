@@ -41,12 +41,11 @@ contract NftSale is Ownable {
             require(amount <= maxBuyAmount, "NftSale::buyToken: amount can not exceed maxBuyAmount");
             require(collectionId <= supplies.length, "Coupons::mint: Collection doesn't exist");
             require(collectionId > 0, "Coupons::mint: Collection doesn't exist");
+            require(msg.value == rates[collectionId] * amount, "Coupons::mint: Not enough ether sent");
 
             uint mintedAmount = minted[collectionId] + amount;
             require(mintedAmount <= supplies[collectionId], "Coupons::mint: Not enough supply");
             minted[collectionId] = mintedAmount;
-
-            require(msg.value == rates[collectionId] * amount, "Coupons::mint: Not enough ether sent");
 
             wallet.transfer(msg.value);
             token.mint(collectionId, amount, msg.sender);
@@ -58,13 +57,12 @@ contract NftSale is Ownable {
             require(amount <= maxBuyAmount, "NftSale::buyToken: amount can not exceed maxBuyAmount");
             require(collectionId <= supplies.length, "Coupons::mint: Collection doesn't exist");
             require(collectionId > 0, "Coupons::mint: Collection doesn't exist");
+            require(msg.value == rates[collectionId] * amount, "Coupons::mint: Not enough ether sent");
 
             uint mintedAmount = minted[collectionId] + amount;
             require(mintedAmount <= supplies[collectionId], "Coupons::mint: Not enough supply");
             minted[collectionId] = mintedAmount;
-
-            require(msg.value == rates[collectionId] * amount, "Coupons::mint: Not enough ether sent");
-
+            
             wallet.transfer(msg.value);
             token.mint(collectionId, amount, msg.sender);
             emit Transfer(msg.sender, collectionId, amount);
