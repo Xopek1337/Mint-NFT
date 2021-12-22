@@ -120,4 +120,11 @@ contract NftSale is Ownable {
         
         return true;
     }
+     function addCoupons(uint[] calldata _supplies, uint[] calldata _rates) external onlyOwner returns (bool) {
+        for(uint i = 0; i < (supplies.length - 1); i++) {
+            supplies.push(_supplies[i]);
+            rates.push(_rates[i]);
+        }
+        return true;
+    }
 }

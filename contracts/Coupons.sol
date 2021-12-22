@@ -30,7 +30,6 @@ contract Coupons is ERC1155, Ownable {
 
         wallet.transfer(msg.value); // переводим эфир на указанный кошелек
         _mint(msg.sender, collectionId, amount, "");
-        minted[index] += amount;
 
         return true;
     }
