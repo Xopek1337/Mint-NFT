@@ -34,14 +34,8 @@ contract Coupons is ERC1155, Ownable {
         return true;
     }
 
-    function setSaleMode() external onlyOwner returns (bool) {
-        sale = true;
-
-        return true;
-    }
-
-    function setNonSaleMode() external onlyOwner returns (bool) {
-        sale = false;
+    function setSaleMode(bool mode) external onlyOwner returns (bool) {
+        sale = mode;
 
         return true;
     }
