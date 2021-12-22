@@ -118,6 +118,7 @@ contract NftSale is Ownable {
         for(uint i = 0; i < (supplies.length - 1); i++) {
             supplies.push(_supplies[i]);
             rates.push(_rates[i]);
+            minted.push(0);
         }
         return true;
     }
