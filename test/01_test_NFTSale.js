@@ -46,9 +46,8 @@ describe("NFTSaleTest", () => {
   });
 
   it('should bye one coupon from first collection', async () => {
-    const price = await BigNumber.from('10000000000000000');
-
     const [wallet, addr1] = await ethers.getSigners();
+    const price = await BigNumber.from('10000000000000000');
 
     const erc1155Instance = await ethers.getContractFactory('ERC1155Mint');
     const erc1155 = await erc1155Instance.deploy(URI);
