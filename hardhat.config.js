@@ -35,29 +35,29 @@ module.exports = {
     rinkeby: {
       url: process.env.RPC_NODE_RINKEBY,
       accounts: [process.env.PRIVATE_KEY]
-    }
+    },
+    mainnet: {
+      url: process.env.RPC_NODE_MAINNET,
+      accounts: [process.env.PRIVATE_KEY]
+    },
+    bsc: {
+      url: process.env.RPC_NODE_BSC, 
+      accounts: [process.env.PRIVATE_KEY]
+    },
+    bsctestnet: {
+      url: process.env.RPC_NODE_BSCTESTNET, 
+      accounts: [process.env.PRIVATE_KEY]
+    },
+    matic: {
+      url: process.env.RPC_NODE_MATIC, 
+      accounts: [process.env.PRIVATE_KEY]
+    },
+    mumbai: {
+      url: process.env.RPC_NODE_MUMBAI, 
+      accounts: [process.env.PRIVATE_KEY]
+    },
   },
   etherscan: {
-    apiKey: process.env.API_KEY
-  },
-  mainnet: {
-    url: process.env.RPC_NODE_MAINNET,
-    accounts: [process.env.PRIVATE_KEY]
-  },
-  bsc: {
-    url: process.env.RPC_NODE_BSC, 
-    accounts: [process.env.PRIVATE_KEY]
-  },
-  bsctestnet: {
-    url: process.env.RPC_NODE_BSCTESTNET, 
-    accounts: [process.env.PRIVATE_KEY]
-  },
-  matic: {
-    url: process.env.RPC_NODE_MATIC, 
-    accounts: [process.env.PRIVATE_KEY]
-  },
-  mumbai: {
-    url: process.env.RPC_NODE_MUMBAI, 
-    accounts: [process.env.PRIVATE_KEY]
+    apiKey: process.env.SCAN_API_KEY
   }
 };

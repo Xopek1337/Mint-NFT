@@ -9,7 +9,7 @@ contract ERC1155Mint is ERC1155, Ownable {
     constructor(string memory uri) ERC1155(uri) {
     }
 
-    function mint(uint256 collectionId, uint256 amount, address addr) public payable onlyOwner returns (bool) {
+    function mint(uint256 collectionId, uint256 amount, address addr) external payable onlyOwner returns (bool) {
         _mint(addr, collectionId, amount, "");
 
         return true;

@@ -30,7 +30,7 @@ contract Coupon is ERC1155, Ownable {
 
     function mint(uint256 couponId, uint256 amount) public payable returns (bool) {
         require(isPaused, "Coupon::mint: contract is paused");
-        require(couponId <= coupones.length, "Coupon::mint: CouponId doesn't exist");
+        require(couponId <= coupones.length, "Coupon::mint: CouponId does not exist");
         require(msg.value == coupones[couponId].rate * amount, "Coupon::mint: not enough ether sent");
 
         coupones[couponId].minted += amount;

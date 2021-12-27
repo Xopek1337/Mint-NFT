@@ -19,8 +19,8 @@ contract Coupons is ERC1155, Ownable {
     
     function mint(uint256 collectionId, uint256 amount) public payable returns (bool) {
         require(sale, "Coupons::mint: Sales are closed");
-        require(collectionId <= supplies.length, "Coupons::mint: Collection doesn't exist");
-        require(collectionId > 0, "Coupons::mint: Collection doesn't exist");
+        require(collectionId < supplies.length, "Coupons::mint: Collection doesn't exist");
+        require(collectionId >= 0, "Coupons::mint: Collection doesn't exist");
         require(msg.value == rates[collectionId] * amount, "Coupons::mint: Not enough ether sent");
 
         minted[collectionId] += amount;
@@ -75,7 +75,9 @@ contract Coupons is ERC1155, Ownable {
     }
     
     function addCoupons(uint[] calldata _supplies, uint[] calldata _rates) external onlyOwner returns (bool) {
-        for(uint i = 0; i < (supplies.length - 1); i++) {
+        require(_supplies.length == _rates.length, 'Coupon::addCoupones: amounts length must be equal rates length');
+
+        for(uint i = 0; i < _supplies.length; i++) {
             supplies.push(_supplies[i]);
             rates.push(_rates[i]);
             minted.push(0);

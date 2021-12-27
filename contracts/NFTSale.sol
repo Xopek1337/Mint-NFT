@@ -6,7 +6,7 @@ import "contracts/ERC1155Mint.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
-contract NftSale is Ownable {
+contract NFTSale is Ownable {
     uint256[] public supplies = [100];
     uint256[] public minted = [0];
     uint256[] public rates = [0.01 ether];
@@ -20,7 +20,6 @@ contract NftSale is Ownable {
     struct Amounts {
         uint allowedAmount;
         uint buyedAmount;
-        bool claimed;
     }
 
     bool public preSale = false;
@@ -34,17 +33,17 @@ contract NftSale is Ownable {
     }
 
     function buyToken(uint collectionId, uint amount) external payable returns (bool) {
-        require(preSale || sale, "NftSale::buyToken: sales are closed");
+        require(preSale || sale, "NFTSale::buyToken: sales are closed");
 
         if (preSale) {
-            require(Accounts[msg.sender].allowedAmount >= Accounts[msg.sender].buyedAmount + amount, "NftSale::buyToken: you are not logged into whitelist");
-            require(amount <= maxBuyAmount, "NftSale::buyToken: amount can not exceed maxBuyAmount");
-            require(collectionId <= supplies.length, "NftSale::mint: Collection doesn't exist");
-            require(collectionId > 0, "NftSale::mint: Collection doesn't exist");
-            require(msg.value == rates[collectionId] * amount, "NftSale::mint: Not enough ether sent");
+            require(Accounts[msg.sender].allowedAmount >= Accounts[msg.sender].buyedAmount + amount, "NFTSale::buyToken: amount is more than allowed or you are not logged into whitelist");
+            require(amount <= maxBuyAmount, "NFTSale::buyToken: amount can not exceed maxBuyAmount");
+            require(collectionId < supplies.length, "NFTSale::buyToken: collection does not exist");
+            require(collectionId >= 0, "NFTSale::buyToken: collection does not exist");
+            require(msg.value == rates[collectionId] * amount, "NFTSale::buyToken: not enough ether sent");
 
             minted[collectionId] += amount;
-            require(minted[collectionId] <= supplies[collectionId], "NftSale::mint: Not enough supply");
+            require(minted[collectionId] <= supplies[collectionId], "NFTSale::buyToken: not enough supply");
 
             wallet.transfer(msg.value);
             token.mint(collectionId, amount, msg.sender);
@@ -53,13 +52,13 @@ contract NftSale is Ownable {
             return true;
         }
         if (sale) {
-            require(amount <= maxBuyAmount, "NftSale::buyToken: amount can not exceed maxBuyAmount");
-            require(collectionId <= supplies.length, "NftSale::mint: Collection doesn't exist");
-            require(collectionId > 0, "NftSale::mint: Collection doesn't exist");
-            require(msg.value == rates[collectionId] * amount, "NftSale::mint: Not enough ether sent");
+            require(amount <= maxBuyAmount, "NFTSale::buyToken: amount can not exceed maxBuyAmount");
+            require(collectionId < supplies.length, "NFTSale::buyToken: collection does not exist");
+            require(collectionId >= 0, "NFTSale::buyToken: collection does not exist");
+            require(msg.value == rates[collectionId] * amount, "NFTSale::buyToken: not enough ether sent");
 
             minted[collectionId] += amount;
-            require(minted[collectionId] <= supplies[collectionId], "NftSale::mint: Not enough supply");
+            require(minted[collectionId] <= supplies[collectionId], "NFTSale::buyToken: not enough supply");
             
             wallet.transfer(msg.value);
             token.mint(collectionId, amount, msg.sender);
@@ -85,7 +84,7 @@ contract NftSale is Ownable {
         return true;
     }
 
-    function whitelistAdd(address account, uint amount) public returns (bool) {
+    function whitelistAdd(address account, uint amount) external onlyOwner returns (bool) {
         Accounts[account].allowedAmount = amount;
         
         return true;
@@ -115,10 +114,10 @@ contract NftSale is Ownable {
         return true;
     }
      function addCoupons(uint[] calldata _supplies, uint[] calldata _rates) external onlyOwner returns (bool) {
-        for(uint i = 0; i < (supplies.length - 1); i++) {
+        require(_supplies.length == _rates.length, 'NFTSale::addCoupons: amounts length must be equal rates length');
+        for(uint i = 0; i < _supplies.length; i++) {
             supplies.push(_supplies[i]);
             rates.push(_rates[i]);
-            minted.push(0);
         }
         return true;
     }

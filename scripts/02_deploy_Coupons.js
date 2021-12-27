@@ -7,7 +7,7 @@ async function main() {
   const namesAndAddresses = {};
 
   const wallet = process.env.WALLET;
-  const token = process.env.NFT;
+  const token = process.env.NFT_URI;
 
   const couponsInstance = await ethers.getContractFactory("Coupons");
   const coupons = await couponsInstance.deploy(wallet, token);

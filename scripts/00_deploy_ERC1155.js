@@ -6,7 +6,7 @@ const fs = require("fs");
 async function main() {
   const namesAndAddresses = {};
   
-  const token = process.env.NFT;
+  const token = process.env.NFT_URI;
 
   const ERC1155Instance = await ethers.getContractFactory("ERC1155Mint");
   const ERC1155 = await ERC1155Instance.deploy(token);

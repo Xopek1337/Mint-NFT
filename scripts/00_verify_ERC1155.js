@@ -4,8 +4,7 @@ const { logger } = require("ethers");
 const fs = require("fs");
 
 async function main() {
-  const wallet = process.env.WALLET;
-  const token = process.env.NFT;
+  const token = process.env.NFT_URI;
 
   const data = JSON.parse(await fs.readFileSync("address.json", { encoding: "utf8" }));
 
