@@ -9,7 +9,7 @@ const {
 const URI = "https://ipfs.io/ipfs/QmTgqnhFBMkfT9s8PHKcdXBn1f5bG3Q5hmBaR4U6hoTvb1?filename=Chainlink_Elf.png";
 
 describe("couponsV2Test", () => {
-  beforeEach(async function () {
+  beforeEach(async () => {
     [wallet, addr1] = await ethers.getSigners();
   });
   it("should faile if contract is paused", async () => {

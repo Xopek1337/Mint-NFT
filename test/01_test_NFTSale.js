@@ -9,7 +9,7 @@ const {
 const URI = "https://ipfs.io/ipfs/QmTgqnhFBMkfT9s8PHKcdXBn1f5bG3Q5hmBaR4U6hoTvb1?filename=Chainlink_Elf.png";
 
 describe("NFTSaleTest", () => {
-  beforeEach(async function () {
+  beforeEach(async () => {
     [wallet, wallet2, addr1, addr2] = await ethers.getSigners();
   });
   it("should fail if nonSaleMode is activated", async () => {
@@ -402,7 +402,7 @@ describe("NFTSaleTest", () => {
     const amounts = [320, 300, 280, 100];
     const rates = [ethers.utils.parseEther("0.1"), ethers.utils.parseEther("0.2"), ethers.utils.parseEther("0.3"), ethers.utils.parseEther("0.05")];
 
-    await NFTSale._addTokens(amounts,rates);
+    await NFTSale._addTokens(amounts, rates);
 
     const newFirstCoupon = await NFTSale.tokens(1);
     const newFirstAmount = newFirstCoupon.amount;

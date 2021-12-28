@@ -9,7 +9,7 @@ const {
 const URI = "https://ipfs.io/ipfs/QmTgqnhFBMkfT9s8PHKcdXBn1f5bG3Q5hmBaR4U6hoTvb1?filename=Chainlink_Elf.png";
 
 describe("ERC1155MintTest", () => {
-  beforeEach(async function () {
+  beforeEach(async () => {
     [addr1] = await ethers.getSigners();
   });
   it("should mint", async () => {

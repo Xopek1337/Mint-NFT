@@ -9,11 +9,15 @@
     "deploy": "npm run eslint:fix && npx hardhat deploy",
     "verify": "npx hardhat etherscan-verify"
   },
-  "repository": "git@bitbucket.org:gogolevdms/nftexample.git",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/gogolevdms/nftexample.git"
+  },
   "keywords": [
-    "erc1155", 
-    "nft", 
-    "buyToken"],
+    "erc1155",
+    "nft",
+    "buyToken"
+  ],
   "author": "Smart contract development",
   "license": "MIT",
   "engines": {
@@ -38,6 +42,12 @@
     "delay": "^5.0.0",
     "dotenv": "^10.0.0",
     "solhint": "^3.3.6"
+  },
+  "bugs": {
+    "url": "https://bitbucket.org/gogolevdms/nftexample/issues"
+  },
+  "homepage": "https://bitbucket.org/gogolevdms/nftexample#readme",
+  "directories": {
+    "test": "test"
   }
 }
-
