@@ -1,11 +1,21 @@
 {
-  "name": "hardhat-project",
+  "name": "NFTSale",
+  "version": "1.0.0",
+  "description": "This repository contains a project based on interaction with the erc1155 token using smart contracts",
+  "main": "hardhat-config.js",
   "scripts": {
     "compile": "npm run prettier:solidity && npx hardhat compile",
     "test": "npm run prettier:js && npm run eslint:fix && npx hardhat test",
     "deploy": "npm run eslint:fix && npx hardhat deploy",
     "verify": "npx hardhat etherscan-verify"
   },
+  "repository": "git@bitbucket.org:gogolevdms/nftexample.git",
+  "keywords": [
+    "erc1155", 
+    "nft", 
+    "buyToken"],
+  "author": "Smart contract development",
+  "license": "MIT",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.3",
     "@nomiclabs/hardhat-etherscan": "^2.1.8",
