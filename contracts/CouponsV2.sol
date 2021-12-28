@@ -69,7 +69,7 @@ contract Coupon is ERC1155, Ownable {
     }
 
     function _addCoupones(uint[] calldata amounts, uint[] calldata rates) public onlyOwner returns (bool) {
-        require(amounts.length == rates.length, 'Coupon::addCoupones: amounts length must be equal rates length');
+        require(amounts.length == rates.length, "Coupon::addCoupones: amounts length must be equal rates length");
 
         for(uint i = 0; i < amounts.length; i++) {
             addCoupon(amounts[i], rates[i]);
