@@ -9,7 +9,7 @@ const {
 const URI = "https://ipfs.io/ipfs/QmTgqnhFBMkfT9s8PHKcdXBn1f5bG3Q5hmBaR4U6hoTvb1?filename=Chainlink_Elf.png";
 
 describe("NFTSaleTest", () => {
-  beforeEach(async () => {
+  beforeEach(async function () {
     [wallet, wallet2, addr1, addr2] = await ethers.getSigners();
   });
   it("should fail if nonSaleMode is activated", async () => {
@@ -35,11 +35,11 @@ describe("NFTSaleTest", () => {
     const NFTSale = await NFTSaleInstance.deploy(wallet.address, erc1155.address);
     await NFTSale.deployed();
 
-    await NFTSale.setPreSaleMode();
+    await NFTSale._setPreSaleMode();
 
-    await NFTSale._setTokenData(0, 5, ethers.utils.parseEther("0.01"));
+    await NFTSale._setBundleData(0, 5, ethers.utils.parseEther("0.01"));
 
-    await NFTSale.whitelistAdd(addr1.address, 8);
+    await NFTSale._whitelistAdd(addr1.address, 8);
 
     await expect(
       NFTSale.connect(addr1).buyToken(0, 8, { value: ethers.utils.parseEther("0.08") }),
@@ -55,16 +55,16 @@ describe("NFTSaleTest", () => {
     const NFTSale = await NFTSaleInstance.deploy(wallet.address, erc1155.address);
     await NFTSale.deployed();
 
-    await NFTSale.setSaleMode();
+    await NFTSale._setSaleMode();
 
-    await NFTSale._setTokenData(0, 5, ethers.utils.parseEther("0.01"));
+    await NFTSale._setBundleData(0, 5, ethers.utils.parseEther("0.01"));
 
     await expect(
       NFTSale.connect(addr1).buyToken(0, 8, { value: ethers.utils.parseEther("0.08") }),
     ).to.be.revertedWith("NFTSale::buyToken: not enough supply");
   });
 
-  it("should bye one coupon from first collection with PreSaleMode", async () => {
+  it("should bye one coupon from first bundle with PreSaleMode", async () => {
     const price = await BigNumber.from("20000000000000000");
 
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
@@ -77,9 +77,9 @@ describe("NFTSaleTest", () => {
 
     await erc1155.setManager(NFTSale.address);
 
-    await NFTSale.setPreSaleMode();
+    await NFTSale._setPreSaleMode();
 
-    await NFTSale.whitelistAdd(addr1.address, 8);
+    await NFTSale._whitelistAdd(addr1.address, 8);
 
     const startingBalance = await ethers.provider.getBalance(wallet.address);
 
@@ -90,7 +90,7 @@ describe("NFTSaleTest", () => {
     expect(startingBalance).to.equal(endingBalance.sub(price));
   });
 
-  it("should bye one coupon from first collection with SaleMode", async () => {
+  it("should bye one coupon from first bundle with SaleMode", async () => {
     const price = await BigNumber.from("20000000000000000");
 
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
@@ -103,7 +103,7 @@ describe("NFTSaleTest", () => {
 
     await erc1155.setManager(NFTSale.address);
 
-    await NFTSale.setSaleMode();
+    await NFTSale._setSaleMode();
 
     const startingBalance = await ethers.provider.getBalance(wallet.address);
 
@@ -123,9 +123,9 @@ describe("NFTSaleTest", () => {
     const NFTSale = await NFTSaleInstance.deploy(wallet.address, erc1155.address);
     await NFTSale.deployed();
 
-    await NFTSale.setPreSaleMode();
+    await NFTSale._setPreSaleMode();
 
-    await NFTSale.whitelistAdd(addr1.address, 8);
+    await NFTSale._whitelistAdd(addr1.address, 8);
 
     await expect(
       NFTSale.connect(addr1).buyToken(0, 9, { value: ethers.utils.parseEther("0.09") }),
@@ -141,7 +141,7 @@ describe("NFTSaleTest", () => {
     const NFTSale = await NFTSaleInstance.deploy(wallet.address, erc1155.address);
     await NFTSale.deployed();
 
-    await NFTSale.setPreSaleMode();
+    await NFTSale._setPreSaleMode();
 
     await expect(
       NFTSale.connect(addr1).buyToken(0, 9, { value: ethers.utils.parseEther("0.09") }),
@@ -157,9 +157,9 @@ describe("NFTSaleTest", () => {
     const NFTSale = await NFTSaleInstance.deploy(wallet.address, erc1155.address);
     await NFTSale.deployed();
 
-    await NFTSale.setPreSaleMode();
+    await NFTSale._setPreSaleMode();
 
-    await NFTSale.whitelistAdd(addr1.address, 15);
+    await NFTSale._whitelistAdd(addr1.address, 15);
 
     await expect(
       NFTSale.connect(addr1).buyToken(0, 12, { value: ethers.utils.parseEther("0.12") }),
@@ -175,14 +175,14 @@ describe("NFTSaleTest", () => {
     const NFTSale = await NFTSaleInstance.deploy(wallet.address, erc1155.address);
     await NFTSale.deployed();
 
-    await NFTSale.setSaleMode();
+    await NFTSale._setSaleMode();
 
     await expect(
       NFTSale.connect(addr1).buyToken(0, 12, { value: ethers.utils.parseEther("0.12") }),
     ).to.be.revertedWith("NFTSale::buyToken: amount can not exceed maxBuyAmount");
   });
 
-  it("should fail if collection does not exist wiht PreSaleMode", async () => {
+  it("should fail if collection does not exist with PreSaleMode", async () => {
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -191,16 +191,16 @@ describe("NFTSaleTest", () => {
     const NFTSale = await NFTSaleInstance.deploy(wallet.address, erc1155.address);
     await NFTSale.deployed();
 
-    await NFTSale.setPreSaleMode();
+    await NFTSale._setPreSaleMode();
 
-    await NFTSale.whitelistAdd(addr1.address, 8);
+    await NFTSale._whitelistAdd(addr1.address, 8);
 
     await expect(
       NFTSale.connect(addr1).buyToken(2, 5, { value: ethers.utils.parseEther("0.05") }),
     ).to.be.revertedWith("NFTSale::buyToken: collection does not exist");
   });
 
-  it("should fail if collection does not exist with SaleMode", async () => {
+  it("should fail if bundle does not exist with SaleMode", async () => {
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -209,7 +209,7 @@ describe("NFTSaleTest", () => {
     const NFTSale = await NFTSaleInstance.deploy(wallet.address, erc1155.address);
     await NFTSale.deployed();
 
-    await NFTSale.setSaleMode();
+    await NFTSale._setSaleMode();
 
     await expect(
       NFTSale.connect(addr1).buyToken(2, 5, { value: ethers.utils.parseEther("0.05") }),
@@ -225,9 +225,9 @@ describe("NFTSaleTest", () => {
     const NFTSale = await NFTSaleInstance.deploy(wallet.address, erc1155.address);
     await NFTSale.deployed();
 
-    await NFTSale.setPreSaleMode();
+    await NFTSale._setPreSaleMode();
 
-    await NFTSale.whitelistAdd(addr1.address, 8);
+    await NFTSale._whitelistAdd(addr1.address, 8);
 
     await expect(
       NFTSale.connect(addr1).buyToken(0, 2, { value: ethers.utils.parseEther("0.01") }),
@@ -243,7 +243,7 @@ describe("NFTSaleTest", () => {
     const NFTSale = await NFTSaleInstance.deploy(wallet.address, erc1155.address);
     await NFTSale.deployed();
 
-    await NFTSale.setSaleMode();
+    await NFTSale._setSaleMode();
 
     await expect(
       NFTSale.connect(addr1).buyToken(0, 2, { value: ethers.utils.parseEther("0.01") }),
@@ -259,7 +259,7 @@ describe("NFTSaleTest", () => {
     const NFTSale = await NFTSaleInstance.deploy(wallet.address, erc1155.address);
     await NFTSale.deployed();
 
-    await NFTSale.setPreSaleMode();
+    await NFTSale._setPreSaleMode();
 
     const preSale = await NFTSale.preSale();
 
@@ -275,7 +275,7 @@ describe("NFTSaleTest", () => {
     const NFTSale = await NFTSaleInstance.deploy(wallet.address, erc1155.address);
     await NFTSale.deployed();
 
-    await NFTSale.setSaleMode();
+    await NFTSale._setSaleMode();
 
     const sale = await NFTSale.sale();
 
@@ -291,7 +291,7 @@ describe("NFTSaleTest", () => {
     const NFTSale = await NFTSaleInstance.deploy(wallet.address, erc1155.address);
     await NFTSale.deployed();
 
-    await NFTSale.setNonSaleMode();
+    await NFTSale._setNonSaleMode();
 
     const preSale = await NFTSale.preSale();
     const sale = await NFTSale.sale();
@@ -311,7 +311,7 @@ describe("NFTSaleTest", () => {
 
     const amount = 10;
 
-    await NFTSale.whitelistAdd(addr1.address, amount);
+    await NFTSale._whitelistAdd(addr1.address, amount);
 
     const account = await NFTSale.Accounts(addr1.address);
 
@@ -329,7 +329,7 @@ describe("NFTSaleTest", () => {
 
     const amount = 15;
 
-    await NFTSale.setMaxBuyAmount(amount);
+    await NFTSale._setMaxBuyAmount(amount);
 
     const endingAmount = await NFTSale.maxBuyAmount();
 
@@ -345,14 +345,14 @@ describe("NFTSaleTest", () => {
     const NFTSale = await NFTSaleInstance.deploy(wallet.address, erc1155.address);
     await NFTSale.deployed();
 
-    await NFTSale.setWallet(wallet2.address);
+    await NFTSale._setWallet(wallet2.address);
 
     const endingWallet = await NFTSale.wallet();
 
     expect(endingWallet).to.equal(wallet2.address);
   });
 
-  it("should change tokenData", async () => {
+  it("should change bundleData", async () => {
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -365,9 +365,9 @@ describe("NFTSaleTest", () => {
     const amount = 320;
     const rate = ethers.utils.parseEther("0.1");
 
-    await NFTSale._setTokenData(couponId, amount, rate);
+    await NFTSale._setBundleData(couponId, amount, rate);
 
-    const couponStruct = await NFTSale.tokens(couponId);
+    const couponStruct = await NFTSale.bundles(couponId);
     const finishAmount = couponStruct.amount;
 
     expect(BigNumber.from(amount)).to.equal(finishAmount);
@@ -386,11 +386,11 @@ describe("NFTSaleTest", () => {
     const rates = [ethers.utils.parseEther("0.1"), ethers.utils.parseEther("0.2"), ethers.utils.parseEther("0.3")];
 
     await expect(
-      NFTSale.connect(wallet)._addTokens(amounts, rates),
-    ).to.be.revertedWith("NFTSale::addTokens: amounts length must be equal rates length");
+      NFTSale.connect(wallet)._addBundles(amounts, rates),
+    ).to.be.revertedWith("NFTSale::addBundles: amounts length must be equal rates length");
   });
 
-  it("should add tokens", async () => {
+  it("should add bundles", async () => {
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -402,9 +402,9 @@ describe("NFTSaleTest", () => {
     const amounts = [320, 300, 280, 100];
     const rates = [ethers.utils.parseEther("0.1"), ethers.utils.parseEther("0.2"), ethers.utils.parseEther("0.3"), ethers.utils.parseEther("0.05")];
 
-    await NFTSale._addTokens(amounts, rates);
+    await NFTSale._addBundles(amounts,rates);
 
-    const newFirstCoupon = await NFTSale.tokens(1);
+    const newFirstCoupon = await NFTSale.bundles(1);
     const newFirstAmount = newFirstCoupon.amount;
     const newFirstRate = newFirstCoupon.rate;
 
@@ -412,7 +412,7 @@ describe("NFTSaleTest", () => {
     expect(newFirstRate).to.equal(rates[0]);
   });
 
-  it("should get tokens", async () => {
+  it("should get bundles", async () => {
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -421,14 +421,14 @@ describe("NFTSaleTest", () => {
     const NFTSale = await NFTSaleInstance.deploy(wallet.address, erc1155.address);
     await NFTSale.deployed();
 
-    const coupons = await NFTSale.getTokens();
+    const coupons = await NFTSale.getBundles();
 
-    const firstCoupon = await NFTSale.tokens(0);
+    const firstCoupon = await NFTSale.bundles(0);
 
     expect(firstCoupon.amount).to.equal(coupons[0].amount);
   });
 
-  it("should get length of the tokens array", async () => {
+  it("should get length of the bundles array", async () => {
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -437,7 +437,7 @@ describe("NFTSaleTest", () => {
     const NFTSale = await NFTSaleInstance.deploy(wallet.address, erc1155.address);
     await NFTSale.deployed();
 
-    const couponsLength = await NFTSale.getTokensLength();
+    const couponsLength = await NFTSale.getBundlesLength();
 
     expect(1).to.equal(couponsLength);
   });

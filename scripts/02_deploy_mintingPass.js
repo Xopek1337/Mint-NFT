@@ -10,10 +10,10 @@ async function main() {
   const wallet = process.env.WALLET;
   const uri = process.env.NFT_URI;
 
-  const couponsInstance = await ethers.getContractFactory("Coupon");
-  const coupons = await couponsInstance.deploy(wallet, uri);
+  const passesInstance = await ethers.getContractFactory("mintingPass");
+  const passes = await passesInstance.deploy(wallet, uri);
 
-  namesAndAddresses.coupons = coupons.address;
+  namesAndAddresses.passes = passes.address;
 
   const data = await JSON.stringify(namesAndAddresses, null, 2);
 

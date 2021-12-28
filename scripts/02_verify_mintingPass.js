@@ -12,9 +12,9 @@ async function main() {
 
   try {
     await hre.run("verify:verify", {
-      address: data.coupons,
+      address: data.passes,
       constructorArguments: [wallet, uri],
-      contract: "contracts/CouponsV2.sol:Coupon",
+      contract: "contracts/mintingPass.sol:mintingPass",
     });
   } catch (e) {
     console.log(e);
