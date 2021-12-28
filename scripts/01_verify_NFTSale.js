@@ -13,6 +13,7 @@ async function main() {
     await hre.run("verify:verify", {
       address: data.nftSale,
       constructorArguments: [wallet, data.ERC1155],
+      contract: "contracts/NFTSale.sol:NFTSale",
     });
   } catch (e) {
     console.log(e);

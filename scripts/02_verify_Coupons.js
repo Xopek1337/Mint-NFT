@@ -14,6 +14,7 @@ async function main() {
     await hre.run("verify:verify", {
       address: data.coupons,
       constructorArguments: [wallet, uri],
+      contract: "contracts/CouponsV2.sol:Coupon",
     });
   } catch (e) {
     console.log(e);

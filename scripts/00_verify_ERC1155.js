@@ -14,6 +14,7 @@ async function main() {
     await hre.run("verify:verify", {
       address: data.ERC1155,
       constructorArguments: [uri],
+      contract: "contracts/ERC1155Mint.sol:ERC1155Mint",
     });
   } catch (e) {
     console.log(e);
