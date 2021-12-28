@@ -166,10 +166,12 @@ describe('couponsV2Test', () => {
     const couponsV2 = await couponsV2Instance.deploy(wallet.address, URI);
     await couponsV2.deployed();
 
-    const amounts = [320, 300, 280];
-    const rates = [ethers.utils.parseEther('0.1'), ethers.utils.parseEther('0.2'), ethers.utils.parseEther('0.3')];
+    const amounts = [320, 300, 280, 100];
+    const rates = [ethers.utils.parseEther('0.1'), ethers.utils.parseEther('0.2'), ethers.utils.parseEther('0.3'), ethers.utils.parseEther('0.05')];
 
-    await couponsV2._addCoupones(amounts, rates);
+    const tx = await couponsV2._addCoupones(amounts, rates);
+    const receipt = await tx.wait();
+    console.log(receipt.gasUsed);
 
     const newFirstCoupon = await couponsV2.coupones(6);
     const newFirstAmount = newFirstCoupon.amount;

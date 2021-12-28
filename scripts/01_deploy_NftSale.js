@@ -10,7 +10,7 @@ async function main() {
 
   const data = JSON.parse(await fs.readFileSync("address.json", { encoding: "utf8" }));
 
-  const nftSaleInstance = await ethers.getContractFactory("NftSale");
+  const nftSaleInstance = await ethers.getContractFactory("NFTSale");
   const nftSale = await nftSaleInstance.deploy(wallet, data.ERC1155);
 
   namesAndAddresses.nftSale = nftSale.address;

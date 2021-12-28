@@ -19,8 +19,7 @@ contract Coupons is ERC1155, Ownable {
     
     function mint(uint256 collectionId, uint256 amount) public payable returns (bool) {
         require(sale, "Coupons::mint: Sales are closed");
-        require(collectionId < supplies.length, "Coupons::mint: Collection doesn't exist");
-        require(collectionId >= 0, "Coupons::mint: Collection doesn't exist");
+        require(collectionId < supplies.length && collectionId >= 0, "Coupons::mint: Collection doesn't exist");
         require(msg.value == rates[collectionId] * amount, "Coupons::mint: Not enough ether sent");
 
         minted[collectionId] += amount;
