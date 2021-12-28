@@ -1,5 +1,5 @@
 {
-  "name": "NFTSale",
+  "name": "nft-sale",
   "version": "1.0.0",
   "description": "This repository contains a project based on interaction with the erc1155 token using smart contracts",
   "main": "hardhat-config.js",
