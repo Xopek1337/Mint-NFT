@@ -14,7 +14,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 * The contract owner can turn sales on and off, set a new URI, change the wallet address, add bundles, change their price and supplies.
 */
 
-contract mintingPass is ERC1155, Ownable {
+contract MintingPass is ERC1155, Ownable {
     struct passData {
         uint amount;
         uint minted;
@@ -24,9 +24,10 @@ contract mintingPass is ERC1155, Ownable {
     passData[] public passes;
 
     address payable public wallet;
-    bool public isPaused = false;
+    bool public isPaused = true;
 
     constructor(address payable _wallet, string memory uri) ERC1155(uri) {
+        require(_wallet != address(0), "MintingPass::constructor: wallet does not exist");
         wallet = _wallet;
 
         _addPass(300, 0.03 ether);
@@ -48,12 +49,12 @@ contract mintingPass is ERC1155, Ownable {
     /// @return The bool value.
 
     function mint(uint256 _passId, uint256 _amount) public payable returns (bool) {
-        require(isPaused, "mintingPass::mint: contract is paused");
-        require(_passId <= passes.length, "mintingPass::mint: passId does not exist");
-        require(msg.value == passes[_passId].rate * _amount, "mintingPass::mint: not enough ether sent");
+        require(!isPaused, "MintingPass::mint: contract is paused");
+        require(_passId <= passes.length, "MintingPass::mint: passId does not exist");
+        require(msg.value == passes[_passId].rate * _amount, "MintingPass::mint: not enough ether sent");
 
         passes[_passId].minted += _amount;
-        require(passes[_passId].minted <= passes[_passId].amount, "mintingPass::mint: not enough supply");
+        require(passes[_passId].minted <= passes[_passId].amount, "MintingPass::mint: not enough supply");
 
         _mint(msg.sender, _passId, _amount, "");
 
@@ -116,7 +117,7 @@ contract mintingPass is ERC1155, Ownable {
     /// @return The bool value.
 
     function _addPasses(uint[] calldata _amounts, uint[] calldata _rates) public onlyOwner returns (bool) {
-        require(_amounts.length == _rates.length, 'mintingPass::addPasses: amounts length must be equal rates length');
+        require(_amounts.length == _rates.length, 'MintingPass::addPasses: amounts length must be equal rates length');
 
         for(uint i = 0; i < _amounts.length; i++) {
             _addPass(_amounts[i], _rates[i]);

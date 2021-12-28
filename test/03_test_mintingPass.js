@@ -5,67 +5,76 @@ const {
     BigNumber,
   },
 } = require("hardhat");
+const { constants }= require("@openzeppelin/test-helpers");
 
 const URI = "https://ipfs.io/ipfs/QmTgqnhFBMkfT9s8PHKcdXBn1f5bG3Q5hmBaR4U6hoTvb1?filename=Chainlink_Elf.png";
 
 describe("mintingPassTest", () => {
   beforeEach(async function () {
-    [wallet, addr1] = await ethers.getSigners();
+    [wallet, wallet2, addr1] = await ethers.getSigners();
   });
   it("should faile if contract is paused", async () => {
-    const mintingPassInstance = await ethers.getContractFactory("mintingPass");
+    const mintingPassInstance = await ethers.getContractFactory("MintingPass");
     const mintingPass = await mintingPassInstance.deploy(wallet.address, URI);
     await mintingPass.deployed();
 
     await expect(
       mintingPass.connect(addr1).mint(1, 100, { value: ethers.utils.parseEther("6") }),
-    ).to.be.revertedWith("mintingPass::mint: contract is paused");
+    ).to.be.revertedWith("MintingPass::mint: contract is paused");
   });
 
   it("should faile if passId does not exist", async () => {
-    const mintingPassInstance = await ethers.getContractFactory("mintingPass");
+    const mintingPassInstance = await ethers.getContractFactory("MintingPass");
     const mintingPass = await mintingPassInstance.deploy(wallet.address, URI);
     await mintingPass.deployed();
 
-    await mintingPass._setPause("true");
+    await mintingPass._setPause(false);
 
     await expect(
       mintingPass.connect(addr1).mint(8, 25, { value: ethers.utils.parseEther("0.25") }),
-    ).to.be.revertedWith("mintingPass::mint: passId does not exist");
+    ).to.be.revertedWith("MintingPass::mint: passId does not exist");
   });
 
   it("should faile if not enough ether sent", async () => {
-    const mintingPassInstance = await ethers.getContractFactory("mintingPass");
+    const mintingPassInstance = await ethers.getContractFactory("MintingPass");
     const mintingPass = await mintingPassInstance.deploy(wallet.address, URI);
     await mintingPass.deployed();
 
-    await mintingPass._setPause("true");
+    await mintingPass._setPause(false);
 
     await expect(
       mintingPass.connect(addr1).mint(1, 100, { value: ethers.utils.parseEther("3.25") }),
-    ).to.be.revertedWith("mintingPass::mint: not enough ether sent");
+    ).to.be.revertedWith("MintingPass::mint: not enough ether sent");
+  });
+
+  it("should faile if wallet does not exist", async () => {
+    const mintingPassInstance = await ethers.getContractFactory("MintingPass");
+
+    await expect(
+      mintingPassInstance.deploy(constants.ZERO_ADDRESS, URI),
+    ).to.be.revertedWith("MintingPass::constructor: wallet does not exist");
   });
 
   it("should faile if not enough enough sepply", async () => {
-    const mintingPassInstance = await ethers.getContractFactory("mintingPass");
+    const mintingPassInstance = await ethers.getContractFactory("MintingPass");
     const mintingPass = await mintingPassInstance.deploy(wallet.address, URI);
     await mintingPass.deployed();
 
-    await mintingPass._setPause("true");
+    await mintingPass._setPause(false);
 
     await expect(
       mintingPass.connect(addr1).mint(1, 200, { value: ethers.utils.parseEther("12") }),
-    ).to.be.revertedWith("mintingPass::mint: not enough supply");
+    ).to.be.revertedWith("MintingPass::mint: not enough supply");
   });
 
   it("should bye one pass from first collection", async () => {
     const price = await BigNumber.from("600000000000000000");
 
-    const mintingPassInstance = await ethers.getContractFactory("mintingPass");
+    const mintingPassInstance = await ethers.getContractFactory("MintingPass");
     const mintingPass = await mintingPassInstance.deploy(wallet.address, URI);
     await mintingPass.deployed();
 
-    await mintingPass._setPause("true");
+    await mintingPass._setPause(false);
 
     const startingBalance = await ethers.provider.getBalance(wallet.address);
 
@@ -77,19 +86,19 @@ describe("mintingPassTest", () => {
   });
 
   it("should turn on pause", async () => {
-    const mintingPassInstance = await ethers.getContractFactory("mintingPass");
+    const mintingPassInstance = await ethers.getContractFactory("MintingPass");
     const mintingPass = await mintingPassInstance.deploy(wallet.address, URI);
     await mintingPass.deployed();
 
-    await mintingPass._setPause("true");
+    await mintingPass._setPause(false);
 
     const isPaused = await mintingPass.isPaused();
 
-    expect(true).to.equal(isPaused);
+    expect(false).to.equal(isPaused);
   });
 
   it("should change URI", async () => {
-    const mintingPassInstance = await ethers.getContractFactory("mintingPass");
+    const mintingPassInstance = await ethers.getContractFactory("MintingPass");
     const mintingPass = await mintingPassInstance.deploy(wallet.address, URI);
     await mintingPass.deployed();
 
@@ -103,19 +112,19 @@ describe("mintingPassTest", () => {
   });
 
   it("should change wallet", async () => {
-    const mintingPassInstance = await ethers.getContractFactory("mintingPass");
+    const mintingPassInstance = await ethers.getContractFactory("MintingPass");
     const mintingPass = await mintingPassInstance.deploy(wallet.address, URI);
     await mintingPass.deployed();
 
-    await mintingPass._setWallet(wallet.address);
+    await mintingPass._setWallet(wallet2.address);
 
     const endingWallet = await mintingPass.wallet();
 
-    expect(endingWallet).to.equal(wallet.address);
+    expect(endingWallet).to.equal(wallet2.address);
   });
 
   it("should change passData", async () => {
-    const mintingPassInstance = await ethers.getContractFactory("mintingPass");
+    const mintingPassInstance = await ethers.getContractFactory("MintingPass");
     const mintingPass = await mintingPassInstance.deploy(wallet.address, URI);
     await mintingPass.deployed();
 
@@ -132,7 +141,7 @@ describe("mintingPassTest", () => {
   });
 
   it("should faile if amounts length must not be equal rates length", async () => {
-    const mintingPassInstance = await ethers.getContractFactory("mintingPass");
+    const mintingPassInstance = await ethers.getContractFactory("MintingPass");
     const mintingPass = await mintingPassInstance.deploy(wallet.address, URI);
     await mintingPass.deployed();
 
@@ -141,11 +150,11 @@ describe("mintingPassTest", () => {
 
     await expect(
       mintingPass.connect(wallet)._addPasses(amounts, rates),
-    ).to.be.revertedWith("mintingPass::addPasses: amounts length must be equal rates length");
+    ).to.be.revertedWith("MintingPass::addPasses: amounts length must be equal rates length");
   });
 
   it("should add passes", async () => {
-    const mintingPassInstance = await ethers.getContractFactory("mintingPass");
+    const mintingPassInstance = await ethers.getContractFactory("MintingPass");
     const mintingPass = await mintingPassInstance.deploy(wallet.address, URI);
     await mintingPass.deployed();
 
@@ -163,7 +172,7 @@ describe("mintingPassTest", () => {
   });
 
   it("should get passes", async () => {
-    const mintingPassInstance = await ethers.getContractFactory("mintingPass");
+    const mintingPassInstance = await ethers.getContractFactory("MintingPass");
     const mintingPass = await mintingPassInstance.deploy(wallet.address, URI);
     await mintingPass.deployed();
 
@@ -175,7 +184,7 @@ describe("mintingPassTest", () => {
   });
 
   it("should get length of the passes array", async () => {
-    const mintingPassInstance = await ethers.getContractFactory("mintingPass");
+    const mintingPassInstance = await ethers.getContractFactory("MintingPass");
     const mintingPass = await mintingPassInstance.deploy(wallet.address, URI);
     await mintingPass.deployed();
 

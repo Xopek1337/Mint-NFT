@@ -30,8 +30,8 @@ contract NFTSale is Ownable {
     mapping(address => Amounts) public Accounts;
 
     struct Amounts {
-        uint allowedAmount;
-        uint buyedAmount;
+        uint allowed;
+        uint bought;
     }
 
     bool public preSale = false;
@@ -40,6 +40,7 @@ contract NFTSale is Ownable {
     event Transfer(address _addr, uint _bundleId, uint _amount);
 
     constructor(address payable _wallet, address _token) {
+        require(_wallet != address(0), "NFTSale::constructor: wallet does not exist");
         token = ERC1155Mint(_token);
         wallet = _wallet;
 
@@ -60,7 +61,7 @@ contract NFTSale is Ownable {
 
     function buyToken(uint _bundleId, uint _amount) external payable returns (bool) {
         if (preSale) {
-            require(Accounts[msg.sender].allowedAmount >= Accounts[msg.sender].buyedAmount + _amount, "NFTSale::buyToken: amount is more than allowed or you are not logged into whitelist");
+            require(Accounts[msg.sender].allowed >= Accounts[msg.sender].bought + _amount, "NFTSale::buyToken: amount is more than allowed or you are not logged into whitelist");
             require(_amount <= maxBuyAmount, "NFTSale::buyToken: amount can not exceed maxBuyAmount");
             require(_bundleId < bundles.length, "NFTSale::buyToken: collection does not exist");
             require(msg.value == bundles[_bundleId].rate * _amount, "NFTSale::buyToken: not enough ether sent");
@@ -70,6 +71,8 @@ contract NFTSale is Ownable {
 
             wallet.transfer(msg.value);
             token.mint(_bundleId, _amount, msg.sender);
+            Accounts[msg.sender].bought += _amount;
+
             emit Transfer(msg.sender, _bundleId, _amount);
 
             return true;
@@ -93,37 +96,11 @@ contract NFTSale is Ownable {
         }
     }
 
-    /// @notice The function enables presales.
-    /// @dev Stores the bool value in the states variables 'preSale' and 'sale'.
-    /// @return The bool value.
+    function _setSellingMode(bool _sale, bool _preSale) external onlyOwner returns (bool) {
+        require((_sale && _preSale) == false, "NFTSale::setSellingMode: can not set 2 selling mode at once");
 
-    function _setPreSaleMode() external onlyOwner returns (bool) {
-        preSale = true;
-        sale = false;
-
-        return true;
-    }
-
-    /// @notice The function enables sales and disables presales.
-    /// @dev Stores the bool value in the states variables 'preSale' and 'sale'.
-    /// @return The bool value.
-
-    function _setSaleMode() external onlyOwner returns (bool) {
-        preSale = false;
-        sale = true;
-
-        return true;
-    }
-
-    /// @notice The function disables sales and presales.
-    /// @dev Stores the bool value in the states variables 'preSale' and 'sale'.
-    /// @return The bool value.
-
-    function _setNonSaleMode() external onlyOwner returns (bool) {
-        preSale = false;
-        sale = false;
-
-        return true;
+        sale = _sale;
+        preSale = _preSale;
     }
 
     /// @notice The function adds a new account to whitelist.
@@ -133,7 +110,7 @@ contract NFTSale is Ownable {
     /// @return The bool value.
 
     function _whitelistAdd(address _account, uint _amount) external onlyOwner returns (bool) {
-        Accounts[_account].allowedAmount = _amount;
+        Accounts[_account].allowed = _amount;
         
         return true;
     }

@@ -7,13 +7,15 @@
     "compile": "npm run prettier:solidity && npx hardhat compile",
     "test": "npm run prettier:js && npm run eslint:fix && npx hardhat test",
     "deploy": "npm run eslint:fix && npx hardhat deploy",
-    "verify": "npx hardhat etherscan-verify"
+    "verify": "npx hardhat etherscan-verify",
+    "coverage": "npx hardhat coverage"
   },
   "repository": "git@bitbucket.org:gogolevdms/nftexample.git",
   "keywords": [
-    "erc1155", 
-    "nft", 
-    "buyToken"],
+    "erc1155",
+    "nft",
+    "buyToken"
+  ],
   "author": "Smart contract development",
   "license": "MIT",
   "engines": {
@@ -35,9 +37,9 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.4.0",
+    "@openzeppelin/test-helpers": "^0.5.15",
     "delay": "^5.0.0",
     "dotenv": "^10.0.0",
     "solhint": "^3.3.6"
   }
 }
-

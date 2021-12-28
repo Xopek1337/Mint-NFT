@@ -2,19 +2,19 @@ const hre = require("hardhat");
 
 const network = hre.network.name;
 const fs = require("fs");
-const { logger } = require("ethers");
 
 async function main() {
-  const wallet = process.env.WALLET;
   const uri = process.env.NFT_URI;
 
-  const data = JSON.parse(await fs.readFileSync("address.json", { encoding: "utf8" }));
+  let dir = './networks/';
+  const fileName = network + '.json';
+  let data = JSON.parse(await fs.readFileSync(dir + fileName, { encoding: 'utf8' }));
 
   try {
     await hre.run("verify:verify", {
-      address: data.passes,
-      constructorArguments: [wallet, uri],
-      contract: "contracts/mintingPass.sol:mintingPass",
+      address: data.ERC1155,
+      constructorArguments: [uri],
+      contract: "contracts/ERC1155Mint.sol:ERC1155Mint",
     });
   } catch (e) {
     console.log(e);
