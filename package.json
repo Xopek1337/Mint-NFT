@@ -2,7 +2,7 @@
   "name": "nft-sale",
   "version": "1.0.0",
   "description": "This repository contains a project based on interaction with the erc1155 token using smart contracts",
-  "main": "hardhat-config.js",
+  "main": "hardhat.config.js",
   "scripts": {
     "compile": "npm run prettier:solidity && npx hardhat compile",
     "test": "npm run prettier:js && npm run eslint:fix && npx hardhat test",
@@ -16,6 +16,10 @@
     "buyToken"],
   "author": "Smart contract development",
   "license": "MIT",
+  "engines": {
+    "npm": ">=8.1.0",
+    "node": ">=16.13.0"
+  },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.3",
     "@nomiclabs/hardhat-etherscan": "^2.1.8",
@@ -36,3 +40,4 @@
     "solhint": "^3.3.6"
   }
 }
+
