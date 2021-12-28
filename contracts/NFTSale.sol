@@ -39,8 +39,6 @@ contract NFTSale is Ownable {
     }
 
     function buyToken(uint collectionId, uint amount) external payable returns (bool) {
-        require(preSale || sale, "NFTSale::buyToken: sales are closed");
-
         if (preSale) {
             require(Accounts[msg.sender].allowedAmount >= Accounts[msg.sender].buyedAmount + amount, "NFTSale::buyToken: amount is more than allowed or you are not logged into whitelist");
             require(amount <= maxBuyAmount, "NFTSale::buyToken: amount can not exceed maxBuyAmount");
@@ -69,6 +67,9 @@ contract NFTSale is Ownable {
             emit Transfer(msg.sender, collectionId, amount);
             
             return true;
+        }
+        else {
+            revert("NFTSale::buyToken: sales are closed");
         }
     }
 

@@ -21,7 +21,7 @@ describe("NFTSaleTest", () => {
     await NFTSale.deployed();
 
     await expect(
-      NFTSale.connect(addr1).buyToken(1, 10, { value: ethers.utils.parseEther("0.3") }),
+      NFTSale.connect(addr1).buyToken(0, 9, { value: ethers.utils.parseEther("0.03") }),
     ).to.be.revertedWith("NFTSale::buyToken: sales are closed");
   });
 
@@ -119,7 +119,7 @@ describe("NFTSaleTest", () => {
     expect(startingBalance).to.equal(endingBalance.sub(price));
   });
 
-  it("should fail if amount is more than allowed or you are not logged into whitelist", async () => {
+  it("should fail if amount is more than allowed", async () => {
     const [wallet, addr1] = await ethers.getSigners();
 
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
@@ -135,7 +135,25 @@ describe("NFTSaleTest", () => {
     await NFTSale.whitelistAdd(addr1.address, 8);
 
     await expect(
-      NFTSale.connect(addr1).buyToken(0, 9, { value: ethers.utils.parseEther("0.05") }),
+      NFTSale.connect(addr1).buyToken(0, 9, { value: ethers.utils.parseEther("0.09") }),
+    ).to.be.revertedWith("NFTSale::buyToken: amount is more than allowed or you are not logged into whitelist");
+  });
+
+  it("should fail if you are not logged into whitelist", async () => {
+    const [wallet, addr1] = await ethers.getSigners();
+
+    const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
+    const erc1155 = await erc1155Instance.deploy(URI);
+    await erc1155.deployed();
+
+    const NFTSaleInstance = await ethers.getContractFactory("NFTSale");
+    const NFTSale = await NFTSaleInstance.deploy(wallet.address, erc1155.address);
+    await NFTSale.deployed();
+
+    await NFTSale.setPreSaleMode();
+
+    await expect(
+      NFTSale.connect(addr1).buyToken(0, 9, { value: ethers.utils.parseEther("0.09") }),
     ).to.be.revertedWith("NFTSale::buyToken: amount is more than allowed or you are not logged into whitelist");
   });
 
