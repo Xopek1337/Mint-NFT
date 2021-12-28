@@ -9,9 +9,10 @@ const {
 const URI = "https://ipfs.io/ipfs/QmTgqnhFBMkfT9s8PHKcdXBn1f5bG3Q5hmBaR4U6hoTvb1?filename=Chainlink_Elf.png";
 
 describe("NFTSaleTest", () => {
+  beforeEach(async function () {
+    [wallet, wallet2, addr1, addr2] = await ethers.getSigners();
+  });
   it("should fail if nonSaleMode is activated", async () => {
-    const [wallet, addr1] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -26,8 +27,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should fail if not enough supply with PreSaleMode", async () => {
-    const [wallet, addr1] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -48,8 +47,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should fail if not enough supply with SaleMode", async () => {
-    const [wallet, addr1] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -68,7 +65,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should bye one coupon from first collection with PreSaleMode", async () => {
-    const [wallet, addr1] = await ethers.getSigners();
     const price = await BigNumber.from("20000000000000000");
 
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
@@ -95,7 +91,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should bye one coupon from first collection with SaleMode", async () => {
-    const [wallet, addr1] = await ethers.getSigners();
     const price = await BigNumber.from("20000000000000000");
 
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
@@ -120,8 +115,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should fail if amount is more than allowed", async () => {
-    const [wallet, addr1] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -140,8 +133,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should fail if you are not logged into whitelist", async () => {
-    const [wallet, addr1] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -158,8 +149,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should fail is amount is more than maxBuyAmount with PreSaleMode", async () => {
-    const [wallet, addr1] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -178,8 +167,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should fail is amount is more than maxBuyAmount with SaleMode", async () => {
-    const [wallet, addr1] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -196,8 +183,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should fail if collection does not exist wiht PreSaleMode", async () => {
-    const [wallet, addr1] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -216,8 +201,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should fail if collection does not exist with SaleMode", async () => {
-    const [wallet, addr1] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -234,8 +217,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should fail if not enough ether sent with PreSaleMode", async () => {
-    const [wallet, addr1] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -254,8 +235,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should fail if not enough ether sent with SaleMode", async () => {
-    const [wallet, addr1] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -272,8 +251,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should turn on preSaleMode", async () => {
-    const [wallet] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -290,8 +267,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should turn on saleMode", async () => {
-    const [wallet] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -308,8 +283,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should turn on noneSaleMode", async () => {
-    const [wallet] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -328,8 +301,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should add to whitelist", async () => {
-    const [wallet, addr1] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -348,8 +319,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should change maxBuyAmount", async () => {
-    const [wallet] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -368,8 +337,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should change wallet", async () => {
-    const [wallet, wallet2] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -386,8 +353,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should change tokenData", async () => {
-    const [wallet] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -409,8 +374,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should faile if amounts length must not be equal rates length", async () => {
-    const [wallet] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -428,8 +391,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should add tokens", async () => {
-    const [wallet] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -452,8 +413,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should get tokens", async () => {
-    const [wallet] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -470,8 +429,6 @@ describe("NFTSaleTest", () => {
   });
 
   it("should get length of the tokens array", async () => {
-    const [wallet] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();

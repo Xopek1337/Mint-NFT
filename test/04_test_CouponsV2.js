@@ -9,9 +9,10 @@ const {
 const URI = "https://ipfs.io/ipfs/QmTgqnhFBMkfT9s8PHKcdXBn1f5bG3Q5hmBaR4U6hoTvb1?filename=Chainlink_Elf.png";
 
 describe("couponsV2Test", () => {
+  beforeEach(async function () {
+    [wallet, addr1] = await ethers.getSigners();
+  });
   it("should faile if contract is paused", async () => {
-    const [wallet, addr1] = await ethers.getSigners();
-
     const couponsV2Instance = await ethers.getContractFactory("Coupon");
     const couponsV2 = await couponsV2Instance.deploy(wallet.address, URI);
     await couponsV2.deployed();
@@ -22,8 +23,6 @@ describe("couponsV2Test", () => {
   });
 
   it("should faile if couponID does not exist", async () => {
-    const [wallet, addr1] = await ethers.getSigners();
-
     const couponsV2Instance = await ethers.getContractFactory("Coupon");
     const couponsV2 = await couponsV2Instance.deploy(wallet.address, URI);
     await couponsV2.deployed();
@@ -36,8 +35,6 @@ describe("couponsV2Test", () => {
   });
 
   it("should faile if not enough ether sent", async () => {
-    const [wallet, addr1] = await ethers.getSigners();
-
     const couponsV2Instance = await ethers.getContractFactory("Coupon");
     const couponsV2 = await couponsV2Instance.deploy(wallet.address, URI);
     await couponsV2.deployed();
@@ -50,8 +47,6 @@ describe("couponsV2Test", () => {
   });
 
   it("should faile if not enough enough sepply", async () => {
-    const [wallet, addr1] = await ethers.getSigners();
-
     const couponsV2Instance = await ethers.getContractFactory("Coupon");
     const couponsV2 = await couponsV2Instance.deploy(wallet.address, URI);
     await couponsV2.deployed();
@@ -64,7 +59,6 @@ describe("couponsV2Test", () => {
   });
 
   it("should bye one coupon from first collection", async () => {
-    const [wallet, addr1] = await ethers.getSigners();
     const price = await BigNumber.from("600000000000000000");
 
     const couponsV2Instance = await ethers.getContractFactory("Coupon");
@@ -83,8 +77,6 @@ describe("couponsV2Test", () => {
   });
 
   it("should turn on pause", async () => {
-    const [wallet] = await ethers.getSigners();
-
     const couponsV2Instance = await ethers.getContractFactory("Coupon");
     const couponsV2 = await couponsV2Instance.deploy(wallet.address, URI);
     await couponsV2.deployed();
@@ -97,8 +89,6 @@ describe("couponsV2Test", () => {
   });
 
   it("should change URI", async () => {
-    const [wallet] = await ethers.getSigners();
-
     const couponsV2Instance = await ethers.getContractFactory("Coupon");
     const couponsV2 = await couponsV2Instance.deploy(wallet.address, URI);
     await couponsV2.deployed();
@@ -113,8 +103,6 @@ describe("couponsV2Test", () => {
   });
 
   it("should change wallet", async () => {
-    const [wallet] = await ethers.getSigners();
-
     const couponsV2Instance = await ethers.getContractFactory("Coupon");
     const couponsV2 = await couponsV2Instance.deploy(wallet.address, URI);
     await couponsV2.deployed();
@@ -127,8 +115,6 @@ describe("couponsV2Test", () => {
   });
 
   it("should change couponData", async () => {
-    const [wallet] = await ethers.getSigners();
-
     const couponsV2Instance = await ethers.getContractFactory("Coupon");
     const couponsV2 = await couponsV2Instance.deploy(wallet.address, URI);
     await couponsV2.deployed();
@@ -146,8 +132,6 @@ describe("couponsV2Test", () => {
   });
 
   it("should faile if amounts length must not be equal rates length", async () => {
-    const [wallet] = await ethers.getSigners();
-
     const couponsV2Instance = await ethers.getContractFactory("Coupon");
     const couponsV2 = await couponsV2Instance.deploy(wallet.address, URI);
     await couponsV2.deployed();
@@ -161,8 +145,6 @@ describe("couponsV2Test", () => {
   });
 
   it("should add coupons", async () => {
-    const [wallet] = await ethers.getSigners();
-
     const couponsV2Instance = await ethers.getContractFactory("Coupon");
     const couponsV2 = await couponsV2Instance.deploy(wallet.address, URI);
     await couponsV2.deployed();
@@ -183,8 +165,6 @@ describe("couponsV2Test", () => {
   });
 
   it("should get coupons", async () => {
-    const [wallet] = await ethers.getSigners();
-
     const couponsV2Instance = await ethers.getContractFactory("Coupon");
     const couponsV2 = await couponsV2Instance.deploy(wallet.address, URI);
     await couponsV2.deployed();
@@ -197,8 +177,6 @@ describe("couponsV2Test", () => {
   });
 
   it("should get length of the coupons array", async () => {
-    const [wallet] = await ethers.getSigners();
-
     const couponsV2Instance = await ethers.getContractFactory("Coupon");
     const couponsV2 = await couponsV2Instance.deploy(wallet.address, URI);
     await couponsV2.deployed();

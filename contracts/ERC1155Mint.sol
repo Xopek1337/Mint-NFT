@@ -16,8 +16,8 @@ contract ERC1155Mint is ERC1155, Ownable {
         _;
     }
 
-    function mint(uint256 collectionId, uint256 amount, address addr) external payable onlyManager returns (bool) {
-        _mint(addr, collectionId, amount, "");
+    function mint(uint256 bundle, uint256 amount, address addr) external payable onlyManager returns (bool) {
+        _mint(addr, bundle, amount, "");
 
         return true;
     }

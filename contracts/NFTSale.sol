@@ -38,33 +38,33 @@ contract NFTSale is Ownable {
         addToken(100, 0.01 ether);
     }
 
-    function buyToken(uint collectionId, uint amount) external payable returns (bool) {
+    function buyToken(uint bundle, uint amount) external payable returns (bool) {
         if (preSale) {
             require(Accounts[msg.sender].allowedAmount >= Accounts[msg.sender].buyedAmount + amount, "NFTSale::buyToken: amount is more than allowed or you are not logged into whitelist");
             require(amount <= maxBuyAmount, "NFTSale::buyToken: amount can not exceed maxBuyAmount");
-            require(collectionId < tokens.length, "NFTSale::buyToken: collection does not exist");
-            require(msg.value == tokens[collectionId].rate * amount, "NFTSale::buyToken: not enough ether sent");
+            require(bundle < tokens.length, "NFTSale::buyToken: collection does not exist");
+            require(msg.value == tokens[bundle].rate * amount, "NFTSale::buyToken: not enough ether sent");
 
-            tokens[collectionId].minted += amount;
-            require(tokens[collectionId].minted <= tokens[collectionId].amount, "NFTSale::buyToken: not enough supply");
+            tokens[bundle].minted += amount;
+            require(tokens[bundle].minted <= tokens[bundle].amount, "NFTSale::buyToken: not enough supply");
 
             wallet.transfer(msg.value);
-            token.mint(collectionId, amount, msg.sender);
-            emit Transfer(msg.sender, collectionId, amount);
+            token.mint(bundle, amount, msg.sender);
+            emit Transfer(msg.sender, bundle, amount);
 
             return true;
         }
         else if (sale) {
             require(amount <= maxBuyAmount, "NFTSale::buyToken: amount can not exceed maxBuyAmount");
-            require(collectionId < tokens.length, "NFTSale::buyToken: collection does not exist");
-            require(msg.value == tokens[collectionId].rate * amount, "NFTSale::buyToken: not enough ether sent");
+            require(bundle < tokens.length, "NFTSale::buyToken: collection does not exist");
+            require(msg.value == tokens[bundle].rate * amount, "NFTSale::buyToken: not enough ether sent");
 
-            tokens[collectionId].minted += amount;
-            require(tokens[collectionId].minted <= tokens[collectionId].amount, "NFTSale::buyToken: not enough supply");
+            tokens[bundle].minted += amount;
+            require(tokens[bundle].minted <= tokens[bundle].amount, "NFTSale::buyToken: not enough supply");
             
             wallet.transfer(msg.value);
-            token.mint(collectionId, amount, msg.sender);
-            emit Transfer(msg.sender, collectionId, amount);
+            token.mint(bundle, amount, msg.sender);
+            emit Transfer(msg.sender, bundle, amount);
             
             return true;
         }

@@ -9,9 +9,10 @@ const {
 const URI = "https://ipfs.io/ipfs/QmTgqnhFBMkfT9s8PHKcdXBn1f5bG3Q5hmBaR4U6hoTvb1?filename=Chainlink_Elf.png";
 
 describe("ERC1155MintTest", () => {
+  beforeEach(async function () {
+    [addr1] = await ethers.getSigners();
+  });
   it("should mint", async () => {
-    const [addr1] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -28,8 +29,6 @@ describe("ERC1155MintTest", () => {
     expect(amount).to.equal(mintedCoupons);
   });
   it("should set manager", async () => {
-    const [addr1] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
@@ -42,8 +41,6 @@ describe("ERC1155MintTest", () => {
   });
 
   it("should fail if minter is not manager", async () => {
-    const [addr1] = await ethers.getSigners();
-
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     const erc1155 = await erc1155Instance.deploy(URI);
     await erc1155.deployed();
