@@ -6,12 +6,11 @@ const URI = "https://ipfs.io/ipfs/QmTgqnhFBMkfT9s8PHKcdXBn1f5bG3Q5hmBaR4U6hoTvb1
 describe("ERC1155MintTest", () => {
   beforeEach(async () => {
     [addr1] = await ethers.getSigners();
+
+    const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
+    erc1155 = await erc1155Instance.deploy(URI);
   });
   it("should mint", async () => {
-    const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
-    const erc1155 = await erc1155Instance.deploy(URI);
-    await erc1155.deployed();
-
     await erc1155.setManager(addr1.address);
 
     const collectionId = 1;
@@ -24,10 +23,6 @@ describe("ERC1155MintTest", () => {
     expect(amount).to.equal(mintedCoupons);
   });
   it("should set manager", async () => {
-    const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
-    const erc1155 = await erc1155Instance.deploy(URI);
-    await erc1155.deployed();
-
     await erc1155.setManager(addr1.address);
 
     const manager = await erc1155.manager();
@@ -36,10 +31,6 @@ describe("ERC1155MintTest", () => {
   });
 
   it("should fail if minter is not manager", async () => {
-    const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
-    const erc1155 = await erc1155Instance.deploy(URI);
-    await erc1155.deployed();
-
     const collectionId = 1;
     const amount = 5;
 
