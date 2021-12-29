@@ -8,13 +8,13 @@ Also, smart contracts are fully tested, the tests are located in the tests folde
 
 ### Instalation
 
-bash
-npm install
+bash  
+```npm install```
 
 ### Usage
 
 For further work, you will need to install in this project all all the necessary dependencies,  
-which are listed in the 'package.json' file (for example, coverage (npm install coverage))
+which are listed in the 'package.json' file (for example, coverage (```npm install coverage```))
 
 ### Compilation
 
