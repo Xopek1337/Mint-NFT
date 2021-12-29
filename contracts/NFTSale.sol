@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.10;
 
-import 'contracts/ERC1155Mint.sol';
+import './ERC1155Mint.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 
 /**
