@@ -13,7 +13,7 @@ async function main() {
     await hre.run("verify:verify", {
       address: data.passes,
       constructorArguments: [wallet, uri],
-      contract: "contracts/mintingPass.sol:mintingPass",
+      contract: "contracts/mintingPass.sol:MintingPass",
     });
   } catch (e) {
     console.log(e);

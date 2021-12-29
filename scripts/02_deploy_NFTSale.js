@@ -33,8 +33,9 @@ async function main() {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
+  const fileName2 = "NFTSale_" + `${network}.json`;
 
-  await fs.writeFileSync(dir + fileName, changedData, { encoding: "utf8" });
+  await fs.writeFileSync(dir + fileName2, changedData, { encoding: "utf8" });
 }
 
 main()
