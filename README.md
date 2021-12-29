@@ -9,7 +9,7 @@ Also, smart contracts are fully tested, the tests are located in the tests folde
 ### Instalation
 
 bash  
-```npm install```
+```yarn install```
 
 ### Usage
 
