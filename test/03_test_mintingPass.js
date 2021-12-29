@@ -82,9 +82,15 @@ describe("mintingPassTest", () => {
     it("should change URI", async () => {
       await mintingPass._setNewURI(URI);
 
-      const endingURI = await mintingPass.uri(1);
+      const endingURI = await mintingPass._uri();
 
       expect(URI).to.equal(endingURI);
+    });
+
+    it("should return IPFS URL", async () => {
+      const answer = await mintingPass.uri(0);
+  
+      expect(URI + "0").to.equal(answer);
     });
 
     it("should change wallet", async () => {
