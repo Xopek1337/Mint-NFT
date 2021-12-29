@@ -26,10 +26,10 @@ which are listed in the 'package.json' file (for example, coverage (npm install 
 
 ### Deploying contract
 
-'''npx hardhat run scripts/ *select the file you want to run*'''
+'''npx hardhat run scripts/ *select the file you want to run*'''  
 --network rinkeby
 
 ### Verify a contract
 
-'''npx hardhat run scripts/ *select the file you want to run*'''
+'''npx hardhat run scripts/ *select the file you want to run*'''  
 --network rinkeby
