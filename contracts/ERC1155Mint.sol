@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
 * @title  ERC1155Mint.
-* @author Smart contract development team.
+* @author bright lynx team.
 * @dev The ERC1155Mint contract has one main function 'mint' to send the required tokens number of bundle to user. 
 _mint is inherited from the ERC1155 contract by openzeppelin.
 */

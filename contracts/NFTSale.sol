@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
 * @title  NFTSale.
-* @author Smart contract development team.
+* @author bright lynx team.
 * @dev This is a contract for the purchase of tokens by the user. 
 * There is a whitelist so that users can participate in the presale for the amounts specified by the contract.
 * The contract owner can turn sales/presales on and off, set a new URI, change the wallet address, 

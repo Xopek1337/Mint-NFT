@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
 * @title  mintingPass.
-* @author Smart contract development team.
+* @author bright lynx team.
 * @dev The mintingPass contract mints a specified number of bundles and counts the number of minted, 
 * and does not allow the user to purchase more than the limit. 
 * Users can buy the valid quantity of bundles.
