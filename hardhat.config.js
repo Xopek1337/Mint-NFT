@@ -1,15 +1,10 @@
 require("@nomiclabs/hardhat-waffle");
 require("solidity-coverage");
-require('@nomiclabs/hardhat-ethers');
+require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-etherscan");
-require('dotenv').config();
+require("dotenv").config();
+require("hardhat-deploy");
 
-// You need to export an object to set up your config
-// Go to https://hardhat.org/config/ to learn more
-
-/**
- * @type import('hardhat/config').HardhatUserConfig
- */
 module.exports = {
   solidity: {
     version: "0.8.10",

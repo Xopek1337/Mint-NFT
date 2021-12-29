@@ -1,5 +1,3 @@
-const hre = require("hardhat");
-
 const network = hre.network.name;
 const fs = require("fs");
 
@@ -7,9 +5,9 @@ async function main() {
   const wallet = process.env.WALLET;
   const uri = process.env.NFT_URI;
 
-  let dir = './networks/';
-  const fileName = network + '.json';
-  let data = JSON.parse(await fs.readFileSync(dir + fileName, { encoding: 'utf8' }));
+  const dir = "./networks/";
+  const fileName = "mintingPass_" + `${network}.json`;
+  const data = JSON.parse(await fs.readFileSync(dir + fileName, { encoding: "utf8" }));
 
   try {
     await hre.run("verify:verify", {

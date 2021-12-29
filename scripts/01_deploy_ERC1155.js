@@ -1,5 +1,3 @@
-const hre = require("hardhat");
-
 const network = hre.network.name;
 const fs = require("fs");
 
@@ -12,22 +10,22 @@ async function main() {
   const ERC1155Instance = await ethers.getContractFactory("ERC1155Mint");
   const ERC1155 = await ERC1155Instance.deploy(uri);
 
-  console.log('Network', network);
-  console.log('Deploying contracts with the account:', deployer.address);
-  console.log('Account balance:', (await deployer.getBalance()).toString());
+  console.log("Network", network);
+  console.log("Deploying contracts with the account:", deployer.address);
+  console.log("Account balance:", (await deployer.getBalance()).toString());
 
   console.log(`ERC1155 smart contract has been deployed to: ${ERC1155.address}`);
 
   namesAndAddresses.ERC1155 = ERC1155.address;
 
-  let data = await JSON.stringify(namesAndAddresses, null, 2);
-  let dir = './networks/';
-  if (!fs.existsSync(dir)){
-      fs.mkdirSync(dir, { recursive: true });
+  const data = await JSON.stringify(namesAndAddresses, null, 2);
+  const dir = "./networks/";
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
   }
-  const fileName = network + '.json';
+  const fileName = "ERC1155_" + `${network}.json`;
 
-  await fs.writeFileSync(dir + fileName, data, { encoding: 'utf8' });
+  await fs.writeFileSync(dir + fileName, data, { encoding: "utf8" });
 }
 
 main()

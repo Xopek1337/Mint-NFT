@@ -2,45 +2,48 @@
 
 pragma solidity 0.8.10;
 
-import "contracts/ERC1155Mint.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import 'contracts/ERC1155Mint.sol';
+import '@openzeppelin/contracts/access/Ownable.sol';
 
 /**
-* @title  NFTSale.
-* @author bright lynx team.
-* @dev This is a contract for the purchase of tokens by the user. 
-* There is a whitelist so that users can participate in the presale for the amounts specified by the contract.
-* The contract owner can turn sales/presales on and off, set a new URI, change the wallet address, 
-* set maximum number of tokens to purchase, add bundles, change their price and supplies.
-*/
+ * @title  NFTSale.
+ * @author bright lynx team.
+ * @dev This is a contract for the purchase of tokens by the user.
+ * There is a whitelist so that users can participate in the presale for the amounts specified by the contract.
+ * The contract owner can turn sales/presales on and off, set a new URI, change the wallet address,
+ * set maximum number of tokens to purchase, add bundles, change their price and supplies.
+ */
 
 contract NFTSale is Ownable {
     struct bundleData {
-        uint amount;
-        uint minted;
-        uint rate;
+        uint256 amount;
+        uint256 minted;
+        uint256 rate;
     }
 
     bundleData[] public bundles;
 
     ERC1155Mint public token;
     address payable public wallet;
-    uint public maxBuyAmount = 10;
+    uint256 public maxBuyAmount = 10;
 
     mapping(address => Amounts) public Accounts;
 
     struct Amounts {
-        uint allowed;
-        uint bought;
+        uint256 allowed;
+        uint256 bought;
     }
 
     bool public preSale = false;
     bool public sale = false;
 
-    event Transfer(address _addr, uint _bundleId, uint _amount);
+    event Transfer(address _addr, uint256 _bundleId, uint256 _amount);
 
     constructor(address payable _wallet, address _token) {
-        require(_wallet != address(0), "NFTSale::constructor: wallet does not exist");
+        require(
+            _wallet != address(0),
+            'NFTSale::constructor: wallet does not exist'
+        );
         token = ERC1155Mint(_token);
         wallet = _wallet;
 
@@ -59,15 +62,35 @@ contract NFTSale is Ownable {
     /// @param _amount The number of the desired token's amount.
     /// @return The bool value.
 
-    function buyToken(uint _bundleId, uint _amount) external payable returns (bool) {
+    function buyToken(uint256 _bundleId, uint256 _amount)
+        external
+        payable
+        returns (bool)
+    {
         if (preSale) {
-            require(Accounts[msg.sender].allowed >= Accounts[msg.sender].bought + _amount, "NFTSale::buyToken: amount is more than allowed or you are not logged into whitelist");
-            require(_amount <= maxBuyAmount, "NFTSale::buyToken: amount can not exceed maxBuyAmount");
-            require(_bundleId < bundles.length, "NFTSale::buyToken: collection does not exist");
-            require(msg.value == bundles[_bundleId].rate * _amount, "NFTSale::buyToken: not enough ether sent");
+            require(
+                Accounts[msg.sender].allowed >=
+                    Accounts[msg.sender].bought + _amount,
+                'NFTSale::buyToken: amount is more than allowed or you are not logged into whitelist'
+            );
+            require(
+                _amount <= maxBuyAmount,
+                'NFTSale::buyToken: amount can not exceed maxBuyAmount'
+            );
+            require(
+                _bundleId < bundles.length,
+                'NFTSale::buyToken: collection does not exist'
+            );
+            require(
+                msg.value == bundles[_bundleId].rate * _amount,
+                'NFTSale::buyToken: not enough ether sent'
+            );
 
             bundles[_bundleId].minted += _amount;
-            require(bundles[_bundleId].minted <= bundles[_bundleId].amount, "NFTSale::buyToken: not enough supply");
+            require(
+                bundles[_bundleId].minted <= bundles[_bundleId].amount,
+                'NFTSale::buyToken: not enough supply'
+            );
 
             wallet.transfer(msg.value);
             token.mint(_bundleId, _amount, msg.sender);
@@ -76,28 +99,45 @@ contract NFTSale is Ownable {
             emit Transfer(msg.sender, _bundleId, _amount);
 
             return true;
-        }
-        else if (sale) {
-            require(_amount <= maxBuyAmount, "NFTSale::buyToken: amount can not exceed maxBuyAmount");
-            require(_bundleId < bundles.length, "NFTSale::buyToken: collection does not exist");
-            require(msg.value == bundles[_bundleId].rate * _amount, "NFTSale::buyToken: not enough ether sent");
+        } else if (sale) {
+            require(
+                _amount <= maxBuyAmount,
+                'NFTSale::buyToken: amount can not exceed maxBuyAmount'
+            );
+            require(
+                _bundleId < bundles.length,
+                'NFTSale::buyToken: collection does not exist'
+            );
+            require(
+                msg.value == bundles[_bundleId].rate * _amount,
+                'NFTSale::buyToken: not enough ether sent'
+            );
 
             bundles[_bundleId].minted += _amount;
-            require(bundles[_bundleId].minted <= bundles[_bundleId].amount, "NFTSale::buyToken: not enough supply");
-            
+            require(
+                bundles[_bundleId].minted <= bundles[_bundleId].amount,
+                'NFTSale::buyToken: not enough supply'
+            );
+
             wallet.transfer(msg.value);
             token.mint(_bundleId, _amount, msg.sender);
             emit Transfer(msg.sender, _bundleId, _amount);
-            
+
             return true;
-        }
-        else {
-            revert("NFTSale::buyToken: sales are closed");
+        } else {
+            revert('NFTSale::buyToken: sales are closed');
         }
     }
 
-    function _setSellingMode(bool _sale, bool _preSale) external onlyOwner returns (bool) {
-        require((_sale && _preSale) == false, "NFTSale::setSellingMode: can not set 2 selling mode at once");
+    function _setSellingMode(bool _sale, bool _preSale)
+        external
+        onlyOwner
+        returns (bool)
+    {
+        require(
+            (_sale && _preSale) == false,
+            'NFTSale::setSellingMode: can not set 2 selling mode at once'
+        );
 
         sale = _sale;
         preSale = _preSale;
@@ -109,9 +149,13 @@ contract NFTSale is Ownable {
     /// @param _amount The new value to store.
     /// @return The bool value.
 
-    function _whitelistAdd(address _account, uint _amount) external onlyOwner returns (bool) {
+    function _whitelistAdd(address _account, uint256 _amount)
+        external
+        onlyOwner
+        returns (bool)
+    {
         Accounts[_account].allowed = _amount;
-        
+
         return true;
     }
 
@@ -120,9 +164,13 @@ contract NFTSale is Ownable {
     /// @param _maxBuyAmount The number of the token's maximum for 1 purchase.
     /// @return The bool value.
 
-    function _setMaxBuyAmount(uint _maxBuyAmount) external onlyOwner returns (bool) { 
+    function _setMaxBuyAmount(uint256 _maxBuyAmount)
+        external
+        onlyOwner
+        returns (bool)
+    {
         maxBuyAmount = _maxBuyAmount;
-        
+
         return true;
     }
 
@@ -131,9 +179,13 @@ contract NFTSale is Ownable {
     /// @param _wallet The new value to store.
     /// @return The bool value.
 
-    function _setWallet(address payable _wallet) external onlyOwner returns (bool) { 
+    function _setWallet(address payable _wallet)
+        external
+        onlyOwner
+        returns (bool)
+    {
         wallet = _wallet;
-        
+
         return true;
     }
 
@@ -144,7 +196,11 @@ contract NFTSale is Ownable {
     /// @param _rate The new value to store.
     /// @return The bool value.
 
-    function _setBundleData(uint _bundleId, uint _amount, uint _rate) external onlyOwner returns (bool) {
+    function _setBundleData(
+        uint256 _bundleId,
+        uint256 _amount,
+        uint256 _rate
+    ) external onlyOwner returns (bool) {
         bundles[_bundleId].amount = _amount;
         bundles[_bundleId].rate = _rate;
 
@@ -157,10 +213,17 @@ contract NFTSale is Ownable {
     /// @param _rates The supply of a new bundle.
     /// @return The bool value.
 
-    function _addBundles(uint[] calldata _amounts, uint[] calldata _rates) public onlyOwner returns (bool) {
-        require(_amounts.length == _rates.length, 'NFTSale::addBundles: amounts length must be equal rates length');
+    function _addBundles(uint256[] calldata _amounts, uint256[] calldata _rates)
+        public
+        onlyOwner
+        returns (bool)
+    {
+        require(
+            _amounts.length == _rates.length,
+            'NFTSale::addBundles: amounts length must be equal rates length'
+        );
 
-        for(uint i = 0; i < _amounts.length; i++) {
+        for (uint256 i = 0; i < _amounts.length; i++) {
             _addBundle(_amounts[i], _rates[i]);
         }
 
@@ -173,8 +236,15 @@ contract NFTSale is Ownable {
     /// @param _rate The supply of a new bundle.
     /// @return The bool value.
 
-    function _addBundle(uint _amount, uint _rate) internal returns (bool) {
-        bundleData memory pass = bundleData({amount: _amount, minted: 0, rate: _rate});
+    function _addBundle(uint256 _amount, uint256 _rate)
+        internal
+        returns (bool)
+    {
+        bundleData memory pass = bundleData({
+            amount: _amount,
+            minted: 0,
+            rate: _rate
+        });
         bundles.push(pass);
 
         return true;
@@ -185,7 +255,6 @@ contract NFTSale is Ownable {
     /// @return The array values.
 
     function getBundles() public view returns (bundleData[] memory) {
-
         return bundles;
     }
 
@@ -193,8 +262,7 @@ contract NFTSale is Ownable {
     /// @dev The function returns the the number of array's elements.
     /// @return The number.
 
-    function getBundlesLength() public view returns (uint) {
-
+    function getBundlesLength() public view returns (uint256) {
         return bundles.length;
     }
 }

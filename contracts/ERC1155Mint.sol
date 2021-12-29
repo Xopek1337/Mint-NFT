@@ -2,8 +2,8 @@
 
 pragma solidity 0.8.10;
 
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import '@openzeppelin/contracts/token/ERC1155/ERC1155.sol';
+import '@openzeppelin/contracts/access/Ownable.sol';
 
 /**
 * @title  ERC1155Mint.
@@ -15,11 +15,13 @@ _mint is inherited from the ERC1155 contract by openzeppelin.
 contract ERC1155Mint is ERC1155, Ownable {
     address public manager;
 
-    constructor(string memory uri) ERC1155(uri) {
-    }
-    
+    constructor(string memory uri) ERC1155(uri) {}
+
     modifier onlyManager() {
-        require(msg.sender == manager, "ERC1155Mint::mint: sender is not manager");
+        require(
+            msg.sender == manager,
+            'ERC1155Mint::mint: sender is not manager'
+        );
         _;
     }
 
@@ -30,8 +32,12 @@ contract ERC1155Mint is ERC1155, Ownable {
     /// @param _addr The address of the token recipient.
     /// @return The bool value.
 
-    function mint(uint256 _bundleId, uint256 _amount, address _addr) external payable onlyManager returns (bool) {
-        _mint(_addr, _bundleId, _amount, "");
+    function mint(
+        uint256 _bundleId,
+        uint256 _amount,
+        address _addr
+    ) external payable onlyManager returns (bool) {
+        _mint(_addr, _bundleId, _amount, '');
 
         return true;
     }

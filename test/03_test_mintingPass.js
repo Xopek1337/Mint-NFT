@@ -5,12 +5,12 @@ const {
     BigNumber,
   },
 } = require("hardhat");
-const { constants }= require("@openzeppelin/test-helpers");
+const { constants } = require("@openzeppelin/test-helpers");
 
 const URI = "https://ipfs.io/ipfs/QmTgqnhFBMkfT9s8PHKcdXBn1f5bG3Q5hmBaR4U6hoTvb1?filename=Chainlink_Elf.png";
 
 describe("mintingPassTest", () => {
-  beforeEach(async function () {
+  beforeEach(async () => {
     [wallet, wallet2, addr1] = await ethers.getSigners();
   });
   it("should faile if contract is paused", async () => {
@@ -163,7 +163,7 @@ describe("mintingPassTest", () => {
 
     await mintingPass._addPasses(amounts, rates);
 
-    const newFirstPass= await mintingPass.passes(6);
+    const newFirstPass = await mintingPass.passes(6);
     const newFirstAmount = newFirstPass.amount;
     const newFirstRate = newFirstPass.rate;
 

@@ -5,10 +5,13 @@
   "main": "hardhat.config.js",
   "scripts": {
     "compile": "npm run prettier:solidity && npx hardhat compile",
-    "test": "npm run prettier:js && npm run eslint:fix && npx hardhat test",
-    "deploy": "npm run eslint:fix && npx hardhat deploy",
+    "test": "npm run eslint:fix-tests && npx hardhat test",
+    "deploy": "npm run eslint:fix-scripts && npx hardhat deploy",
     "verify": "npx hardhat etherscan-verify",
-    "coverage": "npx hardhat coverage"
+    "coverage": "npx hardhat coverage",
+    "eslint:fix-tests": "eslint test/* --fix",
+    "prettier:solidity": "./node_modules/.bin/prettier --write contracts/**/*.sol",
+    "eslint:fix-scripts": "eslint scripts/* --fix"
   },
   "repository": "git@bitbucket.org:gogolevdms/nftexample.git",
   "keywords": [
@@ -40,6 +43,7 @@
     "@openzeppelin/test-helpers": "^0.5.15",
     "delay": "^5.0.0",
     "dotenv": "^10.0.0",
+    "hardhat-deploy": "^0.9.22",
     "solhint": "^3.3.6"
   }
 }

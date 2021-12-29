@@ -2,23 +2,23 @@
 
 pragma solidity 0.8.10;
 
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import '@openzeppelin/contracts/token/ERC1155/ERC1155.sol';
+import '@openzeppelin/contracts/access/Ownable.sol';
 
 /**
-* @title  mintingPass.
-* @author bright lynx team.
-* @dev The mintingPass contract mints a specified number of bundles and counts the number of minted, 
-* and does not allow the user to purchase more than the limit. 
-* Users can buy the valid quantity of bundles.
-* The contract owner can turn sales on and off, set a new URI, change the wallet address, add bundles, change their price and supplies.
-*/
+ * @title  mintingPass.
+ * @author bright lynx team.
+ * @dev The mintingPass contract mints a specified number of bundles and counts the number of minted,
+ * and does not allow the user to purchase more than the limit.
+ * Users can buy the valid quantity of bundles.
+ * The contract owner can turn sales on and off, set a new URI, change the wallet address, add bundles, change their price and supplies.
+ */
 
 contract MintingPass is ERC1155, Ownable {
     struct passData {
-        uint amount;
-        uint minted;
-        uint rate;
+        uint256 amount;
+        uint256 minted;
+        uint256 rate;
     }
 
     passData[] public passes;
@@ -27,7 +27,10 @@ contract MintingPass is ERC1155, Ownable {
     bool public isPaused = true;
 
     constructor(address payable _wallet, string memory uri) ERC1155(uri) {
-        require(_wallet != address(0), "MintingPass::constructor: wallet does not exist");
+        require(
+            _wallet != address(0),
+            'MintingPass::constructor: wallet does not exist'
+        );
         wallet = _wallet;
 
         _addPass(300, 0.03 ether);
@@ -48,15 +51,28 @@ contract MintingPass is ERC1155, Ownable {
     /// @param _amount The number of the desired token's amount.
     /// @return The bool value.
 
-    function mint(uint256 _passId, uint256 _amount) public payable returns (bool) {
-        require(!isPaused, "MintingPass::mint: contract is paused");
-        require(_passId <= passes.length, "MintingPass::mint: passId does not exist");
-        require(msg.value == passes[_passId].rate * _amount, "MintingPass::mint: not enough ether sent");
+    function mint(uint256 _passId, uint256 _amount)
+        public
+        payable
+        returns (bool)
+    {
+        require(!isPaused, 'MintingPass::mint: contract is paused');
+        require(
+            _passId <= passes.length,
+            'MintingPass::mint: passId does not exist'
+        );
+        require(
+            msg.value == passes[_passId].rate * _amount,
+            'MintingPass::mint: not enough ether sent'
+        );
 
         passes[_passId].minted += _amount;
-        require(passes[_passId].minted <= passes[_passId].amount, "MintingPass::mint: not enough supply");
+        require(
+            passes[_passId].minted <= passes[_passId].amount,
+            'MintingPass::mint: not enough supply'
+        );
 
-        _mint(msg.sender, _passId, _amount, "");
+        _mint(msg.sender, _passId, _amount, '');
 
         wallet.transfer(msg.value);
 
@@ -79,7 +95,11 @@ contract MintingPass is ERC1155, Ownable {
     /// @param _newUri The new value to store.
     /// @return The bool value.
 
-    function _setNewURI(string memory _newUri) external onlyOwner returns (bool) {
+    function _setNewURI(string memory _newUri)
+        external
+        onlyOwner
+        returns (bool)
+    {
         _setURI(_newUri);
 
         return true;
@@ -90,7 +110,11 @@ contract MintingPass is ERC1155, Ownable {
     /// @param _wallet The new value to store.
     /// @return The bool value.
 
-    function _setWallet(address payable _wallet) external onlyOwner returns (bool) {
+    function _setWallet(address payable _wallet)
+        external
+        onlyOwner
+        returns (bool)
+    {
         wallet = _wallet;
 
         return true;
@@ -103,7 +127,11 @@ contract MintingPass is ERC1155, Ownable {
     /// @param _rate The new value to store.
     /// @return The bool value.
 
-    function _setPassData(uint _passId, uint _amount, uint _rate) external onlyOwner returns (bool) {
+    function _setPassData(
+        uint256 _passId,
+        uint256 _amount,
+        uint256 _rate
+    ) external onlyOwner returns (bool) {
         passes[_passId].amount = _amount;
         passes[_passId].rate = _rate;
 
@@ -116,10 +144,17 @@ contract MintingPass is ERC1155, Ownable {
     /// @param _rates The supply of a new bundle.
     /// @return The bool value.
 
-    function _addPasses(uint[] calldata _amounts, uint[] calldata _rates) public onlyOwner returns (bool) {
-        require(_amounts.length == _rates.length, 'MintingPass::addPasses: amounts length must be equal rates length');
+    function _addPasses(uint256[] calldata _amounts, uint256[] calldata _rates)
+        public
+        onlyOwner
+        returns (bool)
+    {
+        require(
+            _amounts.length == _rates.length,
+            'MintingPass::addPasses: amounts length must be equal rates length'
+        );
 
-        for(uint i = 0; i < _amounts.length; i++) {
+        for (uint256 i = 0; i < _amounts.length; i++) {
             _addPass(_amounts[i], _rates[i]);
         }
 
@@ -132,8 +167,12 @@ contract MintingPass is ERC1155, Ownable {
     /// @param _rate The supply of a new bundle.
     /// @return The bool value.
 
-    function _addPass(uint _amount, uint _rate) internal returns (bool) {
-        passData memory pass = passData({amount: _amount, minted: 0, rate: _rate});
+    function _addPass(uint256 _amount, uint256 _rate) internal returns (bool) {
+        passData memory pass = passData({
+            amount: _amount,
+            minted: 0,
+            rate: _rate
+        });
         passes.push(pass);
 
         return true;
@@ -144,7 +183,6 @@ contract MintingPass is ERC1155, Ownable {
     /// @return The array values.
 
     function getPasses() public view returns (passData[] memory) {
-
         return passes;
     }
 
@@ -152,8 +190,7 @@ contract MintingPass is ERC1155, Ownable {
     /// @dev The function returns the the number of array's elements.
     /// @return The number.
 
-    function getPassesLength() public view returns (uint) {
-
+    function getPassesLength() public view returns (uint256) {
         return passes.length;
     }
 }

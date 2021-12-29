@@ -5,12 +5,12 @@ const {
     BigNumber,
   },
 } = require("hardhat");
-const { constants }= require("@openzeppelin/test-helpers");
+const { constants } = require("@openzeppelin/test-helpers");
 
 const URI = "https://ipfs.io/ipfs/QmTgqnhFBMkfT9s8PHKcdXBn1f5bG3Q5hmBaR4U6hoTvb1?filename=Chainlink_Elf.png";
 
 describe("NFTSaleTest", () => {
-  beforeEach(async function () {
+  beforeEach(async () => {
     [wallet, wallet2, addr1, addr2] = await ethers.getSigners();
   });
   it("should faile if wallet does not exist", async () => {
@@ -79,7 +79,6 @@ describe("NFTSaleTest", () => {
       NFTSale.connect(addr1).buyToken(0, 8, { value: ethers.utils.parseEther("0.08") }),
     ).to.be.revertedWith("NFTSale::buyToken: amount is more than allowed or you are not logged into whitelist");
   });
-
 
   it("should fail if not enough supply with SaleMode", async () => {
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
@@ -451,7 +450,7 @@ describe("NFTSaleTest", () => {
     const amounts = [320, 300, 280, 100];
     const rates = [ethers.utils.parseEther("0.1"), ethers.utils.parseEther("0.2"), ethers.utils.parseEther("0.3"), ethers.utils.parseEther("0.05")];
 
-    await NFTSale._addBundles(amounts,rates);
+    await NFTSale._addBundles(amounts, rates);
 
     const newFirstCoupon = await NFTSale.bundles(1);
     const newFirstAmount = newFirstCoupon.amount;

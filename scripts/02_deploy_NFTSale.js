@@ -1,5 +1,3 @@
-const hre = require("hardhat");
-
 const network = hre.network.name;
 const fs = require("fs");
 
@@ -7,16 +5,15 @@ async function main() {
   const namesAndAddresses = {};
   const [deployer] = await hre.ethers.getSigners();
   const wallet = process.env.WALLET;
-  
-  let dir = './networks/';
-  const fileName = network + '.json';
 
-  const data = JSON.parse(await fs.readFileSync(dir + fileName, { encoding: 'utf8' }));
+  const dir = "./networks/";
+  const fileName = "ERC1155_" + `${network}.json`;
 
-  if("SALE_TOKEN" in process.env) {
+  const data = JSON.parse(await fs.readFileSync(dir + fileName, { encoding: "utf8" }));
+
+  if ("SALE_TOKEN" in process.env) {
     namesAndAddresses.ERC1155 = process.env.SALE_TOKEN;
-  }
-  else {
+  } else {
     namesAndAddresses.ERC1155 = data.ERC1155;
   }
 
@@ -27,18 +24,17 @@ async function main() {
 
   const changedData = await JSON.stringify(namesAndAddresses, null, 2);
 
-  console.log('Network', network);
-  console.log('Deploying contracts with the account:', deployer.address);
-  console.log('Account balance:', (await deployer.getBalance()).toString());
+  console.log("Network", network);
+  console.log("Deploying contracts with the account:", deployer.address);
+  console.log("Account balance:", (await deployer.getBalance()).toString());
 
   console.log(`NFTSale smart contract has been deployed to: ${nftSale.address}`);
 
-  
-  if (!fs.existsSync(dir)){
-      fs.mkdirSync(dir, { recursive: true });
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
   }
 
-  await fs.writeFileSync(dir + fileName, changedData, { encoding: 'utf8' });
+  await fs.writeFileSync(dir + fileName, changedData, { encoding: "utf8" });
 }
 
 main()
