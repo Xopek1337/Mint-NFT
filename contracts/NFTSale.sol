@@ -15,13 +15,13 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 */
 
 contract NFTSale is Ownable {
-    struct bundleData {
+    struct tokenData {
         uint amount;
         uint minted;
         uint rate;
     }
 
-    bundleData[] public bundles;
+    tokenData[] public tokens;
 
     ERC1155Mint public token;
     address payable public wallet;
@@ -44,7 +44,7 @@ contract NFTSale is Ownable {
         token = ERC1155Mint(_token);
         wallet = _wallet;
 
-        _addBundle(100, 0.01 ether);
+        _addToken(100, 0.01 ether);
     }
 
     /// @notice  The function mints an specified token's amount of the bundle.
@@ -55,39 +55,39 @@ contract NFTSale is Ownable {
     accepts ether and sends the specified number of tokens to the user's address.
     sale: the same thing only without checking for whitelist.
     */
-    /// @param _bundleId The number of the desired bundle.
+    /// @param _tokenId The number of the desired bundle.
     /// @param _amount The number of the desired token's amount.
     /// @return The bool value.
 
-    function buyToken(uint _bundleId, uint _amount) external payable returns (bool) {
+    function buyToken(uint _tokenId, uint _amount) external payable returns (bool) {
         if (preSale) {
             require(Accounts[msg.sender].allowed >= Accounts[msg.sender].bought + _amount, "NFTSale::buyToken: amount is more than allowed or you are not logged into whitelist");
             require(_amount <= maxBuyAmount, "NFTSale::buyToken: amount can not exceed maxBuyAmount");
-            require(_bundleId < bundles.length, "NFTSale::buyToken: collection does not exist");
-            require(msg.value == bundles[_bundleId].rate * _amount, "NFTSale::buyToken: not enough ether sent");
+            require(_tokenId < tokens.length, "NFTSale::buyToken: collection does not exist");
+            require(msg.value == tokens[_tokenId].rate * _amount, "NFTSale::buyToken: not enough ether sent");
 
-            bundles[_bundleId].minted += _amount;
-            require(bundles[_bundleId].minted <= bundles[_bundleId].amount, "NFTSale::buyToken: not enough supply");
+            tokens[_tokenId].minted += _amount;
+            require(tokens[_tokenId].minted <= tokens[_tokenId].amount, "NFTSale::buyToken: not enough supply");
 
             wallet.transfer(msg.value);
-            token.mint(_bundleId, _amount, msg.sender);
+            token.mint(_tokenId, _amount, msg.sender);
             Accounts[msg.sender].bought += _amount;
 
-            emit Transfer(msg.sender, _bundleId, _amount);
+            emit Transfer(msg.sender, _tokenId, _amount);
 
             return true;
         }
         else if (sale) {
             require(_amount <= maxBuyAmount, "NFTSale::buyToken: amount can not exceed maxBuyAmount");
-            require(_bundleId < bundles.length, "NFTSale::buyToken: collection does not exist");
-            require(msg.value == bundles[_bundleId].rate * _amount, "NFTSale::buyToken: not enough ether sent");
+            require(_tokenId < tokens.length, "NFTSale::buyToken: collection does not exist");
+            require(msg.value == tokens[_tokenId].rate * _amount, "NFTSale::buyToken: not enough ether sent");
 
-            bundles[_bundleId].minted += _amount;
-            require(bundles[_bundleId].minted <= bundles[_bundleId].amount, "NFTSale::buyToken: not enough supply");
+            tokens[_tokenId].minted += _amount;
+            require(tokens[_tokenId].minted <= tokens[_tokenId].amount, "NFTSale::buyToken: not enough supply");
             
             wallet.transfer(msg.value);
-            token.mint(_bundleId, _amount, msg.sender);
-            emit Transfer(msg.sender, _bundleId, _amount);
+            token.mint(_tokenId, _amount, msg.sender);
+            emit Transfer(msg.sender, _tokenId, _amount);
             
             return true;
         }
@@ -138,63 +138,63 @@ contract NFTSale is Ownable {
     }
 
     /// @notice The function sets amount and rate for the specified bundle.
-    /// @dev Stores the values of the variables 'amount' and 'rate' for the specified bundle in the array 'bundles'.
-    /// @param _bundleId The bundle number.
+    /// @dev Stores the values of the variables 'amount' and 'rate' for the specified bundle in the array 'tokens'.
+    /// @param _tokenId The bundle number.
     /// @param _amount The new value to store.
     /// @param _rate The new value to store.
     /// @return The bool value.
 
-    function _setBundleData(uint _bundleId, uint _amount, uint _rate) external onlyOwner returns (bool) {
-        bundles[_bundleId].amount = _amount;
-        bundles[_bundleId].rate = _rate;
+    function _setTokenData(uint _tokenId, uint _amount, uint _rate) external onlyOwner returns (bool) {
+        tokens[_tokenId].amount = _amount;
+        tokens[_tokenId].rate = _rate;
 
         return true;
     }
 
     /// @notice The function adds new bundles.
-    /// @dev Adds a new element in the array 'bundles'.
+    /// @dev Adds a new element in the array 'tokens'.
     /// @param _amounts The supply of a new bundle.
     /// @param _rates The supply of a new bundle.
     /// @return The bool value.
 
-    function _addBundles(uint[] calldata _amounts, uint[] calldata _rates) public onlyOwner returns (bool) {
-        require(_amounts.length == _rates.length, 'NFTSale::addBundles: amounts length must be equal rates length');
+    function _addTokens(uint[] calldata _amounts, uint[] calldata _rates) public onlyOwner returns (bool) {
+        require(_amounts.length == _rates.length, 'NFTSale::addTokens: amounts length must be equal rates length');
 
         for(uint i = 0; i < _amounts.length; i++) {
-            _addBundle(_amounts[i], _rates[i]);
+            _addToken(_amounts[i], _rates[i]);
         }
 
         return true;
     }
 
-    /// @notice The function adds elements of a new bundle in the array 'bundles'.
-    /// @dev The function adds characteristics of a new bundle in the array 'bundles'.
+    /// @notice The function adds elements of a new bundle in the array 'tokens'.
+    /// @dev The function adds characteristics of a new bundle in the array 'tokens'.
     /// @param _amount The supply of a new bundle.
     /// @param _rate The supply of a new bundle.
     /// @return The bool value.
 
-    function _addBundle(uint _amount, uint _rate) internal returns (bool) {
-        bundleData memory pass = bundleData({amount: _amount, minted: 0, rate: _rate});
-        bundles.push(pass);
+    function _addToken(uint _amount, uint _rate) internal returns (bool) {
+        tokenData memory pass = tokenData({amount: _amount, minted: 0, rate: _rate});
+        tokens.push(pass);
 
         return true;
     }
 
     /// @notice The function shows all existing bundles.
-    /// @dev the function returns structures from the array 'bundles'.
+    /// @dev the function returns structures from the array 'tokens'.
     /// @return The array values.
 
-    function getBundles() public view returns (bundleData[] memory) {
+    function getTokens() public view returns (tokenData[] memory) {
 
-        return bundles;
+        return tokens;
     }
 
     /// @notice The function shows the number of existing bundles.
     /// @dev The function returns the the number of array's elements.
     /// @return The number.
 
-    function getBundlesLength() public view returns (uint) {
+    function getTokensLength() public view returns (uint) {
 
-        return bundles.length;
+        return tokens.length;
     }
 }
