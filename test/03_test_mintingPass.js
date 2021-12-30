@@ -10,9 +10,12 @@ const { constants } = require("@openzeppelin/test-helpers");
 const URI = "https://ipfs.io/ipfs/QmTgqnhFBMkfT9s8PHKcdXBn1f5bG3Q5hmBaR4U6hoTvb1?filename=Chainlink_Elf.png";
 
 describe("mintingPassTest", () => {
-  beforeEach(async () => {
+  let mintingPass;
+
+    beforeEach(async () => {
     [wallet, wallet2, addr1] = await ethers.getSigners();
   });
+
   describe("Testing the existence of a wallet", () => {
     it("should faile if wallet does not exist", async () => {
       const mintingPassInstance = await ethers.getContractFactory("MintingPass");
@@ -22,6 +25,7 @@ describe("mintingPassTest", () => {
       ).to.be.revertedWith("MintingPass::constructor: wallet does not exist");
     });
   });
+
   describe("Other tests", () => {
     beforeEach(async () => {
       const mintingPassInstance = await ethers.getContractFactory("MintingPass");
