@@ -8,7 +8,7 @@ async function main() {
   const uri = process.env.NFT_URI;
 
   const ERC1155Instance = await ethers.getContractFactory("ERC1155Mint");
-  const ERC1155 = await ERC1155Instance.deploy(uri);
+  const ERC1155 = await ERC1155Instance.deploy("MineichToken","MNC", uri);
 
   console.log("Network", network);
   console.log("Deploying contracts with the account:", deployer.address);

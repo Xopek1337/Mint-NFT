@@ -4,12 +4,15 @@ const { ethers } = require("hardhat");
 const URI = "https://ipfs.io/ipfs/QmTgqnhFBMkfT9s8PHKcdXBn1f5bG3Q5hmBaR4U6hoTvb1?filename=Chainlink_Elf.png";
 
 describe("ERC1155MintTest", () => {
+    let erc1155;
+
   beforeEach(async () => {
     [addr1] = await ethers.getSigners();
 
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
     erc1155 = await erc1155Instance.deploy(URI);
   });
+
   it("should mint", async () => {
     await erc1155.setManager(addr1.address);
 
@@ -22,6 +25,7 @@ describe("ERC1155MintTest", () => {
 
     expect(amount).to.equal(mintedCoupons);
   });
+
   it("should set manager", async () => {
     await erc1155.setManager(addr1.address);
 

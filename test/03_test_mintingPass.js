@@ -10,9 +10,12 @@ const { constants } = require("@openzeppelin/test-helpers");
 const URI = "https://ipfs.io/ipfs/QmTgqnhFBMkfT9s8PHKcdXBn1f5bG3Q5hmBaR4U6hoTvb1?filename=Chainlink_Elf.png";
 
 describe("mintingPassTest", () => {
-  beforeEach(async () => {
+  let mintingPass;
+
+    beforeEach(async () => {
     [wallet, wallet2, addr1] = await ethers.getSigners();
   });
+
   describe("Testing the existence of a wallet", () => {
     it("should faile if wallet does not exist", async () => {
       const mintingPassInstance = await ethers.getContractFactory("MintingPass");
@@ -22,6 +25,7 @@ describe("mintingPassTest", () => {
       ).to.be.revertedWith("MintingPass::constructor: wallet does not exist");
     });
   });
+
   describe("Other tests", () => {
     beforeEach(async () => {
       const mintingPassInstance = await ethers.getContractFactory("MintingPass");
@@ -82,9 +86,15 @@ describe("mintingPassTest", () => {
     it("should change URI", async () => {
       await mintingPass._setNewURI(URI);
 
-      const endingURI = await mintingPass.uri(1);
+      const endingURI = await mintingPass._uri();
 
       expect(URI).to.equal(endingURI);
+    });
+
+    it("should return IPFS URL", async () => {
+      const answer = await mintingPass.uri(0);
+  
+      expect(URI + "0").to.equal(answer);
     });
 
     it("should change wallet", async () => {

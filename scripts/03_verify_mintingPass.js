@@ -6,14 +6,14 @@ async function main() {
   const uri = process.env.NFT_URI;
 
   const dir = "./networks/";
-  const fileName = "mintingPass_" + `${network}.json`;
+  const fileName = "MintingPass_" + `${network}.json`;
   const data = JSON.parse(await fs.readFileSync(dir + fileName, { encoding: "utf8" }));
 
   try {
     await hre.run("verify:verify", {
       address: data.passes,
       constructorArguments: [wallet, uri],
-      contract: "contracts/mintingPass.sol:MintingPass",
+      contract: "contracts/MintingPass.sol:MintingPass",
     });
   } catch (e) {
     console.log(e);

@@ -6,7 +6,6 @@ import '@openzeppelin/contracts/token/ERC1155/ERC1155.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-
 /**
  * @title  mintingPass.
  * @author bright lynx team.
@@ -28,12 +27,15 @@ contract MintingPass is ERC1155, Ownable {
     address payable public wallet;
     bool public isPaused = true;
 
-    constructor(address payable _wallet, string memory uri) ERC1155(uri) {
+    string public _uri;
+
+    constructor(address payable _wallet, string memory uri_) ERC1155(uri_) {
         require(
             _wallet != address(0),
             'MintingPass::constructor: wallet does not exist'
         );
         wallet = _wallet;
+        _uri = uri_;
 
         _addPass(300, 0.03 ether);
         _addPass(150, 0.06 ether);
@@ -105,6 +107,20 @@ contract MintingPass is ERC1155, Ownable {
         _setURI(_newUri);
 
         return true;
+    }
+
+    /// @notice The function returns a tokenId uri.
+    /// @dev Shows a specified uri.
+    /// @param _tokenId The number of uri's element.
+    /// @return The bool value.
+
+    function uri(uint256 _bundleId)
+        public
+        override 
+        view 
+        returns (string memory) 
+    {
+        return string(abi.encodePacked(uri_, "/", Strings.toString(_bundleId)));
     }
 
     /// @notice The function sets a new wallet.

@@ -24,7 +24,7 @@ async function main() {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
-  const fileName = "mintingPass_" + `${network}.json`;
+  const fileName = "MintingPass_" + `${network}.json`;
 
   await fs.writeFileSync(dir + fileName, data, { encoding: "utf8" });
 }
