@@ -120,7 +120,7 @@ contract MintingPass is ERC1155, Ownable {
         view 
         returns (string memory) 
     {
-        return string(abi.encodePacked(uri_, "/", Strings.toString(_bundleId)));
+        return string(abi.encodePacked(_uri, "/", Strings.toString(_bundleId)));
     }
 
     /// @notice The function sets a new wallet.
