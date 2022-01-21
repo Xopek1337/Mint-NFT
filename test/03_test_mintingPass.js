@@ -7,7 +7,7 @@ const {
 } = require("hardhat");
 const { constants } = require("@openzeppelin/test-helpers");
 
-const URI = "https://ipfs.io/ipfs/QmTgqnhFBMkfT9s8PHKcdXBn1f5bG3Q5hmBaR4U6hoTvb1?filename=Chainlink_Elf.png";
+const URI = "https://gateway.pinata.cloud/ipfs/QmPhNgR9i4PFtwhaXtf88iNTaq6Lnxs2Y6XxyH27AZmkYE";
 
 describe("mintingPassTest", () => {
   let mintingPass;
@@ -94,7 +94,7 @@ describe("mintingPassTest", () => {
     it("should return IPFS URL", async () => {
       const answer = await mintingPass.uri(0);
   
-      expect(URI + "0").to.equal(answer);
+      expect(URI + "/0").to.equal(answer);
     });
 
     it("should change wallet", async () => {

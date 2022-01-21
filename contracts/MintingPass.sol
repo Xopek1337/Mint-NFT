@@ -109,9 +109,9 @@ contract MintingPass is ERC1155, Ownable {
         return true;
     }
 
-    /// @notice The function returns a tokenId uri.
+    /// @notice The function returns a bundleId uri.
     /// @dev Shows a specified uri.
-    /// @param _tokenId The number of uri's element.
+    /// @param _bundleId The number of uri's element.
     /// @return The bool value.
 
     function uri(uint256 _bundleId)
@@ -120,7 +120,7 @@ contract MintingPass is ERC1155, Ownable {
         view 
         returns (string memory) 
     {
-        return string(abi.encodePacked(uri_, "/", Strings.toString(_bundleId)));
+        return string(abi.encodePacked(_uri, "/", Strings.toString(_bundleId)));
     }
 
     /// @notice The function sets a new wallet.
