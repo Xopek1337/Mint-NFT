@@ -40,6 +40,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.4.0",
     "@openzeppelin/test-helpers": "^0.5.15",
+    "axios": "^0.25.0",
     "delay": "^5.0.0",
     "dotenv": "^10.0.0",
     "hardhat-deploy": "^0.9.22",

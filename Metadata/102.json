@@ -1,0 +1,62 @@
+{
+  "name": "Cryptobot Classic #102",
+  "external_url": "https://cryptobots.me/classic/bot/102",
+  "description": "",
+  "image": "https://ipfs.io/ipfs/QmYRjS8rQUSpoEuc8vL5rPQ9c6e8ky6JxoZfSH56h2QV7H/102.svg",
+  "background_color": "F4F8DA",
+  "attributes": [
+    {
+      "trait_type": "BODY",
+      "value": "CLOCKWORKPINK"
+    },
+    {
+      "trait_type": "EARS",
+      "value": "PETALS"
+    },
+    {
+      "trait_type": "EYES",
+      "value": "PILLS"
+    },
+    {
+      "trait_type": "MASK",
+      "value": "SCORPION"
+    },
+    {
+      "trait_type": "ARMS",
+      "value": "INSECT"
+    },
+    {
+      "trait_type": "LEGS",
+      "value": "CENTIPEDE"
+    },
+    {
+      "trait_type": "AERIAL",
+      "value": "NONE"
+    },
+    {
+      "trait_type": "GENERATION",
+      "value": "Gen1+"
+    },
+    {
+      "display_type": "date",
+      "trait_type": "Birthday",
+      "value": "1515936607"
+    }
+  ],
+  "properties": {
+    "category": "image",
+    "files": [
+      {
+        "uri": "102.svg",
+        "type": "image/svg"
+      }
+    ],
+    "creators": []
+  },
+  "seller_fee_basis_points": 0,
+  "collection": {
+    "name": "CryptoBots",
+    "family": "CryptoBots"
+  },
+  "symbol": ""
+}

@@ -1529,6 +1529,13 @@
   dependencies:
     "follow-redirects" "^1.14.0"
 
+"axios@^0.25.0":
+  "integrity" "sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g=="
+  "resolved" "https://registry.npmjs.org/axios/-/axios-0.25.0.tgz"
+  "version" "0.25.0"
+  dependencies:
+    "follow-redirects" "^1.14.7"
+
 "babel-code-frame@^6.26.0":
   "version" "6.26.0"
   dependencies:
@@ -4267,8 +4274,10 @@
   dependencies:
     "imul" "^1.0.0"
 
-"follow-redirects@^1.12.1", "follow-redirects@^1.14.0":
-  "version" "1.14.5"
+"follow-redirects@^1.12.1", "follow-redirects@^1.14.0", "follow-redirects@^1.14.7":
+  "integrity" "sha512-+hbxoLbFMbRKDwohX8GkTataGqO6Jb7jGwpAlwgy2bIz25XtRm7KEzJM76R1WiNT5SwZkX4Y75SwBolkpmE7iQ=="
+  "resolved" "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.14.7.tgz"
+  "version" "1.14.7"
 
 "for-each@^0.3.3", "for-each@~0.3.3":
   "version" "0.3.3"
