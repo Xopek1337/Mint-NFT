@@ -14,11 +14,11 @@ async function main() {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    for(id = 100; id<106; id++)
+    for(id = 100; id < 106; id++)
     {
-        const res = await axios.get("https://api.cryptobots.me/api/token/"+id);
+        const res = await axios.get(process.env.OLD_METADATA_URL + id);
         if(!isEmpty(res.data)){
-            res.data.image = "https://ipfs.io/ipfs/QmYRjS8rQUSpoEuc8vL5rPQ9c6e8ky6JxoZfSH56h2QV7H/" + id + ".svg";
+            res.data.image = process.env.NEW_METADATA_URL + id + ".svg";
             const fileName = id + `.json`;
             console.log(res.data.image);
             const data = await JSON.stringify(res.data, null, 2);
