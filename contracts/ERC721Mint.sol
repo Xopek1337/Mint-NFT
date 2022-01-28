@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
-import '../node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
-import '../node_modules/@openzeppelin/contracts/access/Ownable.sol';
+import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
+import '@openzeppelin/contracts/access/Ownable.sol';
 
 contract ERC721Mint is ERC721Enumerable, Ownable {
     address public minter;
@@ -56,13 +56,13 @@ contract ERC721Mint is ERC721Enumerable, Ownable {
     function mint(address to) 
         external 
         onlyMinter
-        returns (bool) 
+        returns (uint) 
     {
         tokenId++;
 
         _mint(to, tokenId);
 
-        return true;
+        return tokenId;
     }
 
     function burn(uint tokenId) 
