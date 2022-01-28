@@ -225,7 +225,7 @@ contract SaleToken is Ownable, AccessControl {
         returns (bool) 
     {
         Accounts[user].allowedAmount = amount;
-        
+
         return true;
     }
 
