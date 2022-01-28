@@ -18,20 +18,18 @@ contract SaleToken is Ownable, AccessControl {
 
     address payable public wallet;
 
-    uint public allSaleTokenAmount = 10000;
+    uint public allSaleAmount = 10000;
     uint public saleAmount = 0;
     uint public masPublicSaleAmount = 3;
     uint public price = 0.1 ether;
     uint public discountPrice = 0.09 ether;
-
-    bytes32 public merkleRoot;
 
     mapping(address => userData) public Accounts;
     mapping(uint => uint) public amountsFromId;
 
     struct userData {
         uint allowedAmount;
-        uint bought;
+        uint publicBought;
         bool isBought;
     }
 
@@ -70,13 +68,14 @@ contract SaleToken is Ownable, AccessControl {
     function sale(uint256 _amount)
         external
         payable
-        returns (bool)
+        returns (bool) 
     {
-        require(saleAmount + _amount <= allSaleTokenAmount, 'SaleToken::sale: tokens are enough');
+        require(saleAmount + _amount <= allSaleAmount, 'SaleToken::sale: tokens are enough');
+        require(!isPaused, 'SaleToken::sale: sales are closed');
 
         uint tokenId;
 
-        if (!isPublicSale && !isPaused) {
+        if (!isPublicSale) {
             require(
                 Accounts[msg.sender].allowedAmount >= _amount,
                 'SaleToken::sale: amount is more than allowed or you are not logged into whitelist'
@@ -103,8 +102,7 @@ contract SaleToken is Ownable, AccessControl {
             emit Transfer(msg.sender, tokenId, _amount);
 
             return true;
-        } 
-        else if (isPublicSale && !isPaused) {
+        } else {
             require(
                 Accounts[msg.sender].allowedAmount >= _amount,
                 'SaleToken::sale: amount is more than allowed or you are not logged into whitelist'
@@ -124,11 +122,9 @@ contract SaleToken is Ownable, AccessControl {
                 tokenId = token.mint(msg.sender);
                 saleAmount++;
                 emit Transfer(msg.sender, tokenId, _amount);
-            }   
-        }
-        else {
-            revert('SaleToken::sale: sales are closed');
-        }
+            }
+            return true;
+        } 
     }
 
     function sale(uint256 _amount, uint idPass)
@@ -136,11 +132,12 @@ contract SaleToken is Ownable, AccessControl {
         payable
         returns (bool)
     {
-        require(saleAmount + _amount <= allSaleTokenAmount, 'SaleToken::sale: tokens are enough');
+        require(saleAmount + _amount <= allSaleAmount, 'SaleToken::sale: tokens are enough');
+        require(!isPaused, 'SaleToken::sale: sales are closed');
 
         uint tokenId;
 
-        if (!isPublicSale && !isPaused) {
+        if (!isPublicSale) {
             if(Accounts[msg.sender].isBought) {
                 require(
                     amountsFromId[idPass] >= _amount,
@@ -172,11 +169,9 @@ contract SaleToken is Ownable, AccessControl {
             Accounts[msg.sender].isBought = true;
 
             return true;
-        }
-
-        else if (isPublicSale && !isPaused) {
+        } else {
             require(
-                Accounts[msg.sender].bought + _amount >= masPublicSaleAmount + amountsFromId[idPass],
+                Accounts[msg.sender].publicBought + _amount >= masPublicSaleAmount + amountsFromId[idPass],
                 'SaleToken::sale: amount is more than allowed'
             );
             require(
@@ -193,9 +188,7 @@ contract SaleToken is Ownable, AccessControl {
                 saleAmount++;
                 emit Transfer(msg.sender, tokenId, _amount);
             }   
-        }
-        else {
-            revert('SaleToken::sale: sales are closed');
+            return true;
         }
     }
 
@@ -239,17 +232,17 @@ contract SaleToken is Ownable, AccessControl {
         return true;
     }
 
-    function _setMaxTokenAmount(uint _amount) 
+    function _setAllSaleAmount(uint _amount) 
         external 
         onlyOwner 
         returns(bool) 
     {
-        allSaleTokenAmount = _amount;
+        allSaleAmount = _amount;
 
         return true;
     }
 
-    function _setManager(address manager) public onlyRole(DEFAULT_ADMIN_ROLE){
+    function _setManager(address manager) public onlyRole(DEFAULT_ADMIN_ROLE) {
         grantRole(MANAGER_ROLE, manager);
     }
 
