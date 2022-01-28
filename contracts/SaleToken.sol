@@ -20,7 +20,7 @@ contract SaleToken is Ownable, AccessControl {
 
     uint public allSaleAmount = 10000;
     uint public saleAmount = 0;
-    uint public masPublicSaleAmount = 3;
+    uint public maxPublicSaleAmount = 3;
     uint public price = 0.1 ether;
     uint public discountPrice = 0.09 ether;
 
