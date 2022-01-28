@@ -3,12 +3,14 @@ node_modules
 coverage
 coverage.json
 typechain
+tree
+address.json
+networks
+METADATA
+Metadata
 
 #Hardhat files
 cache
 artifacts
 .idea
-address.json
-networks
-METADATA
-Metadata
+

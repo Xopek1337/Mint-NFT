@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.11;
+pragma solidity 0.8.10;
 
-import '../node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
-import '../node_modules/@openzeppelin/contracts/access/Ownable.sol';
+import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
+import '@openzeppelin/contracts/access/Ownable.sol';
 
-contract ERC721Example is ERC721Enumerable, Ownable {
+contract ERC721Mint is ERC721Enumerable, Ownable {
     address public manager;
     string public uri_;
+
+    uint public tokenId = 0;
 
     mapping(uint256 => string) private _tokenURIs;
 
@@ -28,10 +30,12 @@ contract ERC721Example is ERC721Enumerable, Ownable {
         return true;
     }
 
-    function mint(address to, uint256 tokenId) external onlyManager returns (bool) {
+    function mint(address to) external onlyManager returns (uint) {
+        tokenId++;
+
         _mint(to, tokenId);
 
-        return true;
+        return tokenId;
     }
 
     function burn(uint256 tokenId) external onlyManager returns (bool) {

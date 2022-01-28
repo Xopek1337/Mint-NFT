@@ -215,8 +215,9 @@ describe("NFTSaleTest", () => {
     it("should add to whitelist", async () => {
       const amount = 10;
 
-      await NFTSale._whitelistAdd(addr1.address, amount);
-
+      const tx = await NFTSale._whitelistAdd(addr1.address, amount);
+      const receipt = await tx.wait();
+      console.log(receipt.gasUsed);
       const account = await NFTSale.Accounts(addr1.address);
 
       expect(amount).to.equal(account.allowed);

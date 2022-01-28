@@ -1,5 +1,6 @@
 const { default: axios } = require("axios");
 const fs = require("fs");
+require("dotenv").config();
 
 function isEmpty(obj) {
     for(var key in obj) {
