@@ -48,7 +48,7 @@ contract ERC721Example is ERC721Enumerable, Ownable {
     }
 
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
-        require(_exists(tokenId), "ERC721URIStorage: URI query for nonexistent token");
+        require(_exists(tokenId), 'test: URI query for nonexistent token');
 
         string memory _tokenURI = _tokenURIs[tokenId];
         string memory base = _baseURI();
@@ -69,7 +69,7 @@ contract ERC721Example is ERC721Enumerable, Ownable {
     }
 
     function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual {
-        require(_exists(tokenId), "ERC721URIStorage: URI set of nonexistent token");
+        require(_exists(tokenId), 'test: URI set of nonexistent token');
         _tokenURIs[tokenId] = _tokenURI;
     }
 
