@@ -5,7 +5,8 @@ import '../node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721En
 import '../node_modules/@openzeppelin/contracts/access/Ownable.sol';
 
 contract ERC721Mint is ERC721Enumerable, Ownable {
-    address public manager;
+    address public minter;
+    address public burner;
     string public uri_;
 
     uint public tokenId = 0;
@@ -16,27 +17,45 @@ contract ERC721Mint is ERC721Enumerable, Ownable {
         uri_ = _uri;
     }
 
-    modifier onlyManager() {
+    modifier onlyMinter() {
         require(
-            msg.sender == manager,
-            'ERC721Mint: sender is not manager'
+            msg.sender == minter,
+            'ERC721Mint: sender is not minter'
         );
         _;
     }
 
-    function setManager(address _manager) 
+    modifier onlyBurner() {
+        require(
+            msg.sender == burner,
+            'ERC721Mint: sender is not burner'
+        );
+        _;
+    }
+
+    function setMinter(address _minter) 
         external 
         onlyOwner 
         returns (bool) 
     {
-        manager = _manager;
+        minter = _minter;
+
+        return true;
+    }
+
+     function setBurner(address _burner) 
+        external 
+        onlyOwner 
+        returns (bool) 
+    {
+        burner = _burner;
 
         return true;
     }
 
     function mint(address to) 
         external 
-        onlyManager 
+        onlyMinter
         returns (bool) 
     {
         tokenId++;
@@ -48,7 +67,7 @@ contract ERC721Mint is ERC721Enumerable, Ownable {
 
     function burn(uint tokenId) 
         external 
-        onlyManager 
+        onlyBurner
         returns (bool) 
     {
         require(_isApprovedOrOwner(_msgSender(), tokenId), 'ERC721Mint::burn: caller is not owner nor approved');
