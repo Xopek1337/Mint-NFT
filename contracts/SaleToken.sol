@@ -242,10 +242,10 @@ contract SaleToken is Ownable {
     }
 
     function whitelistAdd(bytes32[] calldata _merkleProof, uint amount) public returns (bool) {
-        require(!Accounts[msg.sender].isClaimed, "NftSale::whitelistMint: address has already claimed");
+        require(!Accounts[msg.sender].isClaimed, "SaleToken::whitelistAdd: address has already claimed");
 
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender, amount));
-        require(MerkleProof.verify(_merkleProof, merkleRoot, leaf), "NftSale::whitelistMint: Invalid proof");
+        require(MerkleProof.verify(_merkleProof, merkleRoot, leaf), "SaleToken::whitelistAdd: Invalid proof");
 
         Accounts[msg.sender].allowed = amount;
         Accounts[msg.sender].isClaimed = true;
