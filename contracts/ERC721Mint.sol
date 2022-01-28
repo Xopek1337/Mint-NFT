@@ -1,20 +1,21 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.11;
 
 import '../node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
 import '../node_modules/@openzeppelin/contracts/access/Ownable.sol';
+import '../node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
 contract ERC721Mint is ERC721Enumerable, Ownable {
     address public minter;
     address public burner;
-    string public uri_;
+    string public uri;
 
     uint public tokenId = 0;
 
     mapping(uint => string) private _tokenURIs;
 
     constructor(string memory _name, string memory _symbol, string memory _uri) ERC721 (_name, _symbol) {
-        uri_ = _uri;
+        uri = _uri;
     }
 
     modifier onlyMinter() {
@@ -65,42 +66,44 @@ contract ERC721Mint is ERC721Enumerable, Ownable {
         return true;
     }
 
-    function burn(uint tokenId) 
+    function burn(uint _tokenId) 
         external 
         onlyBurner
         returns (bool) 
     {
-        require(_isApprovedOrOwner(_msgSender(), tokenId), 'ERC721Mint::burn: caller is not owner nor approved');
+        require(_isApprovedOrOwner(_msgSender(), _tokenId), 'ERC721Mint::burn: caller is not owner nor approved');
 
-        _burn(tokenId);
+        _burn(_tokenId);
 
-        if (bytes(_tokenURIs[tokenId]).length != 0) {
-            delete _tokenURIs[tokenId];
+        if (bytes(_tokenURIs[_tokenId]).length != 0) {
+            delete _tokenURIs[_tokenId];
         }
 
         return true;
     }
 
-    function tokenURI(uint tokenId) 
+    function tokenURI(uint _tokenId) 
         public 
         view 
         override 
         returns (string memory) 
     {
-        require(_exists(tokenId), 'ERC721Mint::tokenURI: URI query for nonexistent token');
+        require(_exists(_tokenId), 'ERC721Mint::tokenURI: URI query for nonexistent token');
 
-        string memory _tokenURI = _tokenURIs[tokenId];
+        string memory _tokenURI = _tokenURIs[_tokenId];
         string memory base = _baseURI();
 
         if (bytes(base).length == 0) {
             return _tokenURI;
         }
-
         if (bytes(_tokenURI).length > 0) {
             return string(abi.encodePacked(base, _tokenURI));
+            //return string(abi.encodePacked(base, '/', _tokenURI));
         }
 
-        return super.tokenURI(tokenId);
+        return super.tokenURI(_tokenId);
+        //return string(abi.encodePacked(_baseURI(), '/', Strings.toString(_tokenId)));
+
     }
 
      function _baseURI() 
@@ -109,16 +112,37 @@ contract ERC721Mint is ERC721Enumerable, Ownable {
         override
         returns (string memory) 
     {
-        return uri_;
+        return uri;
     }
 
-    function _setTokenURI(uint tokenId, string memory _tokenURI) 
+    function _setTokenURI(uint _tokenId, string memory _tokenURI) 
         internal 
         virtual 
+        onlyOwner
         returns (bool) 
     {
-        require(_exists(tokenId), 'ERC721Mint::_setTokenURI: URI set of nonexistent token');
-        _tokenURIs[tokenId] = _tokenURI;
+        require(_exists(_tokenId), 'ERC721Mint::_setTokenURI: URI set of nonexistent token');
+        _tokenURIs[_tokenId] = _tokenURI;
+
+        return true;
+    }
+
+    function withdrawERC20(IERC20 token)
+        external 
+        onlyOwner 
+        returns(bool) 
+    {
+        require(token.transfer(msg.sender, token.balanceOf(address(this))), 'Transfer failed');
+
+        return true;
+    }
+
+    function withdrawERC721(IERC721 token, uint _tokenId)
+        external 
+        onlyOwner 
+        returns(bool) 
+    {
+        token.transferFrom(address(this), msg.sender, _tokenId);
 
         return true;
     }
