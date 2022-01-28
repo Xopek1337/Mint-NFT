@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.11;
 
 import '../node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
+import '../node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol';
 import '../node_modules/@openzeppelin/contracts/access/Ownable.sol';
 import '../node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import '../node_modules/@openzeppelin/contracts/access/AccessControl.sol';
+import '../node_modules/@openzeppelin/contracts/access/AccessControlEnumerable.sol';
 
-contract ERC721Mint is ERC721Enumerable, Ownable, AccessControl {
+contract ERC721Mint is ERC721, ERC721Enumerable, Ownable, AccessControlEnumerable {
     bytes32 public constant MINTER_ROLE = keccak256('MINTER_ROLE');
     bytes32 public constant BURNER_ROLE = keccak256('BURNER_ROLE');
 
@@ -18,6 +19,7 @@ contract ERC721Mint is ERC721Enumerable, Ownable, AccessControl {
         uri = _uri;
         
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        // может ли owner минтить? grantRole(MINTER_ROLE, msg.sender);
     }
 
     function _setMinter(address _minter) 
@@ -112,8 +114,19 @@ contract ERC721Mint is ERC721Enumerable, Ownable, AccessControl {
         return true;
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override (ERC721Enumerable, AccessControl) returns (bool) {
-        return interfaceId == type(IAccessControl).interfaceId || super.supportsInterface(interfaceId) &&
-        interfaceId == type(IERC721Enumerable).interfaceId || super.supportsInterface(interfaceId);
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721Enumerable, AccessControlEnumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+
+    function _beforeTokenTransfer(address from, address to, uint256 _tokenId)
+        internal
+        override(ERC721, ERC721Enumerable)
+    {
+        super._beforeTokenTransfer(from, to, _tokenId);
     }
 }
