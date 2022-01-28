@@ -103,7 +103,6 @@ contract ERC721Mint is ERC721Enumerable, Ownable {
 
         return super.tokenURI(_tokenId);
         //return string(abi.encodePacked(_baseURI(), '/', Strings.toString(_tokenId)));
-
     }
 
      function _baseURI() 
@@ -137,12 +136,12 @@ contract ERC721Mint is ERC721Enumerable, Ownable {
         return true;
     }
 
-    function _withdrawERC721(IERC721 tokenContract, address recepient) 
+    function _withdrawERC721(IERC721 tokenContract, address recepient, uint tokenId) 
         external 
         onlyOwner 
         returns(bool) 
     {
-        tokenContract.transferFrom(address(this), recepient, tokenContract.balanceOf(address(this)));
+        tokenContract.transferFrom(address(this), recepient, tokenId);
 
         return true;
     }

@@ -212,12 +212,12 @@ contract SaleToken is Ownable, AccessControl {
         return true;
     }
 
-    function whitelistAdd(address user, uint amount) 
+    function _addWhitelist(address user, uint _amount) 
         external 
         onlyOwner 
         returns (bool) 
     {
-        Accounts[user].allowedAmount = amount;
+        Accounts[user].allowedAmount = _amount;
 
         return true;
     }
@@ -256,12 +256,12 @@ contract SaleToken is Ownable, AccessControl {
         return true;
     }
 
-    function _withdrawERC721(IERC721 tokenContract, address recepient) 
+    function _withdrawERC721(IERC721 tokenContract, address recepient, uint tokenId) 
         external 
         onlyOwner 
         returns(bool) 
     {
-        tokenContract.transferFrom(address(this), recepient, tokenContract.balanceOf(address(this)));
+        tokenContract.transferFrom(address(this), recepient, tokenId);
 
         return true;
     }
