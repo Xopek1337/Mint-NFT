@@ -34,7 +34,7 @@ contract ERC721Mint is ERC721Enumerable, Ownable {
         _;
     }
 
-    function setMinter(address _minter) 
+    function _setMinter(address _minter) 
         external 
         onlyOwner 
         returns (bool) 
@@ -44,7 +44,7 @@ contract ERC721Mint is ERC721Enumerable, Ownable {
         return true;
     }
 
-     function setBurner(address _burner) 
+     function _setBurner(address _burner) 
         external 
         onlyOwner 
         returns (bool) 
@@ -127,22 +127,22 @@ contract ERC721Mint is ERC721Enumerable, Ownable {
         return true;
     }
 
-    function withdrawERC20(IERC20 token)
+    function _withdrawERC20(IERC20 tokenContract, address recepient)
         external 
         onlyOwner 
         returns(bool) 
     {
-        require(token.transfer(msg.sender, token.balanceOf(address(this))), 'Transfer failed');
+        tokenContract.transfer(recepient, token.balanceOf(address(this)));
 
         return true;
     }
 
-    function withdrawERC721(IERC721 token, uint _tokenId)
+    function _withdrawERC721(IERC721 tokenContract, address recepient)
         external 
         onlyOwner 
         returns(bool) 
     {
-        token.transferFrom(address(this), msg.sender, _tokenId);
+        tokenContract.transferFrom(address(this), recepient, token.balanceOf(adress(this))); // правильно ли
 
         return true;
     }
