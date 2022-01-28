@@ -122,22 +122,22 @@ contract SaleToken is Ownable {
         payable
         returns (bool)
     {
-        require(boughtAmount + _amount <= maxTokenAmount);
+        require(boughtAmount + _amount <= maxTokenAmount, 'SaleToken::sale: tokens are enough');
 
         uint tokenId;
 
         if (privateSale) {
             require(
                 Accounts[msg.sender].allowed >= _amount,
-                'SaleToken::buyToken: amount is more than allowed or you are not logged into whitelist'
+                'SaleToken::sale: amount is more than allowed or you are not logged into whitelist'
             );
             require(
                 !Accounts[msg.sender].isTakePartInSale,
-                'SaleToken::buyToken: sender has already participated in sales'
+                'SaleToken::sale: sender has already participated in sales'
             );
             require(
                 msg.value == discountPrice * _amount,
-                'SaleToken::buyToken: not enough ether sent'
+                'SaleToken::sale: not enough ether sent'
             );
 
             wallet.transfer(msg.value);
@@ -159,11 +159,11 @@ contract SaleToken is Ownable {
         else if (publicSale) {
             require(
                 Accounts[msg.sender].bought + _amount >= maxBuyAmount,
-                'SaleToken::buyToken: amount is more than allowed'
+                'SaleToken::sale: amount is more than allowed'
             );
             require(
                 msg.value == discountPrice * _amount,
-                'SaleToken::buyToken: not enough ether sent'
+                'SaleToken::sale: not enough ether sent'
             );
 
             wallet.transfer(msg.value);
@@ -178,7 +178,7 @@ contract SaleToken is Ownable {
             }   
         }
         else {
-            revert('NFTSale::buyToken: sales are closed');
+            revert('SaleToken::sale: sales are closed');
         }
     }
 
@@ -189,7 +189,7 @@ contract SaleToken is Ownable {
     {
         require(
             (_publicSale && _privateSale) == false,
-            'NFTSale::setSellingMode: can not set 2 selling mode at once'
+            'SaleToken::setSellingMode: can not set 2 selling mode at once'
         );
 
         publicSale = _publicSale;
@@ -218,7 +218,13 @@ contract SaleToken is Ownable {
         return true;
     }
 
-    function changeMerkleRoot(bytes32 _root) external onlyOwner {
+    function changeMerkleRoot(bytes32 _root) 
+    external 
+    onlyOwner 
+    returns (bool) 
+    {
         merkleRoot = _root;
+
+        return true;
     }
 }
