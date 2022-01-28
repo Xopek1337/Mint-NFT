@@ -6,19 +6,27 @@ import './ERC721Mint.sol';
 import './MintingPass.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/cryptography/MerkleProof.sol';
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
+
 
 contract SaleToken is Ownable {
     ERC721Mint public token;
     MintingPass public mintingPass;
+
     address payable public wallet;
+    address[] public managers;
+
     uint public maxTokenAmount = 10000;
     uint public boughtAmount = 0;
     uint public maxBuyAmount = 3;
     uint public price = 0.1 ether;
     uint public discountPrice = 0.09 ether;
+
     bytes32 public merkleRoot;
 
     mapping(address => Amounts) public Accounts;
+    mapping(uint => uint) public amountsFromId;
 
     struct Amounts {
         uint allowed;
@@ -49,6 +57,25 @@ contract SaleToken is Ownable {
         token = ERC721Mint(_token);
         mintingPass = MintingPass(_mintingPass);
         wallet = _wallet;
+
+        amountsFromId[0] = 3;
+        amountsFromId[1] = 6;
+        amountsFromId[2] = 9;
+        amountsFromId[3] = 15;
+        amountsFromId[4] = 30;
+        amountsFromId[5] = 90;
+    }
+
+    modifier onlyManager() {
+        bool isManager = false;
+        for(uint i = 0; i < managers.length; i++) {
+            if(msg.sender == managers[i]) {
+                isManager = true;
+                break;
+            }
+        }
+        require(isManager, 'SaleToken:: sender is not manager');
+        _;
     }
 
     function sale(uint256 _amount)
@@ -127,14 +154,19 @@ contract SaleToken is Ownable {
         uint tokenId;
 
         if (privateSale) {
-            require(
-                Accounts[msg.sender].allowed >= _amount,
-                'SaleToken::sale: amount is more than allowed or you are not logged into whitelist'
-            );
-            require(
-                !Accounts[msg.sender].isTakePartInSale,
-                'SaleToken::sale: sender has already participated in sales'
-            );
+            if(Accounts[msg.sender].isTakePartInSale) {
+                require(
+                    amountsFromId[idPass] >= _amount,
+                    'SaleToken::sale: amount is more than allowed or you are not logged into whitelist'
+                );
+            }
+            else {
+                require(
+                    Accounts[msg.sender].allowed + amountsFromId[idPass] >= _amount,
+                    'SaleToken::sale: amount is more than allowed or you are not logged into whitelist'
+                );
+            }
+
             require(
                 msg.value == discountPrice * _amount,
                 'SaleToken::sale: not enough ether sent'
@@ -158,7 +190,7 @@ contract SaleToken is Ownable {
 
         else if (publicSale) {
             require(
-                Accounts[msg.sender].bought + _amount >= maxBuyAmount,
+                Accounts[msg.sender].bought + _amount >= maxBuyAmount + amountsFromId[idPass],
                 'SaleToken::sale: amount is more than allowed'
             );
             require(
@@ -194,6 +226,19 @@ contract SaleToken is Ownable {
 
         publicSale = _publicSale;
         privateSale = _privateSale;
+
+        return true;
+    }
+
+    function _setPause()
+        external
+        onlyManager
+        returns (bool)
+    {
+        publicSale = false;
+        privateSale = false;
+
+        return true;
     }
 
     function whitelistAdd(bytes32[] calldata _merkleProof, uint amount) public returns (bool) {
@@ -218,12 +263,52 @@ contract SaleToken is Ownable {
         return true;
     }
 
-    function changeMerkleRoot(bytes32 _root) 
-    external 
-    onlyOwner 
-    returns (bool) 
+    function _setMerkleRoot(bytes32 _root) 
+        external 
+        onlyOwner 
+        returns (bool) 
     {
         merkleRoot = _root;
+
+        return true;
+    }
+
+    function _setMaxTokenAmount(uint _amount) 
+        external 
+        onlyOwner 
+        returns(bool) 
+    {
+        maxTokenAmount = _amount;
+
+        return true;
+    }
+
+    function _setManagers(address[] memory _managers) 
+        external 
+        onlyOwner 
+        returns(bool)
+    {
+        managers = _managers;
+
+        return true;
+    }
+
+    function _withdrawERC20(IERC20 tokenContract, address recepient) 
+        external 
+        onlyOwner 
+        returns(bool)
+    {
+        tokenContract.transfer(recepient, tokenContract.balanceOf(address(this)));
+
+        return true;
+    }
+
+    function _withdrawERC721(IERC721 tokenContract, address recepient) 
+        external 
+        onlyOwner 
+        returns(bool) 
+    {
+        tokenContract.transferFrom(address(this), recepient, tokenContract.balanceOf(address(this)));
 
         return true;
     }
