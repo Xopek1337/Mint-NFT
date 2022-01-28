@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.11;
+pragma solidity 0.8.10;
 
 import '../node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
 import '../node_modules/@openzeppelin/contracts/access/Ownable.sol';
@@ -110,5 +110,10 @@ contract ERC721Mint is ERC721Enumerable, Ownable, AccessControl {
         tokenContract.transferFrom(address(this), recepient, _tokenId);
 
         return true;
+    }
+
+    function supportsInterface(bytes4 interfaceId) public view virtual override (ERC721Enumerable, AccessControl) returns (bool) {
+        return interfaceId == type(IAccessControl).interfaceId || super.supportsInterface(interfaceId) &&
+        interfaceId == type(IERC721Enumerable).interfaceId || super.supportsInterface(interfaceId);
     }
 }
