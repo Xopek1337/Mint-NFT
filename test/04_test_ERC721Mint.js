@@ -1,10 +1,5 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
-const {
-  ethers: {
-    BigNumber,
-  },
-} = require("hardhat");
 const { constants } = require("@openzeppelin/test-helpers");
 
 describe('ERC721MintTest', () => {
