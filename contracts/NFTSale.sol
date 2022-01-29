@@ -61,7 +61,6 @@ contract NFTSale is Ownable {
     /// @param _bundleId The number of the desired bundle.
     /// @param _amount The number of the desired token's amount.
     /// @return The bool value.
-
     function buyToken(uint256 _bundleId, uint256 _amount)
         external
         payable

@@ -24,7 +24,7 @@ contract MintNFT is Ownable {
 
     mapping(address => userData) public Accounts;
     mapping(uint => uint) public amountsFromId;
-    mapping(address => bool) managers;
+    mapping(address => bool) public managers;
 
     struct userData {
         uint allowedAmount;
@@ -171,7 +171,7 @@ contract MintNFT is Ownable {
         return true;
     }
 
-    function _setSellingMode(bool _isPublicSale)
+    function _setPublicSale(bool _isPublicSale)
         external
         onlyOwner
         returns (bool)
@@ -221,30 +221,48 @@ contract MintNFT is Ownable {
         return true;
     }
 
-    function _setManager(address _manager) public onlyOwner {
-        managers[_manager] = true;
-    }
-
-    function _removeManager(address _manager) public onlyOwner {
-        managers[_manager] = false;
-    }
-
-    function _withdrawERC20(IERC20 tokenContract, address recepient) 
-        external 
-        onlyOwner 
+    function _addManager(address _manager)
+        external
+        onlyOwner
         returns(bool)
     {
-        tokenContract.transfer(recepient, tokenContract.balanceOf(address(this)));
+        require(!managers[_manager], 'ERC721Mint::_addManager: is already a manager');
+
+        managers[_manager] = true;
 
         return true;
     }
 
-    function _withdrawERC721(IERC721 tokenContract, address recepient, uint tokenId) 
+    function _removeManager(address _manager)
+        external
+        onlyOwner
+        returns(bool)
+    {
+        require(managers[_manager], 'ERC721Mint::_removeManager: is not a manager');
+
+        managers[_manager] = false;
+
+        return true;
+    }
+
+    function _withdrawERC20(address _tokenContract, address _recepient)
         external 
         onlyOwner 
         returns(bool) 
     {
-        tokenContract.transferFrom(address(this), recepient, tokenId);
+        IERC20 token = IERC20(_tokenContract);
+        token.transfer(_recepient, token.balanceOf(address(this)));
+
+        return true;
+    }
+
+    function _withdrawERC721(address _tokenContract, address _recepient, uint _tokenId)
+        external 
+        onlyOwner 
+        returns(bool) 
+    {
+        IERC721 token = IERC721(_tokenContract);
+        token.transferFrom(address(this), _recepient, _tokenId);
 
         return true;
     }
