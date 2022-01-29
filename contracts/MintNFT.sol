@@ -8,14 +8,12 @@ import '@openzeppelin/contracts/utils/cryptography/MerkleProof.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
 import '@openzeppelin/contracts/token/ERC1155/IERC1155.sol';
-import '@openzeppelin/contracts/access/AccessControl.sol';
 
-contract MintNFT is Ownable, AccessControl {
-    bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
-
+contract MintNFT is Ownable {
     ERC721Mint public token;
     IERC1155 public mintingPass;
 
+    address payable public receiver;
     address payable public wallet;
 
     uint public allSaleAmount = 10000;
@@ -26,6 +24,7 @@ contract MintNFT is Ownable, AccessControl {
 
     mapping(address => userData) public Accounts;
     mapping(uint => uint) public amountsFromId;
+    mapping(address => bool) managers;
 
     struct userData {
         uint allowedAmount;
@@ -38,18 +37,17 @@ contract MintNFT is Ownable, AccessControl {
 
     event Buy(address _addr, uint _tokenId);
 
-    constructor(address payable _wallet, address _token, address _mintingPass) {
+    constructor(address payable _wallet, address _token, address _mintingPass, address payable _receiver) {
         require(
             _wallet != address(0) &&
             _token != address(0) &&
             _mintingPass != address(0),
             'MintNFT::constructor: address is null'
         );
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-
         token = ERC721Mint(_token);
         mintingPass = IERC1155(_mintingPass);
         wallet = _wallet;
+        receiver = _receiver;
 
         amountsFromId[0] = 3;
         amountsFromId[1] = 6;
@@ -59,13 +57,22 @@ contract MintNFT is Ownable, AccessControl {
         amountsFromId[5] = 90;
     }
 
+    modifier onlyManager() {
+        require(managers[msg.sender], "Ownable: caller is not the manager");
+        _;
+    }
+
     function buyToken(uint256 _amount)
         external
         payable
         returns (bool) 
     {
-        require(saleAmount + _amount <= allSaleAmount, 'SaleToken::sale: tokens are enough');
+        require(saleAmount + _amount <= allSaleAmount, 'MintNFT::buyToken: tokens are enough');
         require(!isPaused, 'MintNFT::buyToken: sales are closed');
+        require(
+            msg.value == price * _amount,
+            'MintNFT::buyToken: not enough ether sent'
+        );
 
         uint tokenId;
 
@@ -77,10 +84,6 @@ contract MintNFT is Ownable, AccessControl {
             require(
                 !Accounts[msg.sender].isBought,
                 'MintNFT::buyToken: sender has already participated in sales'
-            );
-            require(
-                msg.value == price * _amount,
-                'MintNFT::buyToken: not enough ether sent'
             );
 
             wallet.transfer(msg.value);
@@ -94,16 +97,8 @@ contract MintNFT is Ownable, AccessControl {
             Accounts[msg.sender].isBought = true;
         } else {
             require(
-                Accounts[msg.sender].allowedAmount >= _amount,
-                'MintNFT::buyToken: amount is more than allowed or you are not logged into whitelist'
-            );
-            require(
-                !Accounts[msg.sender].isBought,
-                'MintNFT::buyToken: sender has already participated in sales'
-            );
-            require(
-                msg.value == price * _amount,
-                'MintNFT::buyToken: not enough ether sent'
+                Accounts[msg.sender].publicBought + _amount >= maxPublicSaleAmount,
+                'MintNFT::buyToken: amount is more than allowed'
             );
 
             wallet.transfer(msg.value);
@@ -111,20 +106,24 @@ contract MintNFT is Ownable, AccessControl {
             for(uint i = 0; i < _amount; i++) {
                 tokenId = token.mint(msg.sender);
                 saleAmount++;
+                Accounts[msg.sender].publicBought++;
                 emit Buy(msg.sender, tokenId);
             }
-        } 
+        }
         return true;
     }
 
-    function sale(uint256 _amount, uint idPass)
+    function buyToken(uint256 _amount, uint idPass)
         external
         payable
         returns (bool)
     {
         require(saleAmount + _amount <= allSaleAmount, 'MintNFT::buyToken: tokens are enough');
         require(!isPaused, 'MintNFT::buyToken: sales are closed');
-
+        require(
+            msg.value == discountPrice * _amount,
+            'MintNFT::buyToken: not enough ether sent'
+        );
         uint tokenId;
 
         if (!isPublicSale) {
@@ -141,14 +140,9 @@ contract MintNFT is Ownable, AccessControl {
                 );
             }
 
-            require(
-                msg.value == discountPrice * _amount,
-                'MintNFT::buyToken: not enough ether sent'
-            );
-
             wallet.transfer(msg.value);
 
-            mintingPass.safeTransferFrom(msg.sender, address(this), idPass, 1, '');
+            mintingPass.safeTransferFrom(msg.sender, receiver, idPass, 1, '');
 
             for(uint i = 0; i < _amount; i++) {
                 tokenId = token.mint(msg.sender);
@@ -159,21 +153,18 @@ contract MintNFT is Ownable, AccessControl {
             Accounts[msg.sender].isBought = true;
         } else {
             require(
-                Accounts[msg.sender].publicBought + _amount >= maxPublicSaleAmount + amountsFromId[idPass],
+                (Accounts[msg.sender].publicBought + _amount) <= (maxPublicSaleAmount + amountsFromId[idPass]),
                 'MintNFT::buyToken: amount is more than allowed'
-            );
-            require(
-                msg.value == discountPrice * _amount,
-                'MintNFT::buyToken: not enough ether sent'
             );
 
             wallet.transfer(msg.value);
 
-            mintingPass.safeTransferFrom(msg.sender, address(this), idPass, 1, '');
+            mintingPass.safeTransferFrom(msg.sender, receiver, idPass, 1, '');
 
             for(uint i = 0; i < _amount; i++) {
                 tokenId = token.mint(msg.sender);
                 saleAmount++;
+                Accounts[msg.sender].publicBought++;
                 emit Buy(msg.sender, tokenId);
             }   
         }
@@ -192,7 +183,7 @@ contract MintNFT is Ownable, AccessControl {
 
     function _setPause(bool _isPaused)
         external
-        onlyRole(MANAGER_ROLE)
+        onlyManager
         returns (bool)
     {
         isPaused = _isPaused;
@@ -230,8 +221,12 @@ contract MintNFT is Ownable, AccessControl {
         return true;
     }
 
-    function _setManager(address manager) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        grantRole(MANAGER_ROLE, manager);
+    function _setManager(address _manager) public onlyOwner {
+        managers[_manager] = true;
+    }
+
+    function _removeManager(address _manager) public onlyOwner {
+        managers[_manager] = false;
     }
 
     function _withdrawERC20(IERC20 tokenContract, address recepient) 
