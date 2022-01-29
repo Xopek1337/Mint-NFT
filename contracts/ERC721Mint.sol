@@ -1,51 +1,58 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.11;
+pragma solidity 0.8.10;
 
-import '../node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
-import '../node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol';
 import '../node_modules/@openzeppelin/contracts/access/Ownable.sol';
 import '../node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import '../node_modules/@openzeppelin/contracts/access/AccessControlEnumerable.sol';
+import '../node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol';
 
-contract ERC721Mint is ERC721, ERC721Enumerable, Ownable, AccessControlEnumerable {
-    bytes32 public constant MINTER_ROLE = keccak256('MINTER_ROLE');
-    bytes32 public constant BURNER_ROLE = keccak256('BURNER_ROLE');
-
+contract ERC721Mint is ERC721, Ownable {
     string public uri;
+
+    mapping(address => bool) public managers;
 
     uint public tokenId = 0;
 
     constructor(string memory _name, string memory _symbol, string memory _uri) ERC721 (_name, _symbol) {
         uri = _uri;
-        
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        // может ли owner минтить? grantRole(MINTER_ROLE, msg.sender);
+        managers[msg.sender] = true;
     }
 
-    function _setMinter(address _minter) 
-        external 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
-        returns (bool) 
+    modifier onlyManager() {
+        require(
+            managers[msg.sender], 
+            'ERC721Mint: caller is not the manager'
+        );
+        _;
+    }
+
+    function _addManager(address _manager)
+        external
+        onlyOwner
+        returns(bool)
     {
-        grantRole(MINTER_ROLE, _minter);
+        require(!managers[_manager], 'ERC721Mint::_addManager: is already a manager');
+
+        managers[_manager] = true;
 
         return true;
     }
 
-     function _setBurner(address _burner) 
-        external 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
-        returns (bool) 
+    function _removeManager(address _manager)
+        external
+        onlyOwner
+        returns(bool)
     {
-        grantRole(BURNER_ROLE, _burner);
+        require(managers[_manager], 'ERC721Mint::_removeManager: is not a manager');
+
+        managers[_manager] = false;
 
         return true;
     }
 
     function mint(address to) 
         external 
-        onlyRole(MINTER_ROLE)
-        returns (bool) 
+        onlyManager
+        returns(bool) 
     {
         tokenId++;
 
@@ -56,11 +63,9 @@ contract ERC721Mint is ERC721, ERC721Enumerable, Ownable, AccessControlEnumerabl
 
     function burn(uint _tokenId) 
         external 
-        onlyRole(BURNER_ROLE)
-        returns (bool) 
+        onlyManager
+        returns(bool) 
     {
-        require(_isApprovedOrOwner(_msgSender(), _tokenId), 'ERC721Mint::burn: caller is not owner nor approved');
-
         _burn(_tokenId);
 
         return true;
@@ -70,16 +75,16 @@ contract ERC721Mint is ERC721, ERC721Enumerable, Ownable, AccessControlEnumerabl
         public 
         view 
         override
-        returns (string memory) 
+        returns(string memory) 
     {
         return super.tokenURI(_tokenId);
     }
 
-     function _baseURI() 
+    function _baseURI() 
         internal 
         view 
         override
-        returns (string memory) 
+        returns(string memory) 
     {
         return uri;
     }
@@ -87,46 +92,32 @@ contract ERC721Mint is ERC721, ERC721Enumerable, Ownable, AccessControlEnumerabl
     function _setNewURI(string memory _newURI) 
         external
         onlyOwner
-        returns (bool) 
+        returns(bool) 
     {
         uri = _newURI;
 
         return true;
     }
 
-    function _withdrawERC20(IERC20 tokenContract, address recepient)
+    function _withdrawERC20(address _tokenContract, address _recepient)
         external 
         onlyOwner 
         returns(bool) 
     {
-        tokenContract.transfer(recepient, tokenContract.balanceOf(address(this)));
+        IERC20 token = IERC20(_tokenContract);
+        token.transfer(_recepient, token.balanceOf(address(this)));
 
         return true;
     }
 
-    function _withdrawERC721(IERC721 tokenContract, address recepient, uint _tokenId)
+    function _withdrawERC721(address _tokenContract, address _recepient, uint _tokenId)
         external 
         onlyOwner 
         returns(bool) 
     {
-        tokenContract.transferFrom(address(this), recepient, _tokenId);
+        IERC721 token = IERC721(_tokenContract);
+        token.transferFrom(address(this), _recepient, _tokenId);
 
         return true;
-    }
-
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721, ERC721Enumerable, AccessControlEnumerable)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
-    }
-
-    function _beforeTokenTransfer(address from, address to, uint256 _tokenId)
-        internal
-        override(ERC721, ERC721Enumerable)
-    {
-        super._beforeTokenTransfer(from, to, _tokenId);
     }
 }
