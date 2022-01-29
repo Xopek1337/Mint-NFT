@@ -59,7 +59,7 @@ contract MintNFT is Ownable, AccessControl {
         amountsFromId[5] = 90;
     }
 
-    function buyToken(uint256 _amount)
+    function buyTokens(uint256 _amount)
         external
         payable
         returns (bool) 
@@ -117,7 +117,7 @@ contract MintNFT is Ownable, AccessControl {
         return true;
     }
 
-    function sale(uint256 _amount, uint idPass)
+    function buyTokens(uint256 _amount, uint idPass)
         external
         payable
         returns (bool)
@@ -180,7 +180,7 @@ contract MintNFT is Ownable, AccessControl {
         return true;
     }
 
-    function _setSellingMode(bool _isPublicSale)
+    function _setPublicSale(bool _isPublicSale)
         external
         onlyOwner
         returns (bool)
