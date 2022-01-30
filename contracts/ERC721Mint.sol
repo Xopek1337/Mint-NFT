@@ -30,13 +30,6 @@ contract ERC721Mint is ERC721, Ownable {
         onlyOwner
         returns(bool)
     {
-        if (_status == true) {
-            require(!managers[_manager], 'ERC721Mint::_updateManagerList: is already a manager');
-        }
-        if (_status == false) {
-            require(managers[_manager], 'ERC721Mint::_updateManagerList: is not a manager');
-        }
-
         managers[_manager] = _status;
 
         return true;
@@ -61,17 +54,7 @@ contract ERC721Mint is ERC721, Ownable {
     {
         _burn(_tokenId);
 
-
         return true;
-    }
-
-    function tokenURI(uint _tokenId) 
-        public 
-        view 
-        override
-        returns(string memory) 
-    {
-        return super.tokenURI(_tokenId);
     }
 
     function _baseURI() 

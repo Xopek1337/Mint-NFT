@@ -54,14 +54,6 @@ describe('ERC721MintTest', () => {
       ).to.be.revertedWith('Ownable: caller is not the owner');
     });
 
-    it('should fail add manager if address is already a manager', async () => {
-      await ERC721Mint._updateManagerList(addr2.address, true)
-
-      await expect(
-        ERC721Mint._updateManagerList(addr2.address, true),
-      ).to.be.revertedWith('ERC721Mint::_updateManagerList: is already a manager');
-    });
-
     it('should remove manager', async () => {
       await ERC721Mint._updateManagerList(addr1.address, true);
       await ERC721Mint._updateManagerList(addr1.address, false);
@@ -75,12 +67,6 @@ describe('ERC721MintTest', () => {
       await expect(
         ERC721Mint.connect(addr1)._updateManagerList(addr2.address, false),
       ).to.be.revertedWith('Ownable: caller is not the owner');
-    });
-
-    it('should fail remove manager if address is not a manager', async () => {
-      await expect(
-        ERC721Mint._updateManagerList(addr2.address, false),
-      ).to.be.revertedWith('ERC721Mint::_updateManagerList: is not a manager');
     });
 
     it('should mint', async () => {
