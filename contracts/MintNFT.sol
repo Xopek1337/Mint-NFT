@@ -79,7 +79,7 @@ contract MintNFT is Ownable {
 
     function mintInternal(uint _tokenAmount, bool useMintingPass, uint mintingPassId) internal returns (bool) {
         require(saleCounter + _tokenAmount <= allSaleAmount, 'MintNFT::buyToken: tokens are enough');
-        require(!isPaused, 'MintNFT::buyToken: sales are closed');
+        require(!isPaused, 'MintNFT::mintInternal: sales are closed');
 
         uint sum;
 
@@ -90,7 +90,7 @@ contract MintNFT is Ownable {
 
             require(
                 _tokenAmount <= amountsFromId[mintingPassId],
-                'MintNFT::buyToken: amount is more than allowed'
+                'MintNFT::mintInternal: amount is more than allowed'
             );
         } else {
             sum = price * _tokenAmount;
@@ -98,14 +98,14 @@ contract MintNFT is Ownable {
             if (isPublicSale) {
                 require(
                     Accounts[msg.sender].publicBought + _tokenAmount <= maxPublicSaleAmount,
-                    'MintNFT::buyToken: amount is more than allowed'
+                    'MintNFT::mintInternal: amount is more than allowed'
                 );
 
                 Accounts[msg.sender].publicBought += _tokenAmount;
             } else {
                 require(
                     Accounts[msg.sender].allowedAmount >= _tokenAmount,
-                    'MintNFT::buyToken: amount is more than allowed or you are not logged into whitelist'
+                    'MintNFT::mintInternal: amount is more than allowed or you are not logged into whitelist'
                 );
 
                 Accounts[msg.sender].allowedAmount = 0;
@@ -114,7 +114,7 @@ contract MintNFT is Ownable {
 
         require(
             msg.value == sum,
-            'MintNFT::buyToken: not enough ether sent'
+            'MintNFT::mintInternal: not enough ether sent'
         );
 
         wallet.transfer(msg.value);
