@@ -7,7 +7,7 @@ async function main() {
 
   const ERC721MintInstance = await ethers.getContractFactory('ERC721Mint');
   const ERC721Mint = await ERC721MintInstance.deploy(process.env.TOKEN_NAME, 
-  process.env.TOKEN_SYMBOL, process.env.URI);
+  process.env.TOKEN_SYMBOL, process.env.NFT_URI);
 
   console.log('Network', network);
   console.log('Deploying contracts with the account:', deployer.address);

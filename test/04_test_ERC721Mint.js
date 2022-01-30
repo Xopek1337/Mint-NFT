@@ -12,7 +12,7 @@ describe("ERC721MintTest", () => {
       ERC721Mint = await ERC721MintInstance.deploy(
         process.env.TOKEN_NAME,
         process.env.TOKEN_SYMBOL,
-        process.env.URI,
+        process.env.NFT_URI,
       );
 
       const [name, symbol, uri] = await Promise.all([
@@ -26,7 +26,7 @@ describe("ERC721MintTest", () => {
 
       expect(name).to.be.equal(process.env.TOKEN_NAME);
       expect(symbol).to.be.equal(process.env.TOKEN_SYMBOL);
-      expect(uri).to.equal(process.env.URI);
+      expect(uri).to.equal(process.env.NFT_URI);
       expect(tokenId).to.equal(0);
       expect(isOwnerManager).to.equal(true);
     });
@@ -37,7 +37,7 @@ describe("ERC721MintTest", () => {
       ERC721Mint = await ERC721MintInstance.deploy(
         process.env.TOKEN_NAME,
         process.env.TOKEN_SYMBOL,
-        process.env.URI,
+        process.env.NFT_URI,
       );
     });
     it("should add manager", async () => {
@@ -152,7 +152,7 @@ describe("ERC721MintTest", () => {
       const tokenId = await ERC721Mint.tokenId();
       const result = await ERC721Mint.tokenURI(tokenId);
 
-      expect(process.env.URI + tokenId).to.equal(result);
+      expect(process.env.NFT_URI + tokenId).to.equal(result);
     });
 
     it("should fail return URI if token does not exist", async () => {
