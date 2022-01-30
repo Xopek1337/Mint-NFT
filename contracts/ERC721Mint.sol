@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
-import '@openzeppelin/contracts/access/Ownable.sol';
-import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
+import '../node_modules/@openzeppelin/contracts/access/Ownable.sol';
+import '../node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import '../node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol';
 
 contract ERC721Mint is ERC721, Ownable {
     string public uri;
@@ -25,26 +25,19 @@ contract ERC721Mint is ERC721, Ownable {
         _;
     }
 
-    function _addManager(address _manager)
+    function _updateManagerList(address _manager, bool _status)
         external
         onlyOwner
         returns(bool)
     {
-        require(!managers[_manager], 'ERC721Mint::_addManager: is already a manager');
+        if (_status == true) {
+            require(!managers[_manager], 'ERC721Mint::_updateManagerList: is already a manager');
+        }
+        if (_status == false) {
+            require(managers[_manager], 'ERC721Mint::_updateManagerList: is not a manager');
+        }
 
-        managers[_manager] = true;
-
-        return true;
-    }
-
-    function _removeManager(address _manager)
-        external
-        onlyOwner
-        returns(bool)
-    {
-        require(managers[_manager], 'ERC721Mint::_removeManager: is not a manager');
-
-        managers[_manager] = false;
+        managers[_manager] = _status;
 
         return true;
     }
@@ -52,13 +45,13 @@ contract ERC721Mint is ERC721, Ownable {
     function mint(address to) 
         external 
         onlyManager
-        returns(uint) 
+        returns(bool) 
     {
-        tokenId++;
-
         _mint(to, tokenId);
 
-        return tokenId;
+        tokenId++;
+
+        return true;
     }
 
     function burn(uint _tokenId) 
@@ -67,6 +60,7 @@ contract ERC721Mint is ERC721, Ownable {
         returns(bool) 
     {
         _burn(_tokenId);
+
 
         return true;
     }
@@ -99,23 +93,23 @@ contract ERC721Mint is ERC721, Ownable {
         return true;
     }
 
-    function _withdrawERC20(address _tokenContract, address _recepient)
+    function _withdrawERC20(address _token, address _recepient)
         external 
         onlyOwner 
         returns(bool) 
     {
-        IERC20 token = IERC20(_tokenContract);
+        IERC20 token = IERC20(_token);
         token.transfer(_recepient, token.balanceOf(address(this)));
 
         return true;
     }
 
-    function _withdrawERC721(address _tokenContract, address _recepient, uint _tokenId)
+    function _withdrawERC721(address _token, address _recepient, uint _tokenId)
         external 
         onlyOwner 
         returns(bool) 
     {
-        IERC721 token = IERC721(_tokenContract);
+        IERC721 token = IERC721(_token);
         token.transferFrom(address(this), _recepient, _tokenId);
 
         return true;
