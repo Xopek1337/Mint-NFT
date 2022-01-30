@@ -52,7 +52,7 @@ contract MintNFT is Ownable {
         mintingPass = IERC1155(_mintingPass);
         wallet = _wallet;
         receiver = _receiver;
-        _addManager(msg.sender);
+        _updateManagerList(msg.sender, true);
 
         amountsFromId[0] = 3;
         amountsFromId[1] = 6;
@@ -219,35 +219,21 @@ contract MintNFT is Ownable {
         return true;
     }
 
-    function addManager(address _manager)
+    function updateManagerList(address _manager, bool _status)
         external
         onlyOwner
         returns(bool)
     {
-        _addManager(_manager);
+        _updateManagerList(_manager, _status);
 
         return true;
     }
 
-    function _addManager(address _manager)
+    function _updateManagerList(address _manager, bool _status)
         internal
         returns(bool)
     {
-        require(!managers[_manager], 'MintNFT::_addManager: is already a manager');
-
-        managers[_manager] = true;
-
-        return true;
-    }
-
-    function _removeManager(address _manager)
-        external
-        onlyOwner
-        returns(bool)
-    {
-        require(managers[_manager], 'MintNFT::_removeManager: is not a manager');
-
-        managers[_manager] = false;
+        managers[_manager] = _status;
 
         return true;
     }

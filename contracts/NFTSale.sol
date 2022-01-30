@@ -177,7 +177,6 @@ contract NFTSale is Ownable {
     /// @dev Stores the address value in the state variable 'wallet'.
     /// @param _wallet The new value to store.
     /// @return The bool value.
-
     function _setWallet(address payable _wallet)
         external
         onlyOwner
@@ -187,7 +186,7 @@ contract NFTSale is Ownable {
 
         return true;
     }
-
+    
     /// @notice The function sets amount and rate for the specified bundle.
     /// @dev Stores the values of the variables 'amount' and 'rate' for the specified bundle in the array 'bundles'.
     /// @param _bundleId The bundle number.

@@ -167,7 +167,7 @@ describe("MintNFT test", () => {
     it("should faile if sender has already participated in sales without pass", async () => {
       await MintNFT.connect(owner)._setPause(false);
       await MintNFT.connect(owner)._addWhitelist([addr1.address], [10]);
-      await ERC721Mint.connect(owner)._addManager(MintNFT.address);
+      await ERC721Mint.connect(owner)._updateManagerList(MintNFT.address, 1);
 
       await MintNFT.connect(addr1).functions["mintTokens(uint256)"](1, { value: ethers.utils.parseEther("0.1") });
       await expect(
@@ -186,7 +186,7 @@ describe("MintNFT test", () => {
 
     it("should transfer without pass in private sale", async () => {
       const price = await BigNumber.from("1000000000000000000");
-      await ERC721Mint._addManager(MintNFT.address);
+      await ERC721Mint._updateManagerList(MintNFT.address, 1);
       await MintNFT.connect(owner)._setPause(false);
       await MintNFT.connect(owner)._addWhitelist([addr1.address], [10]);
       await MintNFT._setPublicSale(false);
@@ -202,7 +202,7 @@ describe("MintNFT test", () => {
 
     it("should transfer without pass in public sale", async () => {
       const price = await BigNumber.from("300000000000000000");
-      await ERC721Mint._addManager(MintNFT.address);
+      await ERC721Mint._updateManagerList(MintNFT.address, 1);
       await MintNFT.connect(owner)._setPause(false);
       await MintNFT._setPublicSale(true);
 
@@ -216,7 +216,7 @@ describe("MintNFT test", () => {
     });
 
     it("should faile if amount is more than allowed without pass in public sale", async () => {
-      await ERC721Mint._addManager(MintNFT.address);
+      await ERC721Mint._updateManagerList(MintNFT.address, 1);
       await MintNFT.connect(owner)._setPause(false);
       await MintNFT._setPublicSale(true);
 
@@ -227,7 +227,7 @@ describe("MintNFT test", () => {
 
     it("should transfer with pass in private sale", async () => {
       const tokenPrice = await BigNumber.from("900000000000000000");
-      await ERC721Mint._addManager(MintNFT.address);
+      await ERC721Mint._updateManagerList(MintNFT.address, 1);
       await MintNFT.connect(owner)._setPause(false);
       await MintNFT.connect(owner)._addWhitelist([addr1.address], [10]);
       await mintingPass._setPause(false);
@@ -248,7 +248,7 @@ describe("MintNFT test", () => {
 
     it("should transfer with pass in public sale", async () => {
       const tokenPrice = await BigNumber.from("540000000000000000");
-      await ERC721Mint._addManager(MintNFT.address);
+      await ERC721Mint._updateManagerList(MintNFT.address, 1);
       await MintNFT.connect(owner)._setPause(false);
       await MintNFT.connect(owner)._addWhitelist([addr1.address], [10]);
       await MintNFT._setPublicSale(true);
@@ -269,7 +269,7 @@ describe("MintNFT test", () => {
     });
 
     it("should faile if amount exceed allowed with pass in private sale", async () => {
-      await ERC721Mint._addManager(MintNFT.address);
+      await ERC721Mint._updateManagerList(MintNFT.address, 1);
       await MintNFT.connect(owner)._setPause(false);
       await MintNFT.connect(owner)._addWhitelist([addr1.address], [5]);
       await mintingPass._setPause(false);
@@ -284,7 +284,7 @@ describe("MintNFT test", () => {
     });
 
     it("should faile if amount is more than allowed with pass in public sale", async () => {
-      await ERC721Mint._addManager(MintNFT.address);
+      await ERC721Mint._updateManagerList(MintNFT.address, 1);
       await MintNFT.connect(owner)._setPause(false);
       await MintNFT.connect(owner)._addWhitelist([addr1.address], [5]);
       await MintNFT._setPublicSale(true);
@@ -320,30 +320,17 @@ describe("MintNFT test", () => {
     });
 
     it("should add manager", async () => {
-      await MintNFT.addManager(addr1.address);
+      await MintNFT.updateManagerList(addr1.address, 1);
 
       const isManager = await MintNFT.managers(addr1.address);
 
       expect(isManager).to.equal(true);
     });
 
-    it("should fail add manager if address is already a manager", async () => {
-      await MintNFT.addManager(addr2.address);
-
-      await expect(
-        MintNFT.addManager(addr2.address),
-      ).to.be.revertedWith("MintNFT::_addManager: is already a manager");
-    });
-
-    it("should fail remove manager if address is not a manager", async () => {
-      await expect(
-        MintNFT._removeManager(addr2.address),
-      ).to.be.revertedWith("MintNFT::_removeManager: is not a manager");
-    });
 
     it("should remove manager", async () => {
-      await MintNFT.addManager(addr1.address);
-      await MintNFT._removeManager(addr1.address);
+      await MintNFT.updateManagerList(addr1.address, 1);
+      await MintNFT.updateManagerList(addr1.address, 0);
 
       const isManager = await MintNFT.managers(addr2.address);
 

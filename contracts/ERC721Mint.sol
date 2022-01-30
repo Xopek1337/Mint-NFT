@@ -12,11 +12,6 @@ contract ERC721Mint is ERC721, Ownable {
 
     uint public tokenId = 0;
 
-    constructor(string memory _name, string memory _symbol, string memory _uri) ERC721 (_name, _symbol) {
-        uri = _uri;
-        managers[msg.sender] = true;
-    }
-
     modifier onlyManager() {
         require(
             managers[msg.sender], 
@@ -24,27 +19,18 @@ contract ERC721Mint is ERC721, Ownable {
         );
         _;
     }
-
-    function _addManager(address _manager)
-        external
-        onlyOwner
-        returns(bool)
-    {
-        require(!managers[_manager], 'ERC721Mint::_addManager: is already a manager');
-
-        managers[_manager] = true;
-
-        return true;
+    
+    constructor(string memory _name, string memory _symbol, string memory _uri) ERC721 (_name, _symbol) {
+        uri = _uri;
+        managers[msg.sender] = true;
     }
 
-    function _removeManager(address _manager)
+    function _updateManagerList(address _manager, bool _status)
         external
         onlyOwner
         returns(bool)
     {
-        require(managers[_manager], 'ERC721Mint::_removeManager: is not a manager');
-
-        managers[_manager] = false;
+        managers[_manager] = _status;
 
         return true;
     }
@@ -55,6 +41,7 @@ contract ERC721Mint is ERC721, Ownable {
         returns(uint) 
     {
         _mint(to, tokenId);
+
         tokenId++;
 
         return tokenId;
@@ -68,15 +55,6 @@ contract ERC721Mint is ERC721, Ownable {
         _burn(_tokenId);
 
         return true;
-    }
-
-    function tokenURI(uint _tokenId) 
-        public 
-        view 
-        override
-        returns(string memory) 
-    {
-        return super.tokenURI(_tokenId);
     }
 
     function _baseURI() 
