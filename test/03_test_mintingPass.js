@@ -12,7 +12,7 @@ const URI = "https://gateway.pinata.cloud/ipfs/QmPhNgR9i4PFtwhaXtf88iNTaq6Lnxs2Y
 describe("mintingPassTest", () => {
   let mintingPass;
 
-    beforeEach(async () => {
+  beforeEach(async () => {
     [wallet, wallet2, addr1] = await ethers.getSigners();
   });
 
@@ -29,7 +29,7 @@ describe("mintingPassTest", () => {
   describe("Other tests", () => {
     beforeEach(async () => {
       const mintingPassInstance = await ethers.getContractFactory("MintingPass");
-      mintingPass = await mintingPassInstance.deploy(wallet.address, URI)
+      mintingPass = await mintingPassInstance.deploy(wallet.address, URI);
     });
     it("should faile if contract is paused", async () => {
       await expect(
@@ -51,7 +51,7 @@ describe("mintingPassTest", () => {
       await expect(
         mintingPass.connect(addr1).mint(1, 100, { value: ethers.utils.parseEther("3.25") }),
       ).to.be.revertedWith("MintingPass::mint: not enough ether sent");
-    }); 
+    });
 
     it("should faile if not enough enough sepply", async () => {
       await mintingPass._setPause(false);
@@ -93,8 +93,8 @@ describe("mintingPassTest", () => {
 
     it("should return IPFS URL", async () => {
       const answer = await mintingPass.uri(0);
-  
-      expect(URI + "/0").to.equal(answer);
+
+      expect(`${URI}/0`).to.equal(answer);
     });
 
     it("should change wallet", async () => {
@@ -119,7 +119,6 @@ describe("mintingPassTest", () => {
     });
 
     it("should faile if amounts length must not be equal rates length", async () => {
-
       const amounts = [320, 300, 280, 260];
       const rates = [ethers.utils.parseEther("0.1"), ethers.utils.parseEther("0.2"), ethers.utils.parseEther("0.3")];
 

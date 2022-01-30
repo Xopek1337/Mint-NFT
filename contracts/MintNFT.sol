@@ -4,7 +4,6 @@ pragma solidity 0.8.10;
 
 import './ERC721Mint.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
-import '@openzeppelin/contracts/utils/cryptography/MerkleProof.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
 import '@openzeppelin/contracts/token/ERC1155/IERC1155.sol';
@@ -48,6 +47,7 @@ contract MintNFT is Ownable {
         mintingPass = IERC1155(_mintingPass);
         wallet = _wallet;
         receiver = _receiver;
+        _addManager(msg.sender);
 
         amountsFromId[0] = 3;
         amountsFromId[1] = 6;
@@ -56,7 +56,6 @@ contract MintNFT is Ownable {
         amountsFromId[4] = 30;
         amountsFromId[5] = 90;
     }
-
     modifier onlyManager() {
         require(managers[msg.sender], "Ownable: caller is not the manager");
         _;
@@ -97,7 +96,7 @@ contract MintNFT is Ownable {
             Accounts[msg.sender].isBought = true;
         } else {
             require(
-                Accounts[msg.sender].publicBought + _amount >= maxPublicSaleAmount,
+                Accounts[msg.sender].publicBought + _amount <= maxPublicSaleAmount,
                 'MintNFT::buyToken: amount is more than allowed'
             );
 
@@ -130,12 +129,12 @@ contract MintNFT is Ownable {
             if(Accounts[msg.sender].isBought) {
                 require(
                     amountsFromId[idPass] >= _amount,
-                    'MintNFT::buyToken: amount is more than allowed or you are not logged into whitelist'
+                    'MintNFT::buyToken: amount is more than allowed in private sale'
                 );
             }
             else {
                 require(
-                    Accounts[msg.sender].allowedAmount + amountsFromId[idPass] >= _amount,
+                    (Accounts[msg.sender].allowedAmount + amountsFromId[idPass] >= _amount),
                     'MintNFT::buyToken: amount is more than allowed or you are not logged into whitelist'
                 );
             }
@@ -221,12 +220,22 @@ contract MintNFT is Ownable {
         return true;
     }
 
-    function _addManager(address _manager)
+    function addManager(address _manager)
         external
         onlyOwner
         returns(bool)
     {
-        require(!managers[_manager], 'ERC721Mint::_addManager: is already a manager');
+        _addManager(_manager);
+
+        return true;
+    }
+
+    function _addManager(address _manager)
+        internal
+        onlyOwner
+        returns(bool)
+    {
+        require(!managers[_manager], 'MintNFT::_addManager: is already a manager');
 
         managers[_manager] = true;
 
@@ -238,7 +247,7 @@ contract MintNFT is Ownable {
         onlyOwner
         returns(bool)
     {
-        require(managers[_manager], 'ERC721Mint::_removeManager: is not a manager');
+        require(managers[_manager], 'MintNFT::_removeManager: is not a manager');
 
         managers[_manager] = false;
 

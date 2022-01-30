@@ -18,6 +18,8 @@ module.exports = {
   networks: {
     rinkeby: {
       url: process.env.RPC_NODE_URL_RINKEBY,
+      gas: 2100000,
+      gasPrice: 8000000000,
       accounts: [process.env.PRIVATE_KEY]
     },
     mainnet: {

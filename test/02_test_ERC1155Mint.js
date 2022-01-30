@@ -4,13 +4,13 @@ const { ethers } = require("hardhat");
 const URI = "https://gateway.pinata.cloud/ipfs/QmPhNgR9i4PFtwhaXtf88iNTaq6Lnxs2Y6XxyH27AZmkYE";
 
 describe("ERC1155MintTest", () => {
-    let erc1155;
+  let erc1155;
 
   beforeEach(async () => {
     [addr1] = await ethers.getSigners();
 
     const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
-    erc1155 = await erc1155Instance.deploy("MineichToken","MNC", URI);
+    erc1155 = await erc1155Instance.deploy("MineichToken", "MNC", URI);
   });
 
   it("should mint", async () => {
@@ -46,6 +46,6 @@ describe("ERC1155MintTest", () => {
   it("should return IPFS URL", async () => {
     const answer = await erc1155.uri(0);
 
-    expect(URI + "/0").to.equal(answer);
+    expect(`${URI}/0`).to.equal(answer);
   });
 });

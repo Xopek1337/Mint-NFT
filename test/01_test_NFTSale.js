@@ -10,8 +10,8 @@ const { constants } = require("@openzeppelin/test-helpers");
 const URI = "https://gateway.pinata.cloud/ipfs/QmPhNgR9i4PFtwhaXtf88iNTaq6Lnxs2Y6XxyH27AZmkYE";
 
 describe("NFTSaleTest", () => {
-    let erc1155;
-    let NFTSale;
+  let erc1155;
+  let NFTSale;
 
   beforeEach(async () => {
     [wallet, wallet2, addr1, addr2] = await ethers.getSigners();
@@ -20,7 +20,7 @@ describe("NFTSaleTest", () => {
   describe("Testing the existence of a wallet", () => {
     beforeEach(async () => {
       const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
-      erc1155 = await erc1155Instance.deploy("MineichToken","MNC", URI);
+      erc1155 = await erc1155Instance.deploy("MineichToken", "MNC", URI);
     });
 
     it("should faile if wallet does not exist", async () => {
@@ -34,7 +34,7 @@ describe("NFTSaleTest", () => {
   describe("Other tests", () => {
     beforeEach(async () => {
       const erc1155Instance = await ethers.getContractFactory("ERC1155Mint");
-      erc1155 = await erc1155Instance.deploy("MineichToken","MNC", URI);
+      erc1155 = await erc1155Instance.deploy("MineichToken", "MNC", URI);
       const NFTSaleInstance = await ethers.getContractFactory("NFTSale");
       NFTSale = await NFTSaleInstance.deploy(wallet.address, erc1155.address);
     });
