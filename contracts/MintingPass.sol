@@ -127,7 +127,6 @@ contract MintingPass is ERC1155, Ownable {
     /// @dev Stores the address value in the state variable 'wallet'.
     /// @param _wallet The new value to store.
     /// @return The bool value.
-
     function _setWallet(address payable _wallet)
         external
         onlyOwner

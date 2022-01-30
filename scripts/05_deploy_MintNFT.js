@@ -16,7 +16,7 @@ async function main() {
   const dataERC721 = JSON.parse(await fs.readFileSync(dir + fileNameERC721, { encoding: "utf8" }));
 
   const MintNFTInstance = await ethers.getContractFactory("MintNFT");
-  const MintNFT = await MintNFTInstance.deploy(wallet, dataERC721.ERC721Mint, dataPass.passes, receiver);
+  const MintNFT = await MintNFTInstance.deploy(dataERC721.ERC721Mint, dataPass.passes, wallet, receiver);
 
   console.log("Network", network);
   console.log("Deploying contracts with the account:", deployer.address);

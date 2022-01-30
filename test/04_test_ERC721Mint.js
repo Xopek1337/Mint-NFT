@@ -121,7 +121,7 @@ describe("ERC721MintTest", () => {
 
       const tokenIdAfterMint = await ERC721Mint.tokenId();
 
-      await ERC721Mint.burn(tokenIdAfterMint);
+      await ERC721Mint.burn(tokenIdAfterMint - 1);
 
       const balance = await ERC721Mint.balanceOf(addr1.address);
 
@@ -149,7 +149,7 @@ describe("ERC721MintTest", () => {
     it("should return URI of token", async () => {
       await ERC721Mint.mint(addr1.address);
 
-      const tokenId = await ERC721Mint.tokenId();
+      const tokenId = await ERC721Mint.tokenId() - 1;
       const result = await ERC721Mint.tokenURI(tokenId);
 
       expect(process.env.NFT_URI + tokenId).to.equal(result);

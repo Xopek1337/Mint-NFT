@@ -194,7 +194,6 @@ contract NFTSale is Ownable {
     /// @param _amount The new value to store.
     /// @param _rate The new value to store.
     /// @return The bool value.
-
     function _setBundleData(
         uint256 _bundleId,
         uint256 _amount,

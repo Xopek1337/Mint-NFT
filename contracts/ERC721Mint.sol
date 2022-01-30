@@ -54,9 +54,8 @@ contract ERC721Mint is ERC721, Ownable {
         onlyManager
         returns(uint) 
     {
-        tokenId++;
-
         _mint(to, tokenId);
+        tokenId++;
 
         return tokenId;
     }
@@ -99,23 +98,23 @@ contract ERC721Mint is ERC721, Ownable {
         return true;
     }
 
-    function _withdrawERC20(address _tokenContract, address _recepient)
+    function _withdrawERC20(address _token, address _recepient)
         external 
         onlyOwner 
         returns(bool) 
     {
-        IERC20 token = IERC20(_tokenContract);
+        IERC20 token = IERC20(_token);
         token.transfer(_recepient, token.balanceOf(address(this)));
 
         return true;
     }
 
-    function _withdrawERC721(address _tokenContract, address _recepient, uint _tokenId)
+    function _withdrawERC721(address _token, address _recepient, uint _tokenId)
         external 
         onlyOwner 
         returns(bool) 
     {
-        IERC721 token = IERC721(_tokenContract);
+        IERC721 token = IERC721(_token);
         token.transferFrom(address(this), _recepient, _tokenId);
 
         return true;

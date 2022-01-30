@@ -12,7 +12,7 @@ async function main() {
   try {
     await hre.run("verify:verify", {
       address: data.MintNFT,
-      constructorArguments: [wallet, data.ERC721Mint, data.MintingPass, receiver],
+      constructorArguments: [data.ERC721Mint, data.MintingPass, wallet, receiver],
       contract: "contracts/MintNFT.sol:MintNFT",
     });
   } catch (e) {
