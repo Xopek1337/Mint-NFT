@@ -24,7 +24,6 @@ contract MintNFT is Ownable {
     struct userData {
         uint allowedAmount;
         uint publicBought;
-        bool isBought;
     }
 
     mapping(address => userData) public Accounts;
@@ -34,7 +33,7 @@ contract MintNFT is Ownable {
     bool public isPaused = true;
     bool public isPublicSale = false;
 
-    event Mint(address _addr, uint _tokenId);
+    event Mint(address indexed user, uint tokenAmount);
 
     modifier onlyManager() {
         require(managers[msg.sender], "Ownable: caller is not the manager");
@@ -62,106 +61,72 @@ contract MintNFT is Ownable {
         amountsFromId[5] = 90;
     }
 
-    function mintTokens(uint256 _amount)
-        external
-        payable
-        returns (bool) 
-    {
-        wallet.transfer(msg.value);
-
-        require(saleCounter + _amount <= allSaleAmount, 'MintNFT::mintTokens: tokens are enough');
-        require(!isPaused, 'MintNFT::mintTokens: sales are closed');
-        require(
-            msg.value == price * _amount,
-            'MintNFT::mintTokens: not enough ether sent'
-        );
-        uint tokenId;
-
-        if (!isPublicSale) {
-            require(
-                Accounts[msg.sender].allowedAmount >= _amount,
-                'MintNFT::mintTokens: amount is more than allowed or you are not logged into whitelist'
-            );
-            require(
-                !Accounts[msg.sender].isBought,
-                'MintNFT::mintTokens: sender has already participated in sales'
-            );
-
-            for(uint i = 0; i < _amount; i++) {
-                tokenId = token.mint(msg.sender);
-                saleCounter++;
-                emit Mint(msg.sender, tokenId);
-            }   
-
-            Accounts[msg.sender].isBought = true;
-        } else {
-            require(
-                Accounts[msg.sender].publicBought + _amount <= maxPublicSaleAmount,
-                'MintNFT::mintTokens: amount is more than allowed'
-            );
-
-            for(uint i = 0; i < _amount; i++) {
-                tokenId = token.mint(msg.sender);
-                saleCounter++;
-                Accounts[msg.sender].publicBought++;
-                emit Mint(msg.sender, tokenId);
-            }
-        }
-        return true;
-    }
-
-    function mintTokens(uint256 _amount, uint idPass)
+    function mint(uint256 _tokenAmount)
         external
         payable
         returns (bool)
     {
+        return mintInternal(_tokenAmount, false, 0);
+    }
+
+    function mint(uint256 _tokenAmount, uint mintingPassId)
+        external
+        payable
+        returns (bool)
+    {
+        return mintInternal(_tokenAmount, true, mintingPassId);
+    }
+
+    function mintInternal(uint _tokenAmount, bool useMintingPass, uint mintingPassId) internal returns (bool) {
+        require(saleCounter + _tokenAmount <= allSaleAmount, 'MintNFT::buyToken: tokens are enough');
+        require(!isPaused, 'MintNFT::buyToken: sales are closed');
+
+        uint sum;
+
+        if (useMintingPass) {
+            sum = discountPrice * _tokenAmount;
+
+            mintingPass.safeTransferFrom(msg.sender, receiver, mintingPassId, 1, '');
+
+            require(
+                _tokenAmount <= amountsFromId[mintingPassId],
+                'MintNFT::buyToken: amount is more than allowed'
+            );
+        } else {
+            sum = price * _tokenAmount;
+
+            if (isPublicSale) {
+                require(
+                    Accounts[msg.sender].publicBought + _tokenAmount <= maxPublicSaleAmount,
+                    'MintNFT::buyToken: amount is more than allowed'
+                );
+
+                Accounts[msg.sender].publicBought += _tokenAmount;
+            } else {
+                require(
+                    Accounts[msg.sender].allowedAmount >= _tokenAmount,
+                    'MintNFT::buyToken: amount is more than allowed or you are not logged into whitelist'
+                );
+
+                Accounts[msg.sender].allowedAmount = 0;
+            }
+        }
+
+        require(
+            msg.value == sum,
+            'MintNFT::buyToken: not enough ether sent'
+        );
+
         wallet.transfer(msg.value);
 
-        require(saleCounter + _amount <= allSaleAmount, 'MintNFT::mintTokens: tokens are enough');
-        require(!isPaused, 'MintNFT::mintTokens: sales are closed');
-        require(
-            msg.value == discountPrice * _amount,
-            'MintNFT::mintTokens: not enough ether sent'
-        );
-        uint tokenId;
-
-        if (!isPublicSale) {
-            if(Accounts[msg.sender].isBought) {
-                require(
-                    amountsFromId[idPass] >= _amount,
-                    'MintNFT::mintTokens: amount is more than allowed in private sale'
-                );
-            }
-            else {
-                require(
-                    (Accounts[msg.sender].allowedAmount + amountsFromId[idPass] >= _amount),
-                    'MintNFT::mintTokens: amount is more than allowed or you are not logged into whitelist'
-                );
-            }
-            mintingPass.safeTransferFrom(msg.sender, receiver, idPass, 1, '');
-
-            for(uint i = 0; i < _amount; i++) {
-                tokenId = token.mint(msg.sender);
-                saleCounter++;
-                emit Mint(msg.sender, tokenId);
-            }   
-
-            Accounts[msg.sender].isBought = true;
-        } else {
-            require(
-                (Accounts[msg.sender].publicBought + _amount) <= (maxPublicSaleAmount + amountsFromId[idPass]),
-                'MintNFT::mintTokens: amount is more than allowed'
-            );
-
-            mintingPass.safeTransferFrom(msg.sender, receiver, idPass, 1, '');
-
-            for(uint i = 0; i < _amount; i++) {
-                tokenId = token.mint(msg.sender);
-                saleCounter++;
-                Accounts[msg.sender].publicBought++;
-                emit Mint(msg.sender, tokenId);
-            }   
+        for(uint i = 0; i < _tokenAmount; i++) {
+            token.mint(msg.sender);
         }
+
+        saleCounter += _tokenAmount;
+
+        emit Mint(msg.sender, _tokenAmount);
+
         return true;
     }
 
