@@ -190,13 +190,17 @@ contract MintNFT is Ownable {
         return true;
     }
 
-    function _addWhitelist(address user, uint _amount) 
+    function _addWhitelist(address[] memory users, uint[] memory _amounts) 
         external 
         onlyOwner 
         returns (bool) 
     {
-        Accounts[user].allowedAmount = _amount;
-
+        require(users.length == _amounts.length, 
+        'MintNFT::_addWhitelist: amounts length must be equal rates length');
+        
+        for(uint i = 0; i < users.length; i++) {
+            Accounts[users[i]].allowedAmount = _amounts[i];
+        }
         return true;
     }
 
