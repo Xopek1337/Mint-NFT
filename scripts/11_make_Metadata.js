@@ -15,8 +15,8 @@ async function main() {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    for(id = 100; id < 106; id++)
-    {
+
+    for(let id = 100; id < 106; id++) {
         const res = await axios.get(process.env.OLD_METADATA_URL + id);
         if(!isEmpty(res.data)){
             res.data.image = process.env.NEW_METADATA_URL + id + ".svg";
