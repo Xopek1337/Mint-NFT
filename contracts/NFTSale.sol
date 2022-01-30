@@ -140,6 +140,8 @@ contract NFTSale is Ownable {
 
         sale = _sale;
         preSale = _preSale;
+
+        return true;
     }
 
     /// @notice The function adds a new account to whitelist.
