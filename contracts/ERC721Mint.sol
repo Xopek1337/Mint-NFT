@@ -67,7 +67,7 @@ contract ERC721Mint is ERC721, Ownable {
         return uri;
     }
 
-    function _setNewURI(string memory _newURI) 
+    function _setURI(string memory _newURI) 
         external
         onlyOwner
         returns(bool) 
