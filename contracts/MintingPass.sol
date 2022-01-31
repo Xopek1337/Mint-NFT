@@ -98,7 +98,6 @@ contract MintingPass is ERC1155, Ownable {
     /// @dev Calls the ERC1155 contract function to change the uri.
     /// @param _newUri The new value to store.
     /// @return The bool value.
-
     function _setNewURI(string memory _newUri)
         external
         onlyOwner

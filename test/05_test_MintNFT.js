@@ -102,6 +102,7 @@ describe("MintNFT test", () => {
         MintNFT.connect(addr1).functions["mint(uint256)"](1, { value: ethers.utils.parseEther("6") }),
       ).to.be.revertedWith("MintNFT::mintInternal: sales are closed");
     });
+
     it("should faile if contract is paused with pass", async () => {
       await expect(
         MintNFT.connect(addr1).functions["mint(uint256,uint256)"](1, 2, { value: ethers.utils.parseEther("6") }),
@@ -117,23 +118,13 @@ describe("MintNFT test", () => {
       ).to.be.revertedWith("MintNFT::mintInternal: not enough ether sent");
     });
 
-    it("should faile if not enough enough supply with pass", async () => {
+    it("should faile if not enough enough supply", async () => {
       await MintNFT.connect(owner)._setAllSaleAmount(10);
       await MintNFT.connect(owner)._setPause(false);
       await MintNFT.connect(owner)._setPublicSale(true);
 
       await expect(
         MintNFT.connect(addr1).functions["mint(uint256,uint256)"](15, 1, { value: ethers.utils.parseEther("1") }),
-      ).to.be.revertedWith("MintNFT::mintInternal: tokens are enough");
-    });
-
-    it("should faile if not enough enough supply without pass", async () => {
-      await MintNFT.connect(owner)._setAllSaleAmount(10);
-      await MintNFT.connect(owner)._setPause(false);
-      await MintNFT.connect(owner)._setPublicSale(true);
-
-      await expect(
-        MintNFT.connect(addr1).functions["mint(uint256)"](15, { value: ethers.utils.parseEther("1") }),
       ).to.be.revertedWith("MintNFT::mintInternal: tokens are enough");
     });
 

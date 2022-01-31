@@ -211,7 +211,6 @@ contract NFTSale is Ownable {
     /// @param _amounts The supply of a new bundle.
     /// @param _rates The supply of a new bundle.
     /// @return The bool value.
-
     function _addBundles(uint256[] calldata _amounts, uint256[] calldata _rates)
         public
         onlyOwner
@@ -234,7 +233,6 @@ contract NFTSale is Ownable {
     /// @param _amount The supply of a new bundle.
     /// @param _rate The supply of a new bundle.
     /// @return The bool value.
-
     function _addBundle(uint256 _amount, uint256 _rate)
         internal
         returns (bool)
