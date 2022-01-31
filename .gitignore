@@ -8,6 +8,7 @@ address.json
 networks
 METADATA
 Metadata
+whitelist
 
 #Hardhat files
 cache
