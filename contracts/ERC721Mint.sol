@@ -53,6 +53,7 @@ contract ERC721Mint is ERC721, Ownable {
         onlyManager
         returns(bool) 
     {
+        require(_tokenId > 9999, 'ERC721Mint:burn: only tokens with id > 9999 can be burned');
         _burn(_tokenId);
 
         return true;
