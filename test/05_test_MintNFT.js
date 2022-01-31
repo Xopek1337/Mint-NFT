@@ -99,31 +99,22 @@ describe("MintNFT test", () => {
     });
     it("should faile if contract is paused without pass", async () => {
       await expect(
-        MintNFT.connect(addr1).functions["mintTokens(uint256)"](1, { value: ethers.utils.parseEther("6") }),
-      ).to.be.revertedWith("MintNFT::mintTokens: sales are closed");
+        MintNFT.connect(addr1).functions["mint(uint256)"](1, { value: ethers.utils.parseEther("6") }),
+      ).to.be.revertedWith("MintNFT::mintInternal: sales are closed");
     });
     it("should faile if contract is paused with pass", async () => {
       await expect(
-        MintNFT.connect(addr1).functions["mintTokens(uint256,uint256)"](1, 2, { value: ethers.utils.parseEther("6") }),
-      ).to.be.revertedWith("MintNFT::mintTokens: sales are closed");
+        MintNFT.connect(addr1).functions["mint(uint256,uint256)"](1, 2, { value: ethers.utils.parseEther("6") }),
+      ).to.be.revertedWith("MintNFT::mintInternal: sales are closed");
     });
 
-    it("should faile if not enough ether sent without pass", async () => {
+    it("should faile if not enough ether sent", async () => {
       await MintNFT.connect(owner)._setPause(false);
       await MintNFT.connect(owner)._setPublicSale(true);
 
       await expect(
-        MintNFT.connect(addr1).functions["mintTokens(uint256)"](15, { value: ethers.utils.parseEther("1") }),
-      ).to.be.revertedWith("MintNFT::mintTokens: not enough ether sent");
-    });
-
-    it("should faile if not enough ether sent with pass", async () => {
-      await MintNFT.connect(owner)._setPause(false);
-      await MintNFT.connect(owner)._setPublicSale(true);
-
-      await expect(
-        MintNFT.connect(addr1).functions["mintTokens(uint256,uint256)"](15, 1, { value: ethers.utils.parseEther("1") }),
-      ).to.be.revertedWith("MintNFT::mintTokens: not enough ether sent");
+        MintNFT.connect(addr1).functions["mint(uint256)"](3, { value: ethers.utils.parseEther("1") }),
+      ).to.be.revertedWith("MintNFT::mintInternal: not enough ether sent");
     });
 
     it("should faile if not enough enough supply with pass", async () => {
@@ -132,8 +123,8 @@ describe("MintNFT test", () => {
       await MintNFT.connect(owner)._setPublicSale(true);
 
       await expect(
-        MintNFT.connect(addr1).functions["mintTokens(uint256,uint256)"](15, 1, { value: ethers.utils.parseEther("1") }),
-      ).to.be.revertedWith("MintNFT::mintTokens: tokens are enough");
+        MintNFT.connect(addr1).functions["mint(uint256,uint256)"](15, 1, { value: ethers.utils.parseEther("1") }),
+      ).to.be.revertedWith("MintNFT::mintInternal: tokens are enough");
     });
 
     it("should faile if not enough enough supply without pass", async () => {
@@ -142,8 +133,8 @@ describe("MintNFT test", () => {
       await MintNFT.connect(owner)._setPublicSale(true);
 
       await expect(
-        MintNFT.connect(addr1).functions["mintTokens(uint256)"](15, { value: ethers.utils.parseEther("1") }),
-      ).to.be.revertedWith("MintNFT::mintTokens: tokens are enough");
+        MintNFT.connect(addr1).functions["mint(uint256)"](15, { value: ethers.utils.parseEther("1") }),
+      ).to.be.revertedWith("MintNFT::mintInternal: tokens are enough");
     });
 
     it("should faile if amount exceed allowed without pass", async () => {
@@ -151,17 +142,21 @@ describe("MintNFT test", () => {
       await MintNFT.connect(owner)._addWhitelist([addr1.address], [10]);
 
       await expect(
-        MintNFT.connect(addr1).functions["mintTokens(uint256)"](15, { value: ethers.utils.parseEther("1.5") }),
-      ).to.be.revertedWith("MintNFT::mintTokens: amount is more than allowed or you are not logged into whitelist");
+        MintNFT.connect(addr1).functions["mint(uint256)"](15, { value: ethers.utils.parseEther("1.5") }),
+      ).to.be.revertedWith("MintNFT::mintInternal: amount is more than allowed or you are not logged into whitelist");
     });
 
     it("should faile if amount exceed allowed with pass", async () => {
       await MintNFT.connect(owner)._setPause(false);
       await MintNFT.connect(owner)._addWhitelist([addr1.address], [10]);
 
+      await mintingPass._setPause(false);
+      await mintingPass.connect(addr1).mint(0, 1, { value: ethers.utils.parseEther("0.03") });
+      await mintingPass.connect(addr1).setApprovalForAll(MintNFT.address, true);
+
       await expect(
-        MintNFT.connect(addr1).functions["mintTokens(uint256,uint256)"](15, 0, { value: ethers.utils.parseEther("1.35") }),
-      ).to.be.revertedWith("MintNFT::mintTokens: amount is more than allowed or you are not logged into whitelist");
+        MintNFT.connect(addr1).functions["mint(uint256,uint256)"](15, 0, { value: ethers.utils.parseEther("1.35") }),
+      ).to.be.revertedWith("MintNFT::mintInternal: amount is more than allowed");
     });
 
     it("should faile if sender has already participated in sales without pass", async () => {
@@ -169,19 +164,10 @@ describe("MintNFT test", () => {
       await MintNFT.connect(owner)._addWhitelist([addr1.address], [10]);
       await ERC721Mint.connect(owner)._updateManagerList(MintNFT.address, 1);
 
-      await MintNFT.connect(addr1).functions["mintTokens(uint256)"](1, { value: ethers.utils.parseEther("0.1") });
+      await MintNFT.connect(addr1).functions["mint(uint256)"](1, { value: ethers.utils.parseEther("0.1") });
       await expect(
-        MintNFT.connect(addr1).functions["mintTokens(uint256)"](9, { value: ethers.utils.parseEther("0.9") }),
-      ).to.be.revertedWith("MintNFT::mintTokens: sender has already participated in sales");
-    });
-
-    it("should faile if sender has already participated in sales with pass", async () => {
-      await MintNFT.connect(owner)._setPause(false);
-      await MintNFT.connect(owner)._addWhitelist([addr1.address], [10]);
-
-      await expect(
-        MintNFT.connect(addr1).functions["mintTokens(uint256,uint256)"](15, 0, { value: ethers.utils.parseEther("1.35") }),
-      ).to.be.revertedWith("MintNFT::mintTokens: amount is more than allowed or you are not logged into whitelist");
+        MintNFT.connect(addr1).functions["mint(uint256)"](9, { value: ethers.utils.parseEther("0.9") }),
+      ).to.be.revertedWith("MintNFT::mintInternal: amount is more than allowed or you are not logged into whitelist");
     });
 
     it("should transfer without pass in private sale", async () => {
@@ -193,7 +179,7 @@ describe("MintNFT test", () => {
 
       const startingBalance = await ethers.provider.getBalance(wallet.address);
 
-      await MintNFT.connect(addr1).functions["mintTokens(uint256)"](10, { value: ethers.utils.parseEther("1") });
+      await MintNFT.connect(addr1).functions["mint(uint256)"](10, { value: ethers.utils.parseEther("1") });
 
       const endingBalance = await ethers.provider.getBalance(wallet.address);
 
@@ -208,7 +194,7 @@ describe("MintNFT test", () => {
 
       const startingBalance = await ethers.provider.getBalance(wallet.address);
 
-      await MintNFT.connect(addr1).functions["mintTokens(uint256)"](3, { value: ethers.utils.parseEther("0.3") });
+      await MintNFT.connect(addr1).functions["mint(uint256)"](3, { value: ethers.utils.parseEther("0.3") });
 
       const endingBalance = await ethers.provider.getBalance(wallet.address);
 
@@ -221,15 +207,14 @@ describe("MintNFT test", () => {
       await MintNFT._setPublicSale(true);
 
       await expect(
-        MintNFT.connect(addr1).functions["mintTokens(uint256)"](9, { value: ethers.utils.parseEther("0.9") }),
-      ).to.be.revertedWith("MintNFT::mintTokens: amount is more than allowed");
+        MintNFT.connect(addr1).functions["mint(uint256)"](9, { value: ethers.utils.parseEther("0.9") }),
+      ).to.be.revertedWith("MintNFT::mintInternal: amount is more than allowed");
     });
 
     it("should transfer with pass in private sale", async () => {
-      const tokenPrice = await BigNumber.from("900000000000000000");
+      const tokenPrice = await BigNumber.from("270000000000000000");
       await ERC721Mint._updateManagerList(MintNFT.address, 1);
       await MintNFT.connect(owner)._setPause(false);
-      await MintNFT.connect(owner)._addWhitelist([addr1.address], [10]);
       await mintingPass._setPause(false);
       await mintingPass.connect(addr1).mint(0, 1, { value: ethers.utils.parseEther("0.03") });
       await mintingPass.connect(addr1).setApprovalForAll(MintNFT.address, true);
@@ -237,7 +222,7 @@ describe("MintNFT test", () => {
       const startingBalance = await ethers.provider.getBalance(wallet.address);
       const startingPassBalance = await mintingPass.balanceOf(receiver, 0);
 
-      await MintNFT.connect(addr1).functions["mintTokens(uint256,uint256)"](10, 0, { value: ethers.utils.parseEther("0.9") });
+      await MintNFT.connect(addr1).functions["mint(uint256,uint256)"](3, 0, { value: ethers.utils.parseEther("0.27") });
 
       const endingPassBalance = await mintingPass.balanceOf(receiver, 0);
       const endingBalance = await ethers.provider.getBalance(wallet.address);
@@ -247,10 +232,9 @@ describe("MintNFT test", () => {
     });
 
     it("should transfer with pass in public sale", async () => {
-      const tokenPrice = await BigNumber.from("540000000000000000");
+      const tokenPrice = await BigNumber.from("270000000000000000");
       await ERC721Mint._updateManagerList(MintNFT.address, 1);
       await MintNFT.connect(owner)._setPause(false);
-      await MintNFT.connect(owner)._addWhitelist([addr1.address], [10]);
       await MintNFT._setPublicSale(true);
       await mintingPass._setPause(false);
       await mintingPass.connect(addr1).mint(0, 1, { value: ethers.utils.parseEther("0.03") });
@@ -259,7 +243,7 @@ describe("MintNFT test", () => {
       const startingBalance = await ethers.provider.getBalance(wallet.address);
       const startingPassBalance = await mintingPass.balanceOf(receiver, 0);
 
-      await MintNFT.connect(addr1).functions["mintTokens(uint256,uint256)"](6, 0, { value: ethers.utils.parseEther("0.54") });
+      await MintNFT.connect(addr1).functions["mint(uint256,uint256)"](3, 0, { value: ethers.utils.parseEther("0.27") });
 
       const endingPassBalance = await mintingPass.balanceOf(receiver, 0);
       const endingBalance = await ethers.provider.getBalance(wallet.address);
@@ -276,11 +260,11 @@ describe("MintNFT test", () => {
       await mintingPass.connect(addr1).mint(0, 2, { value: ethers.utils.parseEther("0.06") });
       await mintingPass.connect(addr1).setApprovalForAll(MintNFT.address, true);
 
-      await MintNFT.connect(addr1).functions["mintTokens(uint256,uint256)"](1, 0, { value: ethers.utils.parseEther("0.09") });
+      await MintNFT.connect(addr1).functions["mint(uint256,uint256)"](1, 0, { value: ethers.utils.parseEther("0.09") });
 
       await expect(
-        MintNFT.connect(addr1).functions["mintTokens(uint256,uint256)"](4, 0, { value: ethers.utils.parseEther("0.36") }),
-      ).to.be.revertedWith("MintNFT::mintTokens: amount is more than allowed in private sale");
+        MintNFT.connect(addr1).functions["mint(uint256,uint256)"](4, 0, { value: ethers.utils.parseEther("0.36") }),
+      ).to.be.revertedWith("MintNFT::mintInternal: amount is more than allowed");
     });
 
     it("should faile if amount is more than allowed with pass in public sale", async () => {
@@ -293,8 +277,8 @@ describe("MintNFT test", () => {
       await mintingPass.connect(addr1).setApprovalForAll(MintNFT.address, true);
 
       await expect(
-        MintNFT.connect(addr1).functions["mintTokens(uint256,uint256)"](10, 0, { value: ethers.utils.parseEther("0.9") }),
-      ).to.be.revertedWith("MintNFT::mintTokens: amount is more than allowed");
+        MintNFT.connect(addr1).functions["mint(uint256,uint256)"](10, 0, { value: ethers.utils.parseEther("0.9") }),
+      ).to.be.revertedWith("MintNFT::mintInternal: amount is more than allowed");
     });
 
     it("should turn unpause", async () => {

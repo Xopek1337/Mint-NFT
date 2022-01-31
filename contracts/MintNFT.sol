@@ -78,7 +78,7 @@ contract MintNFT is Ownable {
     }
 
     function mintInternal(uint _tokenAmount, bool useMintingPass, uint mintingPassId) internal returns (bool) {
-        require(saleCounter + _tokenAmount <= allSaleAmount, 'MintNFT::buyToken: tokens are enough');
+        require(saleCounter + _tokenAmount <= allSaleAmount, 'MintNFT::mintInternal: tokens are enough');
         require(!isPaused, 'MintNFT::mintInternal: sales are closed');
 
         uint sum;
