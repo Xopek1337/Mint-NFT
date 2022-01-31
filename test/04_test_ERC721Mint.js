@@ -90,18 +90,6 @@ describe('ERC721MintTest', () => {
       ).to.be.revertedWith('ERC721: mint to the zero address');
     });
 
-    it('should fail mint if token is already minted', async () => {
-      await ERC721Mint.mint(addr1.address);
-
-      const tokenToMint = await ERC721Mint.tokenId();
-
-      await ERC721Mint.mint(addr1.address);
-
-      await expect(
-        ERC721Mint.connect(addr1).mint(addr2.address),
-      ).to.be.revertedWith('ERC721Mint: caller is not the manager');
-    });
-
     it('should burn', async () => {
       const tokenId = await ERC721Mint.tokenId();
       const startingBalance = await ERC721Mint.balanceOf(addr1.address);
@@ -167,7 +155,7 @@ describe('ERC721MintTest', () => {
     it('should change URI', async () => {
       const newURI = 'ExampleNewURI';
 
-      await ERC721Mint._setNewURI(newURI);
+      await ERC721Mint._setURI(newURI);
 
       const endingURI = await ERC721Mint.uri();
 
@@ -178,7 +166,7 @@ describe('ERC721MintTest', () => {
       const newURI = 'ExampleNewURI';
 
       await expect(
-        ERC721Mint.connect(addr1)._setNewURI(newURI),
+        ERC721Mint.connect(addr1)._setURI(newURI),
       ).to.be.revertedWith('Ownable: caller is not the owner');
     });
 

@@ -22,6 +22,7 @@ contract ERC721Mint is ERC721, Ownable {
     
     constructor(string memory _name, string memory _symbol, string memory _uri) ERC721 (_name, _symbol) {
         uri = _uri;
+
         managers[msg.sender] = true;
     }
 
@@ -66,7 +67,7 @@ contract ERC721Mint is ERC721, Ownable {
         return uri;
     }
 
-    function _setNewURI(string memory _newURI) 
+    function _setURI(string memory _newURI) 
         external
         onlyOwner
         returns(bool) 
@@ -81,8 +82,7 @@ contract ERC721Mint is ERC721, Ownable {
         onlyOwner 
         returns(bool) 
     {
-        IERC20 token = IERC20(_token);
-        token.transfer(_recepient, token.balanceOf(address(this)));
+        IERC20(_token).transfer(_recepient, IERC20(_token).balanceOf(address(this)));
 
         return true;
     }
@@ -92,8 +92,7 @@ contract ERC721Mint is ERC721, Ownable {
         onlyOwner 
         returns(bool) 
     {
-        IERC721 token = IERC721(_token);
-        token.transferFrom(address(this), _recepient, _tokenId);
+        IERC721(_token).transferFrom(address(this), _recepient, _tokenId);
 
         return true;
     }

@@ -42,16 +42,18 @@ contract MintNFT is Ownable {
 
     constructor(address _token, address _mintingPass, address payable _wallet, address _receiver) {
         require(
-            _wallet != address(0) &&
             _token != address(0) &&
-            _mintingPass != address(0),
+            _mintingPass != address(0) &&
+            _wallet != address(0),
             'MintNFT::constructor: address is null'
         );
+
         token = ERC721Mint(_token);
         mintingPass = IERC1155(_mintingPass);
         wallet = _wallet;
         receiver = _receiver;
-        _updateManagerList(msg.sender, true);
+
+        managers[msg.sender] = true;
 
         amountsFromId[0] = 3;
         amountsFromId[1] = 6;
@@ -161,6 +163,7 @@ contract MintNFT is Ownable {
         for(uint i = 0; i < users.length; i++) {
             Accounts[users[i]].allowedAmount = _amounts[i];
         }
+
         return true;
     }
 
@@ -189,15 +192,6 @@ contract MintNFT is Ownable {
         onlyOwner
         returns(bool)
     {
-        _updateManagerList(_manager, _status);
-
-        return true;
-    }
-
-    function _updateManagerList(address _manager, bool _status)
-        internal
-        returns(bool)
-    {
         managers[_manager] = _status;
 
         return true;
@@ -208,8 +202,7 @@ contract MintNFT is Ownable {
         onlyOwner 
         returns(bool) 
     {
-        IERC20 tokenERC20 = IERC20(_token);
-        tokenERC20.transfer(_recepient, tokenERC20.balanceOf(address(this)));
+        IERC20(_token).transfer(_recepient, IERC20(_token).balanceOf(address(this)));
 
         return true;
     }
@@ -219,8 +212,7 @@ contract MintNFT is Ownable {
         onlyOwner 
         returns(bool) 
     {
-        IERC721 tokenERC721 = IERC721(_token);
-        tokenERC721.transferFrom(address(this), _recepient, _tokenId);
+        IERC721(_token).transferFrom(address(this), _recepient, _tokenId);
 
         return true;
     }

@@ -11,7 +11,7 @@ async function main() {
   const ERC721MintInstance = await ethers.getContractFactory("ERC721Mint");
   const ERC721Mint = await ERC721MintInstance.attach(data.ERC721Mint);
 
-  await ERC721Mint._setNewURI(newURI);
+  await ERC721Mint._setURI(newURI);
 }
 
 main()
