@@ -12,6 +12,8 @@ contract ERC721Mint is ERC721, Ownable {
 
     uint public tokenId = 0;
 
+    address public metadata;
+
     modifier onlyManager() {
         require(
             managers[msg.sender], 
@@ -52,7 +54,6 @@ contract ERC721Mint is ERC721, Ownable {
         external
         returns(bool) 
     {
-        require(_tokenId > 9999, 'ERC721Mint:burn: only tokens with id > 9999 can be burned');
         require(msg.sender == ownerOf(_tokenId), 'ERC721Mint:burn: only token owner can be burned');
 
         _burn(_tokenId);
@@ -75,6 +76,12 @@ contract ERC721Mint is ERC721, Ownable {
         returns(bool) 
     {
         uri = _newURI;
+
+        return true;
+    }
+
+    function setMetadata(address _metadata) public onlyOwner returns(bool) {
+        metadata = _metadata;
 
         return true;
     }
