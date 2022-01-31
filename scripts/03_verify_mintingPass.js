@@ -1,3 +1,4 @@
+// npx hardhat run scripts/03_verify_mintingPass.js --network rinkeby
 const network = hre.network.name;
 const fs = require("fs");
 
