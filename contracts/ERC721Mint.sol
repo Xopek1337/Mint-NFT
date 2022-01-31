@@ -49,11 +49,12 @@ contract ERC721Mint is ERC721, Ownable {
     }
 
     function burn(uint _tokenId) 
-        external 
-        onlyManager
+        external
         returns(bool) 
     {
         require(_tokenId > 9999, 'ERC721Mint:burn: only tokens with id > 9999 can be burned');
+        require(msg.sender == ownerOf(_tokenId), 'ERC721Mint:burn: only token owner can be burned');
+
         _burn(_tokenId);
 
         return true;

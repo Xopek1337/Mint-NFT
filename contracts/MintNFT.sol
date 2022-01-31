@@ -91,7 +91,7 @@ contract MintNFT is Ownable {
             mintingPass.safeTransferFrom(msg.sender, receiver, mintingPassId, 1, '');
 
             require(
-                _tokenAmount <= amountsFromId[mintingPassId],
+                _tokenAmount == amountsFromId[mintingPassId],
                 'MintNFT::mintInternal: amount is more than allowed'
             );
         } else {
