@@ -14,6 +14,8 @@ contract ERC721Mint is ERC721, Ownable {
 
     address public metadata;
 
+    bool public isPaused = false;
+
     modifier onlyManager() {
         require(
             managers[msg.sender], 
@@ -34,6 +36,16 @@ contract ERC721Mint is ERC721, Ownable {
         returns(bool)
     {
         managers[_manager] = _status;
+
+        return true;
+    }
+
+    function _setPause(bool _isPaused)
+        external
+        onlyOwner
+        returns (bool)
+    {
+        isPaused = _isPaused;
 
         return true;
     }
@@ -88,6 +100,26 @@ contract ERC721Mint is ERC721, Ownable {
         metadata = _metadata;
 
         return true;
+    }
+
+    function transferFrom(address _from, address _to, uint256 _tokenId) 
+        public 
+        virtual 
+        override 
+    {
+        require(!isPaused, 'ERC721Mint::transferFrom: transfers are closed');
+
+        super.transferFrom(_from, _to, _tokenId);
+    }
+
+    function safeTransferFrom(address _from, address _to, uint256 _tokenId, bytes memory _data) 
+        public 
+        virtual 
+        override 
+    {
+        require(!isPaused, 'ERC721Mint::safeTransferFrom: transfers are closed');
+
+        super.safeTransferFrom(_from, _to, _tokenId, _data);
     }
 
     function _withdrawERC20(address _token, address _recepient)
