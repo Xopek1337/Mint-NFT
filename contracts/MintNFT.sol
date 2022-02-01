@@ -110,11 +110,11 @@ contract MintNFT is Ownable {
                 Accounts[msg.sender].publicBought += _tokenAmount;
             } else {
                 require(
-                    Accounts[msg.sender].allowedAmount >= _tokenAmount,
+                    Accounts[msg.sender].allowedAmount - _tokenAmount >= 0,
                     'MintNFT::mintInternal: amount is more than allowed or you are not logged into whitelist'
                 );
 
-                Accounts[msg.sender].allowedAmount = 0;
+                Accounts[msg.sender].allowedAmount += _tokenAmount;
             }
         }
 
