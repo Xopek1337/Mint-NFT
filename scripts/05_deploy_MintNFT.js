@@ -22,8 +22,6 @@ async function main() {
   console.log(`MintNFT smart contract has been deployed to: ${MintNFT.address}`);
 
   namesAndAddresses.MintNFT = MintNFT.address;
-  namesAndAddresses.MintingPass = MintingPass;
-  namesAndAddresses.ERC721Mint = ERC721Mint;
 
   const data = await JSON.stringify(namesAndAddresses, null, 2);
   if (!fs.existsSync(dir)) {
