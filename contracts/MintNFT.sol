@@ -68,32 +68,37 @@ contract MintNFT is Ownable {
         payable
         returns (bool)
     {
-        return mintInternal(_tokenAmount, false, 0);
+        uint[] memory mintingPassIds;
+        uint[] memory amounts;
+
+        return mintInternal(_tokenAmount, false, mintingPassIds, amounts);
     }
 
-    function mint(uint256 _tokenAmount, uint mintingPassId)
+    function mint(uint256 _tokenAmount, uint[] memory mintingPassIds, uint[] memory amounts)
         external
         payable
         returns (bool)
     {
-        return mintInternal(_tokenAmount, true, mintingPassId);
+        return mintInternal(_tokenAmount, true, mintingPassIds, amounts);
     }
 
-    function mintInternal(uint _tokenAmount, bool useMintingPass, uint mintingPassId) internal returns (bool) {
+    function mintInternal(uint _tokenAmount, bool useMintingPass, uint[] memory mintingPassIds, uint[] memory amounts) internal returns (bool) {
         require(saleCounter + _tokenAmount <= allSaleAmount, 'MintNFT::mintInternal: tokens are enough');
         require(!isPaused, 'MintNFT::mintInternal: sales are closed');
+        require(mintingPassIds.length == amounts.length, 'MintNFT::mintInternal: sales are closed');
 
         uint sum;
 
         if (useMintingPass) {
             sum = discountPrice * _tokenAmount;
+            uint totalAmount = 0;
+            
+            for(uint i = 0; i < amounts.length; i++) {
+                mintingPass.safeTransferFrom(msg.sender, receiver, mintingPassIds[i], amounts[i], '');
 
-            mintingPass.safeTransferFrom(msg.sender, receiver, mintingPassId, 1, '');
-
-            require(
-                _tokenAmount == amountsFromId[mintingPassId],
-                'MintNFT::mintInternal: amount is more than allowed'
-            );
+                totalAmount += amountsFromId[mintingPassIds[i]] * amounts[i];
+            }
+            require(_tokenAmount == totalAmount, 'MintNFT::mintInternal: amount is more than allowed');
         } else {
             sum = price * _tokenAmount;
 
