@@ -80,7 +80,11 @@ contract ERC721Mint is ERC721, Ownable {
         return true;
     }
 
-    function setMetadata(address _metadata) public onlyOwner returns(bool) {
+    function _setMetadata(address _metadata) 
+        public 
+        onlyOwner 
+        returns(bool) 
+    {
         metadata = _metadata;
 
         return true;
