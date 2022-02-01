@@ -47,7 +47,6 @@ contract MintNFT is Ownable {
             _wallet != address(0),
             'MintNFT::constructor: address is null'
         );
-
         token = ERC721Mint(_token);
         mintingPass = IERC1155(_mintingPass);
         wallet = _wallet;
@@ -110,7 +109,7 @@ contract MintNFT is Ownable {
                 Accounts[msg.sender].publicBought += _tokenAmount;
             } else {
                 require(
-                    Accounts[msg.sender].allowedAmount - _tokenAmount >= 0,
+                    Accounts[msg.sender].allowedAmount  >= _tokenAmount,
                     'MintNFT::mintInternal: amount is more than allowed or you are not logged into whitelist'
                 );
 

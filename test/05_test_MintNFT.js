@@ -144,17 +144,6 @@ describe("MintNFT test", () => {
       ).to.be.revertedWith("MintNFT::mintInternal: amount is more than allowed");
     });
 
-    it("should faile if sender has already participated in sales without pass", async () => {
-      await MintNFT.connect(owner)._setPause(false);
-      await MintNFT.connect(owner)._addWhitelist([addr1.address], [10]);
-      await ERC721Mint.connect(owner)._updateManagerList(MintNFT.address, 1);
-
-      await MintNFT.connect(addr1).functions["mint(uint256)"](1, { value: ethers.utils.parseEther("0.1") });
-      await expect(
-        MintNFT.connect(addr1).functions["mint(uint256)"](9, { value: ethers.utils.parseEther("0.9") }),
-      ).to.be.revertedWith("MintNFT::mintInternal: amount is more than allowed or you are not logged into whitelist");
-    });
-
     it("should transfer without pass in private sale", async () => {
       const price = await BigNumber.from("1000000000000000000");
       await ERC721Mint._updateManagerList(MintNFT.address, 1);
