@@ -22,6 +22,10 @@ module.exports = {
       gasPrice: 8000000000,
       accounts: [process.env.PRIVATE_KEY]
     },
+    matic: {
+      url: "RPC_NODE_URL_MUMBAI",
+      accounts: [process.env.PRIVATE_KEY]
+    },
     mainnet: {
       url: process.env.RPC_NODE_URL_MAINNET,
       accounts: [process.env.PRIVATE_KEY]

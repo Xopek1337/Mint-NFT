@@ -68,13 +68,12 @@ contract MintNFT is Ownable {
         payable
         returns (bool)
     {
-        uint[] memory mintingPassIds;
-        uint[] memory amounts;
+        uint[] memory a;
 
-        return mintInternal(_tokenAmount, false, mintingPassIds, amounts);
+        return mintInternal({_tokenAmount: _tokenAmount, useMintingPass: false, mintingPassIds: a, amounts:a});
     }
 
-    function mint(uint256 _tokenAmount, uint[] memory mintingPassIds, uint[] memory amounts)
+    function mint(uint256 _tokenAmount, uint[] calldata mintingPassIds, uint[] calldata amounts)
         external
         payable
         returns (bool)
@@ -83,9 +82,9 @@ contract MintNFT is Ownable {
     }
 
     function mintInternal(uint _tokenAmount, bool useMintingPass, uint[] memory mintingPassIds, uint[] memory amounts) internal returns (bool) {
+        require(mintingPassIds.length == amounts.length, 'MintNFT::mintInternal: amounts length must be equal rates length');
         require(saleCounter + _tokenAmount <= allSaleAmount, 'MintNFT::mintInternal: tokens are enough');
         require(!isPaused, 'MintNFT::mintInternal: sales are closed');
-        require(mintingPassIds.length == amounts.length, 'MintNFT::mintInternal: sales are closed');
 
         uint sum;
 

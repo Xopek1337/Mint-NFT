@@ -9,6 +9,7 @@ networks
 METADATA
 Metadata
 whitelist
+contracts/ERC721A
 
 #Hardhat files
 cache

@@ -97,15 +97,9 @@ describe("MintNFT test", () => {
         receiver,
       );
     });
-    it("should faile if contract is paused without pass", async () => {
+    it("should faile if contract is paused", async () => {
       await expect(
         MintNFT.connect(addr1).functions["mint(uint256)"](1, { value: ethers.utils.parseEther("6") }),
-      ).to.be.revertedWith("MintNFT::mintInternal: sales are closed");
-    });
-
-    it("should faile if contract is paused with pass", async () => {
-      await expect(
-        MintNFT.connect(addr1).functions["mint(uint256,uint256)"](1, 2, { value: ethers.utils.parseEther("6") }),
       ).to.be.revertedWith("MintNFT::mintInternal: sales are closed");
     });
 
@@ -124,7 +118,7 @@ describe("MintNFT test", () => {
       await MintNFT.connect(owner)._setPublicSale(true);
 
       await expect(
-        MintNFT.connect(addr1).functions["mint(uint256,uint256)"](15, 1, { value: ethers.utils.parseEther("1") }),
+        MintNFT.connect(addr1).functions["mint(uint256,uint256[],uint256[])"](15, [1], [1], { value: ethers.utils.parseEther("1") }),
       ).to.be.revertedWith("MintNFT::mintInternal: tokens are enough");
     });
 
@@ -146,7 +140,7 @@ describe("MintNFT test", () => {
       await mintingPass.connect(addr1).setApprovalForAll(MintNFT.address, true);
 
       await expect(
-        MintNFT.connect(addr1).functions["mint(uint256,uint256)"](15, 0, { value: ethers.utils.parseEther("1.35") }),
+        MintNFT.connect(addr1).functions["mint(uint256,uint256[],uint256[])"](15, [0], [1], { value: ethers.utils.parseEther("1.35") }),
       ).to.be.revertedWith("MintNFT::mintInternal: amount is more than allowed");
     });
 
@@ -213,7 +207,28 @@ describe("MintNFT test", () => {
       const startingBalance = await ethers.provider.getBalance(wallet.address);
       const startingPassBalance = await mintingPass.balanceOf(receiver, 0);
 
-      await MintNFT.connect(addr1).functions["mint(uint256,uint256)"](3, 0, { value: ethers.utils.parseEther("0.27") });
+      await MintNFT.connect(addr1).functions["mint(uint256,uint256[],uint256[])"](3, [0], [1], { value: ethers.utils.parseEther("0.27") });
+
+      const endingPassBalance = await mintingPass.balanceOf(receiver, 0);
+      const endingBalance = await ethers.provider.getBalance(wallet.address);
+
+      expect(startingPassBalance).to.equal(endingPassBalance.sub(1));
+      expect(startingBalance).to.equal(endingBalance.sub(tokenPrice));
+    });
+
+    it("should transfer with pass in private sale", async () => {
+      const tokenPrice = await BigNumber.from("810000000000000000");
+      await ERC721Mint._updateManagerList(MintNFT.address, 1);
+      await MintNFT.connect(owner)._setPause(false);
+      await mintingPass._setPause(false);
+      await mintingPass.connect(addr1).mint(0, 1, { value: ethers.utils.parseEther("0.03") });
+      await mintingPass.connect(addr1).mint(1, 1, { value: ethers.utils.parseEther("0.06") });
+      await mintingPass.connect(addr1).setApprovalForAll(MintNFT.address, true);
+
+      const startingBalance = await ethers.provider.getBalance(wallet.address);
+      const startingPassBalance = await mintingPass.balanceOf(receiver, 0);
+
+      await MintNFT.connect(addr1).functions["mint(uint256,uint256[],uint256[])"](9, [0, 1], [1, 1], { value: ethers.utils.parseEther("0.81") });
 
       const endingPassBalance = await mintingPass.balanceOf(receiver, 0);
       const endingBalance = await ethers.provider.getBalance(wallet.address);
@@ -234,7 +249,7 @@ describe("MintNFT test", () => {
       const startingBalance = await ethers.provider.getBalance(wallet.address);
       const startingPassBalance = await mintingPass.balanceOf(receiver, 0);
 
-      await MintNFT.connect(addr1).functions["mint(uint256,uint256)"](3, 0, { value: ethers.utils.parseEther("0.27") });
+      await MintNFT.connect(addr1).functions["mint(uint256,uint256[],uint256[])"](3, [0], [1], { value: ethers.utils.parseEther("0.27") });
 
       const endingPassBalance = await mintingPass.balanceOf(receiver, 0);
       const endingBalance = await ethers.provider.getBalance(wallet.address);
@@ -251,10 +266,10 @@ describe("MintNFT test", () => {
       await mintingPass.connect(addr1).mint(0, 2, { value: ethers.utils.parseEther("0.06") });
       await mintingPass.connect(addr1).setApprovalForAll(MintNFT.address, true);
 
-      await MintNFT.connect(addr1).functions["mint(uint256,uint256)"](1, 0, { value: ethers.utils.parseEther("0.09") });
+      await MintNFT.connect(addr1).functions["mint(uint256,uint256[],uint256[])"](3, [0], [1], { value: ethers.utils.parseEther("0.27") });
 
       await expect(
-        MintNFT.connect(addr1).functions["mint(uint256,uint256)"](4, 0, { value: ethers.utils.parseEther("0.36") }),
+        MintNFT.connect(addr1).functions["mint(uint256,uint256[],uint256[])"](4, [0], [1], { value: ethers.utils.parseEther("0.36") }),
       ).to.be.revertedWith("MintNFT::mintInternal: amount is more than allowed");
     });
 
@@ -268,7 +283,7 @@ describe("MintNFT test", () => {
       await mintingPass.connect(addr1).setApprovalForAll(MintNFT.address, true);
 
       await expect(
-        MintNFT.connect(addr1).functions["mint(uint256,uint256)"](10, 0, { value: ethers.utils.parseEther("0.9") }),
+        MintNFT.connect(addr1).functions["mint(uint256,uint256[],uint256[])"](10, [0], [1], { value: ethers.utils.parseEther("0.9") }),
       ).to.be.revertedWith("MintNFT::mintInternal: amount is more than allowed");
     });
 
@@ -369,6 +384,21 @@ describe("MintNFT test", () => {
       await expect(
         MintNFT._addWhitelist(addresses, amounts),
       ).to.be.revertedWith("MintNFT::_addWhitelist: amounts length must be equal rates length");
+    });
+                          
+    it("should faile if amounts length must not be equal rates length in mint function", async () => {  
+      await MintNFT.connect(owner)._setPause(false);
+      await mintingPass._setPause(false);
+      await mintingPass.connect(addr1).mint(0, 1, { value: ethers.utils.parseEther("0.03") });
+      await mintingPass.connect(addr1).mint(1, 1, { value: ethers.utils.parseEther("0.06") });
+      await mintingPass.connect(addr1).setApprovalForAll(MintNFT.address, true);
+      
+      const amounts = [3, 3, 2, 2];
+      const passes = [0, 2];
+
+      await expect(
+        MintNFT.connect(addr1).functions["mint(uint256,uint256[],uint256[])"](10, passes, amounts, { value: ethers.utils.parseEther("0.9") }),
+      ).to.be.revertedWith("MintNFT::mintInternal: amounts length must be equal rates length");
     });
 
     it("should set all Sale amount", async () => {
