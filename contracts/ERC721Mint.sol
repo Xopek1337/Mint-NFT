@@ -12,6 +12,10 @@ contract ERC721Mint is ERC721, Ownable {
 
     uint public tokenId = 0;
 
+    address public metadata;
+
+    bool public isPaused = false;
+
     modifier onlyManager() {
         require(
             managers[msg.sender], 
@@ -36,6 +40,16 @@ contract ERC721Mint is ERC721, Ownable {
         return true;
     }
 
+    function _setPause(bool _isPaused)
+        external
+        onlyOwner
+        returns (bool)
+    {
+        isPaused = _isPaused;
+
+        return true;
+    }
+
     function mint(address to) 
         external 
         onlyManager
@@ -49,10 +63,11 @@ contract ERC721Mint is ERC721, Ownable {
     }
 
     function burn(uint _tokenId) 
-        external 
-        onlyManager
+        external
         returns(bool) 
     {
+        require(msg.sender == ownerOf(_tokenId), 'ERC721Mint:burn: only token owner can be burned');
+
         _burn(_tokenId);
 
         return true;
@@ -75,6 +90,36 @@ contract ERC721Mint is ERC721, Ownable {
         uri = _newURI;
 
         return true;
+    }
+
+    function _setMetadata(address _metadata) 
+        public 
+        onlyOwner 
+        returns(bool) 
+    {
+        metadata = _metadata;
+
+        return true;
+    }
+
+    function transferFrom(address _from, address _to, uint256 _tokenId) 
+        public 
+        virtual 
+        override 
+    {
+        require(!isPaused, 'ERC721Mint::transferFrom: transfers are closed');
+
+        super.transferFrom(_from, _to, _tokenId);
+    }
+
+    function safeTransferFrom(address _from, address _to, uint256 _tokenId, bytes memory _data) 
+        public 
+        virtual 
+        override 
+    {
+        require(!isPaused, 'ERC721Mint::safeTransferFrom: transfers are closed');
+
+        super.safeTransferFrom(_from, _to, _tokenId, _data);
     }
 
     function _withdrawERC20(address _token, address _recepient)

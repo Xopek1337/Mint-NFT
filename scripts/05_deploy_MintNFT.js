@@ -1,3 +1,4 @@
+// npx hardhat run scripts/05_deploy_MintNFT.js --network rinkeby
 const network = hre.network.name;
 const fs = require("fs");
 
@@ -5,7 +6,6 @@ async function main() {
   const namesAndAddresses = {};
   const [deployer] = await hre.ethers.getSigners();
 
-  const uri = process.env.NFT_URI;
   const wallet = process.env.WALLET;
   const receiver = process.env.RECEIVER;
 

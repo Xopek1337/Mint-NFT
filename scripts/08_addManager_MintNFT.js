@@ -11,7 +11,7 @@ async function main() {
   const MintNFTInstance = await ethers.getContractFactory("MintNFT");
   const MintNFT = await MintNFTInstance.attach(data.MintNFT);
 
-  await MintNFT.addManager(manager);
+  await MintNFT.updateManagerList(manager, true);
 }
 
 main()

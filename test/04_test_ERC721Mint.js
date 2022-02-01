@@ -95,7 +95,7 @@ describe("ERC721MintTest", () => {
       const startingBalance = await ERC721Mint.balanceOf(addr1.address);
 
       await ERC721Mint.mint(addr1.address);
-      await ERC721Mint.burn(tokenId);
+      await ERC721Mint.connect(addr1).burn(tokenId);
 
       const endingBalance = await ERC721Mint.balanceOf(addr1.address);
 
@@ -110,14 +110,14 @@ describe("ERC721MintTest", () => {
       ).to.be.revertedWith("ERC721: owner query for nonexistent token");
     });
 
-    it("should fail burn if msg.sender is not manager", async () => {
-      await ERC721Mint.mint(addr1.address);
-
+    it('should fail burn if msg.sender is not owner of token', async () => {
       const tokenId = await ERC721Mint.tokenId();
 
+      await ERC721Mint.mint(addr1.address);
+
       await expect(
-        ERC721Mint.connect(addr1).burn(tokenId),
-      ).to.be.revertedWith("ERC721Mint: caller is not the manager");
+        ERC721Mint.connect(addr2).burn(tokenId),
+      ).to.be.revertedWith('ERC721Mint:burn: only token owner can be burned');
     });
 
     it("should return URI of token", async () => {
@@ -138,14 +138,11 @@ describe("ERC721MintTest", () => {
       ).to.be.revertedWith("ERC721Metadata: URI query for nonexistent token");
     });
 
-    it("should fail return URI if token was burned", async () => {
-      await ERC721Mint.mint(addr1.address);
-
+    it('should fail return URI if token was burned', async () => {
       const tokenId = await ERC721Mint.tokenId();
 
-      await ERC721Mint.mint(addr2.address);
-
-      await ERC721Mint.burn(tokenId);
+      await ERC721Mint.mint(addr1.address);
+      await ERC721Mint.connect(addr1).burn(tokenId);
 
       await expect(
         ERC721Mint.connect(addr1).tokenURI(tokenId),
@@ -168,6 +165,98 @@ describe("ERC721MintTest", () => {
       await expect(
         ERC721Mint.connect(addr1)._setURI(newURI),
       ).to.be.revertedWith("Ownable: caller is not the owner");
+    });
+
+    it('should change metadata', async () => {
+      [newMetadata] = await ethers.getSigners();
+
+      await ERC721Mint._setMetadata(newMetadata.address);
+
+      const endingMetadata = await ERC721Mint.metadata();
+
+      expect(newMetadata.address).to.equal(endingMetadata);
+    });
+
+    it('should turn on pause', async () => {
+      await ERC721Mint._setPause(true);
+
+      const isPaused = await ERC721Mint.isPaused();
+
+      expect(true).to.equal(isPaused);
+    });
+
+    it('should fail turn on pause if msg.sender is not owner', async () => {
+      await expect(
+        ERC721Mint.connect(addr1)._setPause(true),
+      ).to.be.revertedWith('Ownable: caller is not the owner');
+    });
+
+    it('should transfer (transferFrom) one token from addr1 to addr2', async () => {
+      const tokenId = await ERC721Mint.tokenId();
+
+      const startingSenderBalance = await ERC20Test.balanceOf(addr1.address);
+      const startingRecipientBalance = await ERC20Test.balanceOf(addr2.address);
+
+      await ERC721Mint._updateManagerList(addr1.address, true);
+      await ERC721Mint.connect(addr1).mint(addr1.address);
+      await ERC721Mint.connect(addr1).transferFrom(addr1.address, addr2.address, tokenId);
+
+      const endingSenderBalance = await ERC20Test.balanceOf(addr1.address);
+      const endingRecipientBalance = await ERC20Test.balanceOf(addr2.address);
+
+      expect(endingSenderBalance).to.equal(endingRecipientBalance - startingSenderBalance);
+      expect(endingRecipientBalance).to.equal(startingRecipientBalance + startingSenderBalance);
+    });
+
+    it('should transfer (safeTransferFrom) one token from addr1 to addr2', async () => {
+      const tokenId = await ERC721Mint.tokenId();
+
+      const startingSenderBalance = await ERC20Test.balanceOf(addr1.address);
+      const startingRecipientBalance = await ERC20Test.balanceOf(addr2.address);
+
+      await ERC721Mint._updateManagerList(addr1.address, true);
+      await ERC721Mint.connect(addr1).mint(addr1.address);
+      await ERC721Mint.connect(addr1)['safeTransferFrom(address,address,uint256)'](addr1.address,
+        addr2.address, tokenId);
+
+      const endingSenderBalance = await ERC20Test.balanceOf(addr1.address);
+      const endingRecipientBalance = await ERC20Test.balanceOf(addr2.address);
+
+      expect(endingSenderBalance).to.equal(endingRecipientBalance - startingSenderBalance);
+      expect(endingRecipientBalance).to.equal(startingRecipientBalance + startingSenderBalance);
+    });
+
+    it('should fail transferFrom if pause is turned on', async () => {
+      const tokenId = await ERC721Mint.tokenId();
+
+      await ERC721Mint._setPause(true);
+      await ERC721Mint.mint(addr1.address);
+      await expect(
+        ERC721Mint.connect(addr1).transferFrom(addr1.address, addr2.address, tokenId),
+      ).to.be.revertedWith('ERC721Mint::transferFrom: transfers are closed');
+    });
+
+    it('should fail safeTransferFrom with 3 arguments if pause is turned on', async () => {
+      const tokenId = await ERC721Mint.tokenId();
+
+      await ERC721Mint._setPause(true);
+      await ERC721Mint.mint(addr1.address);
+      await expect(
+        ERC721Mint.connect(addr1)['safeTransferFrom(address,address,uint256)'](addr1.address,
+          addr2.address, tokenId),
+      ).to.be.revertedWith('ERC721Mint::safeTransferFrom: transfers are closed');
+    });
+
+    it('should fail safeTransferFrom with 4 arguments if pause is turned on', async () => {
+      const tokenId = await ERC721Mint.tokenId();
+      const bytes = 252;
+
+      await ERC721Mint._setPause(true);
+      await ERC721Mint.mint(addr1.address);
+      await expect(
+        ERC721Mint.connect(addr1)['safeTransferFrom(address,address,uint256,bytes)'](addr1.address,
+          addr2.address, tokenId, bytes),
+      ).to.be.revertedWith('ERC721Mint::safeTransferFrom: transfers are closed');
     });
 
     beforeEach(async () => {

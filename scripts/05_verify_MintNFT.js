@@ -1,3 +1,4 @@
+// npx hardhat run scripts/05_verify_MintNFT.js --network rinkeby
 const network = hre.network.name;
 const fs = require("fs");
 
