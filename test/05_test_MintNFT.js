@@ -302,7 +302,6 @@ describe("MintNFT test", () => {
       expect(isManager).to.equal(true);
     });
 
-
     it("should remove manager", async () => {
       await MintNFT.updateManagerList(addr1.address, 1);
       await MintNFT.updateManagerList(addr1.address, 0);
