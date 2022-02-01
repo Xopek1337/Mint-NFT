@@ -8,15 +8,12 @@ async function main() {
 
   const wallet = process.env.WALLET;
   const receiver = process.env.RECEIVER;
+  const ERC721Mint = process.env.ERC721_MINT_ADDRESS;
+  const MintingPass = process.env.MINTING_PASS_ADDRESS;
 
   const dir = "./networks/";
-  const fileNamePass = "MintingPass_" + `${network}.json`;
-  const fileNameERC721 = 'ERC721Mint_' + `${network}.json`;
-  const dataPass = JSON.parse(await fs.readFileSync(dir + fileNamePass, { encoding: "utf8" }));
-  const dataERC721 = JSON.parse(await fs.readFileSync(dir + fileNameERC721, { encoding: "utf8" }));
-
   const MintNFTInstance = await ethers.getContractFactory("MintNFT");
-  const MintNFT = await MintNFTInstance.deploy(dataERC721.ERC721Mint, dataPass.passes, wallet, receiver);
+  const MintNFT = await MintNFTInstance.deploy(ERC721Mint, MintingPass, wallet, receiver);
 
   console.log("Network", network);
   console.log("Deploying contracts with the account:", deployer.address);
@@ -25,8 +22,8 @@ async function main() {
   console.log(`MintNFT smart contract has been deployed to: ${MintNFT.address}`);
 
   namesAndAddresses.MintNFT = MintNFT.address;
-  namesAndAddresses.MintingPass = dataPass.passes;
-  namesAndAddresses.ERC721Mint = dataERC721.ERC721Mint;
+  namesAndAddresses.MintingPass = MintingPass;
+  namesAndAddresses.ERC721Mint = ERC721Mint;
 
   const data = await JSON.stringify(namesAndAddresses, null, 2);
   if (!fs.existsSync(dir)) {

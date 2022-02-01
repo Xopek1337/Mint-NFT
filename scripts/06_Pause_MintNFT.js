@@ -8,7 +8,9 @@ async function main() {
 
   const MintNFTInstance = await ethers.getContractFactory("MintNFT");
   const MintNFT = await MintNFTInstance.attach(data.MintNFT);
-  await MintNFT._setPause(true);
+  
+  const tx = await MintNFT._setPause(true);
+  console.log(tx);
 }
 
 main()

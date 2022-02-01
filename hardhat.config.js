@@ -23,7 +23,7 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY]
     },
     matic: {
-      url: "RPC_NODE_URL_MUMBAI",
+      url: process.env.RPC_NODE_URL_MUMBAI,
       accounts: [process.env.PRIVATE_KEY]
     },
     mainnet: {

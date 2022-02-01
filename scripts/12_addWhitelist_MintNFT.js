@@ -21,7 +21,8 @@ async function main() {
   const MintNFTInstance = await ethers.getContractFactory("MintNFT");
   const MintNFT = await MintNFTInstance.attach(dataMintNFT.MintNFT);
 
-  await MintNFT._addWhitelist(adresses, amounts);
+  const tx = await MintNFT._addWhitelist(adresses, amounts);
+  console.log(tx);
 }
 
 main()
