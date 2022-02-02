@@ -2,8 +2,8 @@ const network = hre.network.name;
 const fs = require("fs");
 
 async function main() {
-  var adresses = [];
-  var amounts = []
+  let adresses = [];
+  let amounts = []
   const dir = "./whitelist/";
   const fileName = "whitelist.json";
   const data = JSON.parse(await fs.readFileSync(dir + fileName, { encoding: "utf8" }));
