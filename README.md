@@ -38,23 +38,23 @@ which are listed in the 'package.json' file (for example, coverage (```npm insta
 
 ### MintNFT
 #### MintNFT Deploy
-npx hardhat run scripts/05_1_MintNFT_deploy.js --network rinkeby
+```npx hardhat run scripts/05_1_MintNFT_deploy.js``` --network rinkeby
 
 #### MintNFT Verify
-npx hardhat run scripts/05_2_MintNFT_verify.js --network rinkeby
+```npx hardhat run scripts/05_2_MintNFT_verify.js``` --network rinkeby
 
 #### MintNFT Add manager or remove
-npx hardhat run scripts/06_3_MintNFT_addManager.js --network rinkeby
-npx hardhat run scripts/06_4_MintNFT_removeManager.js --network rinkeby
+```npx hardhat run scripts/06_3_MintNFT_addManager.js``` --network rinkeby
+```npx hardhat run scripts/06_4_MintNFT_removeManager.js``` --network rinkeby
 
 #### MintNFT pause and unpause
-npx hardhat run scripts/06_1_MintNFT_pause.js --network rinkeby
-npx hardhat run scripts/06_2_MintNFT_unpause.js --network rinkeby
+```npx hardhat run scripts/06_1_MintNFT_pause.js``` --network rinkeby
+```npx hardhat run scripts/06_2_MintNFT_unpause.js``` --network rinkeby
 
 #### MintNFT set public sale
-npx hardhat run scripts/06_5_MintNFT_setPublicSale.js --network rinkeby
+```npx hardhat run scripts/06_5_MintNFT_setPublicSale.js``` --network rinkeby
 
 #### MintNFT add whitelist
 1. Add addresses and amounts to whitelist/whitelist.json
 2. Run script:
-npx hardhat run scripts/06_6_MintNFT_addWhitelist.js --network rinkeby
+```npx hardhat run scripts/06_6_MintNFT_addWhitelist.js``` --network rinkeby
