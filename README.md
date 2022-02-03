@@ -36,6 +36,10 @@ which are listed in the 'package.json' file (for example, coverage (```npm insta
 
 ***
 
+### ERC721
+#### ERC721 setURI
+```npx hardhat run scripts/04_setURI_ERC721Mint.js``` --network rinkeby
+
 ### MintNFT
 #### MintNFT Deploy
 ```npx hardhat run scripts/05_1_MintNFT_deploy.js``` --network rinkeby
@@ -44,11 +48,11 @@ which are listed in the 'package.json' file (for example, coverage (```npm insta
 ```npx hardhat run scripts/05_2_MintNFT_verify.js``` --network rinkeby
 
 #### MintNFT Add manager or remove
-```npx hardhat run scripts/06_3_MintNFT_addManager.js``` --network rinkeby
+```npx hardhat run scripts/06_3_MintNFT_addManager.js``` --network rinkeby  
 ```npx hardhat run scripts/06_4_MintNFT_removeManager.js``` --network rinkeby
 
 #### MintNFT pause and unpause
-```npx hardhat run scripts/06_1_MintNFT_pause.js``` --network rinkeby
+```npx hardhat run scripts/06_1_MintNFT_pause.js``` --network rinkeby  
 ```npx hardhat run scripts/06_2_MintNFT_unpause.js``` --network rinkeby
 
 #### MintNFT set public sale
