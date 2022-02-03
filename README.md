@@ -37,34 +37,36 @@ which are listed in the 'package.json' file (for example, coverage (```yarn add 
 ***
 
 ### ERC721Mint
-#### ERC721Mint Deploy
+#### Deploy
 ```npx hardhat run scripts/04_deploy_ERC721Mint.js``` --network rinkeby
 
-#### ERC721Mint Verify
+#### Verify
 ```npx hardhat run scripts/04_verify_ERC721Mint.js``` --network rinkeby
 
-#### ERC721Mint setURI
+#### Set URI
 ```npx hardhat run scripts/04_setURI_ERC721Mint.js``` --network rinkeby
 
+***
+
 ### MintNFT
-#### MintNFT Deploy
+#### Deploy
 ```npx hardhat run scripts/05_deploy_MintNFT.js``` --network rinkeby
 
-#### MintNFT Verify
+#### Verify
 ```npx hardhat run scripts/05_verify_MintNFT.js``` --network rinkeby
 
-#### MintNFT Add manager or remove
+#### Add manager or remove
 ```npx hardhat run scripts/05_addManager_MintNFT.js``` --network rinkeby  
 ```npx hardhat run scripts/05_removeManager_MintNFT.js``` --network rinkeby
 
-#### MintNFT pause and unpause
+#### Pause and unpause
 ```npx hardhat run scripts/05_pause_MintNFT.js``` --network rinkeby  
 ```npx hardhat run scripts/05_unPause_MintNFT.js``` --network rinkeby
 
-#### MintNFT set public sale
+#### Set public sale
 ```npx hardhat run scripts/05_setPublicSale_MintNFT.js``` --network rinkeby
 
-#### MintNFT add whitelist
+#### Add whitelist
 1. Add addresses and amounts to whitelist/whitelist.json
 2. Run script:
 ```npx hardhat run scripts/05_addWhitelist_MintNFT.js``` --network rinkeby
