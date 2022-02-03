@@ -14,6 +14,8 @@ describe("MintNFT test", () => {
   let mintingPass;
   let ERC721Mint;
   let MintNFT;
+  let ERC20Test;
+  let ERC721Test;
 
   beforeEach(async () => {
     [owner, wallet, wallet2, addr1, addr2] = await ethers.getSigners();

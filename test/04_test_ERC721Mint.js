@@ -4,6 +4,8 @@ const { constants } = require("@openzeppelin/test-helpers");
 
 describe("ERC721MintTest", () => {
   let ERC721Mint;
+  let ERC20Test;
+  let ERC721Test;
 
   beforeEach(async () => {
     [deployer, addr1, addr2] = await ethers.getSigners();
