@@ -14,7 +14,7 @@ bash
 ### Usage
 
 For further work, you will need to install in this project all all the necessary dependencies,  
-which are listed in the 'package.json' file (for example, coverage (```npm install coverage```))
+which are listed in the 'package.json' file (for example, coverage (```yarn add coverage```))
 
 ### Compilation
 
@@ -36,29 +36,35 @@ which are listed in the 'package.json' file (for example, coverage (```npm insta
 
 ***
 
-### ERC721
-#### ERC721 setURI
+### ERC721Mint
+#### ERC721Mint Deploy
+```npx hardhat run scripts/04_deploy_ERC721Mint.js``` --network rinkeby
+
+#### ERC721Mint Verify
+```npx hardhat run scripts/04_verify_ERC721Mint.js``` --network rinkeby
+
+#### ERC721Mint setURI
 ```npx hardhat run scripts/04_setURI_ERC721Mint.js``` --network rinkeby
 
 ### MintNFT
 #### MintNFT Deploy
-```npx hardhat run scripts/05_1_MintNFT_deploy.js``` --network rinkeby
+```npx hardhat run scripts/05_deploy_MintNFT.js``` --network rinkeby
 
 #### MintNFT Verify
-```npx hardhat run scripts/05_2_MintNFT_verify.js``` --network rinkeby
+```npx hardhat run scripts/05_verify_MintNFT.js``` --network rinkeby
 
 #### MintNFT Add manager or remove
-```npx hardhat run scripts/06_3_MintNFT_addManager.js``` --network rinkeby  
-```npx hardhat run scripts/06_4_MintNFT_removeManager.js``` --network rinkeby
+```npx hardhat run scripts/05_addManager_MintNFT.js``` --network rinkeby  
+```npx hardhat run scripts/05_removeManager_MintNFT.js``` --network rinkeby
 
 #### MintNFT pause and unpause
-```npx hardhat run scripts/06_1_MintNFT_pause.js``` --network rinkeby  
-```npx hardhat run scripts/06_2_MintNFT_unpause.js``` --network rinkeby
+```npx hardhat run scripts/05_pause_MintNFT.js``` --network rinkeby  
+```npx hardhat run scripts/05_unPause_MintNFT.js``` --network rinkeby
 
 #### MintNFT set public sale
-```npx hardhat run scripts/06_5_MintNFT_setPublicSale.js``` --network rinkeby
+```npx hardhat run scripts/05_setPublicSale_MintNFT.js``` --network rinkeby
 
 #### MintNFT add whitelist
 1. Add addresses and amounts to whitelist/whitelist.json
 2. Run script:
-```npx hardhat run scripts/06_6_MintNFT_addWhitelist.js``` --network rinkeby
+```npx hardhat run scripts/05_addWhitelist_MintNFT.js``` --network rinkeby
