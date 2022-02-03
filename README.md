@@ -61,7 +61,7 @@ which are listed in the 'package.json' file (for example, coverage (```yarn add 
 
 #### Pause and unpause
 ```npx hardhat run scripts/05_pause_MintNFT.js``` --network rinkeby  
-```npx hardhat run scripts/05_unPause_MintNFT.js``` --network rinkeby
+```npx hardhat run scripts/05_unpause_MintNFT.js``` --network rinkeby
 
 #### Set public sale
 ```npx hardhat run scripts/05_setPublicSale_MintNFT.js``` --network rinkeby
