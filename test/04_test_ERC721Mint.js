@@ -3,9 +3,12 @@ const { ethers } = require("hardhat");
 const { constants } = require("@openzeppelin/test-helpers");
 
 describe("ERC721MintTest", () => {
+  let ERC721Mint;
+
   beforeEach(async () => {
     [deployer, addr1, addr2] = await ethers.getSigners();
   });
+
   describe("Testing constructor", () => {
     it("should set right constructor parametres", async () => {
       const ERC721MintInstance = await ethers.getContractFactory("ERC721Mint");
@@ -31,6 +34,7 @@ describe("ERC721MintTest", () => {
       expect(isOwnerManager).to.equal(true);
     });
   });
+  
   describe("Other tests", () => {
     beforeEach(async () => {
       const ERC721MintInstance = await ethers.getContractFactory("ERC721Mint");
@@ -175,6 +179,14 @@ describe("ERC721MintTest", () => {
       const endingMetadata = await ERC721Mint.metadata();
 
       expect(newMetadata.address).to.equal(endingMetadata);
+    });
+
+    it("should fail change metadata if msg.sender is not owner", async () => {
+      [newMetadata] = await ethers.getSigners();
+
+      await expect(
+        ERC721Mint.connect(addr1)._setMetadata(newMetadata.address),
+      ).to.be.revertedWith("Ownable: caller is not the owner");
     });
 
     it('should turn on pause', async () => {
