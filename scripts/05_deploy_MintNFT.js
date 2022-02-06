@@ -10,10 +10,11 @@ async function main() {
   const receiver = process.env.RECEIVER;
   const ERC721Mint = process.env.ERC721_MINT_ADDRESS;
   const MintingPass = process.env.MINTING_PASS_ADDRESS;
+  const saleCounter = process.env.SALE_COUNTER;
 
   const dir = "./networks/";
   const MintNFTInstance = await ethers.getContractFactory("MintNFT");
-  const MintNFT = await MintNFTInstance.deploy(ERC721Mint, MintingPass, wallet, receiver);
+  const MintNFT = await MintNFTInstance.deploy(ERC721Mint, MintingPass, wallet, receiver, saleCounter);
 
   console.log("Network", network);
   console.log("Deploying contracts with the account:", deployer.address);

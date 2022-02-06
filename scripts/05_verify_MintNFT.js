@@ -7,6 +7,7 @@ async function main() {
   const receiver = process.env.RECEIVER;
   const ERC721Mint = process.env.ERC721_MINT_ADDRESS;
   const MintingPass = process.env.MINTING_PASS_ADDRESS;
+  const saleCounter = process.env.SALE_COUNTER;
 
   const dir = "./networks/";
   const fileName = "MintNFT_" + `${network}.json`;
@@ -15,7 +16,7 @@ async function main() {
   try {
     await hre.run("verify:verify", {
       address: data.MintNFT,
-      constructorArguments: [ERC721Mint, MintingPass, wallet, receiver],
+      constructorArguments: [ERC721Mint, MintingPass, wallet, receiver, saleCounter],
       contract: "contracts/MintNFT.sol:MintNFT",
     });
   } catch (e) {

@@ -16,8 +16,8 @@ contract MintNFT is Ownable {
     address payable public wallet;
 
     uint public allSaleAmount = 10000;
-    uint public saleCounter = 0;
-    uint public maxPublicSaleAmount = 3;
+    uint public saleCounter;
+    uint public maxPublicSaleAmount = 250;
     uint public price = 0.1 ether;
     uint public discountPrice = 0.09 ether;
 
@@ -40,7 +40,7 @@ contract MintNFT is Ownable {
         _;
     }
 
-    constructor(address _token, address _mintingPass, address payable _wallet, address _receiver) {
+    constructor(address _token, address _mintingPass, address payable _wallet, address _receiver, uint _saleCounter) {
         require(
             _token != address(0) &&
             _mintingPass != address(0) &&
@@ -51,6 +51,7 @@ contract MintNFT is Ownable {
         mintingPass = IERC1155(_mintingPass);
         wallet = _wallet;
         receiver = _receiver;
+        saleCounter = _saleCounter;
 
         managers[msg.sender] = true;
 
@@ -186,6 +187,27 @@ contract MintNFT is Ownable {
         returns(bool) 
     {
         allSaleAmount = _amount;
+
+        return true;
+    }
+
+    function _setMaxPublicSaleAmount(uint _maxPublicSaleAmount) 
+        external 
+        onlyOwner 
+        returns(bool) 
+    {
+        maxPublicSaleAmount = _maxPublicSaleAmount;
+
+        return true;
+    }
+
+    function _setPrice(uint _price) 
+        external 
+        onlyOwner 
+        returns(bool) 
+    {
+        price = _price;
+        discountPrice = price * 9 / 10;
 
         return true;
     }

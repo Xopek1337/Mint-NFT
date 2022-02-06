@@ -9,6 +9,7 @@ const { constants } = require("@openzeppelin/test-helpers");
 
 const URI = process.env.NFT_URI;
 const receiver = process.env.RECEIVER;
+const saleCounter = process.env.SALE_COUNTER;
 
 describe("MintNFT test", () => {
   let mintingPass;
@@ -42,6 +43,7 @@ describe("MintNFT test", () => {
           mintingPass.address,
           constants.ZERO_ADDRESS,
           receiver,
+          saleCounter,
         ),
       ).to.be.revertedWith("MintNFT::constructor: address is null");
     });
@@ -53,6 +55,7 @@ describe("MintNFT test", () => {
           mintingPass.address,
           wallet.address,
           receiver,
+          saleCounter,
         ),
       ).to.be.revertedWith("MintNFT::constructor: address is null");
     });
@@ -64,6 +67,7 @@ describe("MintNFT test", () => {
           constants.ZERO_ADDRESS,
           wallet.address,
           receiver,
+          saleCounter,
         ),
       ).to.be.revertedWith("MintNFT::constructor: address is null");
     });
@@ -74,18 +78,21 @@ describe("MintNFT test", () => {
         mintingPass.address,
         wallet.address,
         receiver,
+        saleCounter,
       );
 
-      const [walletAddress, tokenAddress, passAddress, receiverAddress] = await Promise.all([
+      const [walletAddress, tokenAddress, passAddress, receiverAddress, saleCount] = await Promise.all([
         MintNFT.wallet(),
         MintNFT.token(),
         MintNFT.mintingPass(),
         MintNFT.receiver(),
+        MintNFT.saleCounter(),
       ]);
       expect(walletAddress).to.be.equal(wallet.address);
       expect(tokenAddress).to.be.equal(ERC721Mint.address);
       expect(passAddress).to.be.equal(mintingPass.address);
       expect(receiverAddress).to.be.equal(receiver);
+      expect(saleCount).to.be.equal(saleCounter);
     });
   });
 
@@ -97,6 +104,7 @@ describe("MintNFT test", () => {
         mintingPass.address,
         wallet.address,
         receiver,
+        saleCounter,
       );
     });
     it("should faile if contract is paused", async () => {
@@ -196,7 +204,7 @@ describe("MintNFT test", () => {
       await MintNFT._setPublicSale(true);
 
       await expect(
-        MintNFT.connect(addr1).functions["mint(uint256)"](9, { value: ethers.utils.parseEther("0.9") }),
+        MintNFT.connect(addr1).functions["mint(uint256)"](900, { value: ethers.utils.parseEther("90") }),
       ).to.be.revertedWith("MintNFT::mintInternal: amount is more than allowed");
     });
 
@@ -407,9 +415,25 @@ describe("MintNFT test", () => {
 
     it("should set all Sale amount", async () => {
       await MintNFT._setAllSaleAmount(10);
-      const data = await MintNFT.allSaleAmount();
+      const allSaleAmount = await MintNFT.allSaleAmount();
 
-      expect(data).to.equal(10);
+      expect(allSaleAmount).to.equal(10);
+    });
+
+    it("should set max Public Sale Amount", async () => {
+      await MintNFT._setMaxPublicSaleAmount(10);
+      const maxPublicSaleAmount = await MintNFT.maxPublicSaleAmount();
+
+      expect(maxPublicSaleAmount).to.equal(10);
+    });
+
+    it("should set price", async () => {
+      await MintNFT._setPrice(10000000000);
+      const price = await MintNFT.price();
+      const discountPrice = await MintNFT.discountPrice();
+
+      expect(price).to.equal(10000000000);
+      expect(discountPrice).to.equal(9000000000);
     });
   });
 });
