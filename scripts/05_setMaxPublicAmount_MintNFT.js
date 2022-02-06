@@ -1,3 +1,4 @@
+// npx hardhat run scripts/05_setMaxPublicAmount_MintNFT.js --network rinkeby
 const network = hre.network.name;
 const fs = require("fs");
 
@@ -10,7 +11,7 @@ async function main() {
   const MintNFT = await MintNFTInstance.attach(data.MintNFT);
   const maxPublicSaleAmount = process.env.MAX_PUBLIC_SALE_AMOUNT;
 
-  const tx = await MintNFT._setMaxPublicSaleAmountue(maxPublicSaleAmount);
+  const tx = await MintNFT._setMaxPublicSaleAmount(maxPublicSaleAmount);
   console.log(tx);
 }
 
