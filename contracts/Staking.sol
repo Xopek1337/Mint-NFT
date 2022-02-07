@@ -10,8 +10,8 @@ contract Staking is Ownable {
 
     bool public isPaused = false;
 
-    uint public period = 1 days; // variable
-    uint public rewardRate = 100; // variable
+    uint public period = 1 days; 
+    uint public rewardRate = 100; 
     uint public stakedTokens;
 
     mapping(uint => address) public stakes;
@@ -29,12 +29,10 @@ contract Staking is Ownable {
         require(!isPaused, 'Staking::stake: staking is closed');
 
         for (uint i = 0; i < ids.length; i++) {
-            require(msg.sender == stakingToken.ownerOf(ids[i]), 'Staking::stake: only token owner can stake'); // проверка на владение токеном
-            require(stakes[ids[i]] != msg.sender, 'Staking::stake: token is already staked'); // проверка не стейкал ли уже юзер этот токен
-            // если существует ячейка, конечно же, так-то можно if дописать
-            //stakingToken.approve(address(this), ids[i]);
+            require(msg.sender == stakingToken.ownerOf(ids[i]), 'Staking::stake: only token owner can stake'); 
+            require(stakes[ids[i]] != msg.sender, 'Staking::stake: token is already staked'); 
             
-            stakingToken.transferFrom(msg.sender, address(this), ids[i]); // уменьшается ли здесь баланс юзера в ERC721Mint? или надо дописать
+            stakingToken.transferFrom(msg.sender, address(this), ids[i]);
 
             stakersBalances[msg.sender]++;
             stakes[ids[i]] = msg.sender;
@@ -48,7 +46,7 @@ contract Staking is Ownable {
 
     function unstake(uint[] memory ids) external returns(uint[] memory) {
         for (uint i = 0; i < ids.length; i++) {
-            //require(msg.sender == stakes[ids[i]], 'Staking::unstake: msg.sender is not token owner'); // чекает что владелец тот кто стейкнул
+            require(msg.sender == stakes[ids[i]], 'Staking::unstake: msg.sender is not token owner');
 
             stakingToken.transferFrom(address(this), msg.sender, ids[i]); 
 
