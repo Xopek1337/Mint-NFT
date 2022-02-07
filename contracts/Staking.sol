@@ -1,17 +1,18 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.11;
 
-import './ERC721Mint.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
 
 contract Staking is Ownable {
     IERC20 public rewardsToken;
-    ERC721Mint public stakingToken;
+    IERC721 public stakingToken;
 
     bool public isPaused = false;
 
-    uint public period = 1 days; 
-    uint public rewardRate = 100; 
+    uint public timeToReward = 1 days;
+    uint public rewardRate = 100;
     uint public stakedTokens;
 
     mapping(uint => address) public stakes;
@@ -22,15 +23,15 @@ contract Staking is Ownable {
 
     constructor(address _rewardsToken, address _stakingToken) {
         rewardsToken = IERC20(_rewardsToken);
-        stakingToken = ERC721Mint(_stakingToken);
+        stakingToken = IERC721(_stakingToken);
     }
 
     function stake(uint[] memory ids) external returns(uint[] memory) {
         require(!isPaused, 'Staking::stake: staking is closed');
 
         for (uint i = 0; i < ids.length; i++) {
-            require(msg.sender == stakingToken.ownerOf(ids[i]), 'Staking::stake: only token owner can stake'); 
-            require(stakes[ids[i]] != msg.sender, 'Staking::stake: token is already staked'); 
+            require(msg.sender == stakingToken.ownerOf(ids[i]), 'Staking::stake: only token owner can stake');
+            require(stakes[ids[i]] != msg.sender, 'Staking::stake: token is already staked');
             
             stakingToken.transferFrom(msg.sender, address(this), ids[i]);
 
@@ -46,7 +47,7 @@ contract Staking is Ownable {
 
     function unstake(uint[] memory ids) external returns(uint[] memory) {
         for (uint i = 0; i < ids.length; i++) {
-            require(msg.sender == stakes[ids[i]], 'Staking::unstake: msg.sender is not token owner');
+            require(msg.sender == stakes[ids[i]], 'Staking::unstake: msg.sender is not token owner'); // чекает что владелец тот кто стейкнул
 
             stakingToken.transferFrom(address(this), msg.sender, ids[i]); 
 
@@ -60,6 +61,38 @@ contract Staking is Ownable {
         emit Unstaked(msg.sender, ids);
 
         return ids;
+    }
+
+    function rewardPerToken() 
+        public 
+        view 
+        returns(uint) 
+    {
+        if (stakedTokens == 0) {
+            return 0;
+        }
+
+        return rewardRate * 1e18 / stakedTokens;
+    }
+
+    function _setRewardRate(uint _rewardRate) 
+        external 
+        onlyOwner 
+        returns(bool) 
+    {
+        rewardRate = _rewardRate;
+
+        return true;
+    }
+
+    function _setTimeToReward(uint _timeToReward) 
+        external 
+        onlyOwner 
+        returns(bool) 
+    {
+        timeToReward = _timeToReward;
+
+        return true;
     }
 
     function _withdraw(uint[] memory ids)
@@ -83,5 +116,4 @@ contract Staking is Ownable {
 
         return true;
     }
-
 }
