@@ -11,7 +11,7 @@ contract Staking is Ownable {
 
     bool public isPaused = false;
 
-    uint public period = 1 days; 
+    uint public timeToReward = 1 days; 
     uint public rewardRate = 100; 
     uint public stakedTokens = 0;
 
@@ -30,8 +30,8 @@ contract Staking is Ownable {
         require(!isPaused, 'Staking::stake: staking is closed');
 
         for (uint i = 0; i < ids.length; i++) {
-            require(msg.sender == stakingToken.ownerOf(ids[i]), 'Staking::stake: only token owner can stake'); 
-            require(stakes[ids[i]] != msg.sender, 'Staking::stake: token is already staked'); 
+            require(msg.sender == stakingToken.ownerOf(ids[i]), 'Staking::stake: only token owner can stake');
+            require(stakes[ids[i]] != msg.sender, 'Staking::stake: token is already staked');
             
             stakingToken.transferFrom(msg.sender, address(this), ids[i]);
 
@@ -61,6 +61,38 @@ contract Staking is Ownable {
         emit Unstaked(msg.sender, ids);
 
         return ids;
+    }
+
+    function rewardPerToken() 
+        public 
+        view 
+        returns(uint) 
+    {
+        if (stakedTokens == 0) {
+            return 0;
+        }
+
+        return rewardRate / stakedTokens;
+    }
+
+    function _setRewardRate(uint _rewardRate) 
+        external 
+        onlyOwner 
+        returns(bool) 
+    {
+        rewardRate = _rewardRate;
+
+        return true;
+    }
+
+    function _setTimeToReward(uint _timeToReward) 
+        external 
+        onlyOwner 
+        returns(bool) 
+    {
+        timeToReward = _timeToReward;
+
+        return true;
     }
 
     function _withdraw(uint[] memory ids)

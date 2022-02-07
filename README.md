@@ -66,6 +66,12 @@ which are listed in the 'package.json' file (for example, coverage (```yarn add 
 #### Set public sale
 ```npx hardhat run scripts/05_setPublicSale_MintNFT.js``` --network rinkeby
 
+#### Set price
+```npx hardhat run scripts/05_setPrice_MintNFT.js``` --network rinkeby
+
+#### Set max public amount
+```npx hardhat run scripts/05_setMaxPublicAmount_MintNFT.js``` --network rinkeby
+
 #### Add whitelist
 1. Add addresses and amounts to whitelist/whitelist.json
 2. Run script:

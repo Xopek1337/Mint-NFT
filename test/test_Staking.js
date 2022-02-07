@@ -22,16 +22,16 @@ describe("StakingTest", () => {
     });
 
     it("should set right constructor parametres", async () => {
-      const [rewardsToken, stakingToken, period, rewardRate, stakedTokens] = await Promise.all([
+      const [rewardsToken, stakingToken, timeToReward, rewardRate, stakedTokens] = await Promise.all([
         Staking.rewardsToken(),
         Staking.stakingToken(),
-        Staking.period(),
+        Staking.timeToReward(),
         Staking.rewardRate(),
         Staking.stakedTokens(),
       ]);
       expect(rewardsToken).to.be.equal(ERC20Test.address);
       expect(stakingToken).to.be.equal(ERC721Mint.address);
-      expect(period).to.be.equal(86400);
+      expect(timeToReward).to.be.equal(86400);
       expect(rewardRate).to.be.equal(100);
       expect(stakedTokens).to.be.equal(0);
     });
